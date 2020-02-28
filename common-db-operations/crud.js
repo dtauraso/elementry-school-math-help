@@ -4,7 +4,7 @@ module.exports = {
 
     getAll,
     getOneByFilter,
-    getByFilter,
+    getAllByFilter,
     make,
     updateById,
     removeById
@@ -20,7 +20,7 @@ function getOneByFilter(filter, table) {
         .where(filter)
         .first();
 }
-function getByFilter(filter, table) {
+function getAllByFilter(filter, table) {
     return db(table)
         .where(filter);
 }
