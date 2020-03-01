@@ -15,12 +15,12 @@ const Container = styled.div`
     }
     
 `
-
+// need to know all the values so the right total spaces can be calculated
 const AddTwoValues = (props) => {
     return (
         <Container>
             {/* <h1>testing</h1> */}
-            <OneValue value={2}/>
+            <OneValue value={3}/>
         </Container>
     )
 }
