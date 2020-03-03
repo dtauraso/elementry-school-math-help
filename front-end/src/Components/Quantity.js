@@ -7,6 +7,7 @@ const Box = styled.p`
 
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+    color: ${props => props.isColor ? props.backgroundColor: "black"};
 
 `
 
@@ -20,11 +21,10 @@ const MiddleBox = styled(Box)`
     border-right: 1px solid black;
 `
 
-const EndBox = styled(Box)`
+const EndBox = styled(Box/*, props */)`
     border-right: 1px solid black;
 
     // have this added to color the extra items 
-    color: lightblue;
 
 `
 // things are expanding from the center
@@ -46,30 +46,57 @@ const Boxes = styled.div`
     align-items: center;
     border: 1px solid black;
 `
+
+
+const makeQuantity = (total) => {
+    let x = []
+    for(let i = 0; i < total; i++) {
+        x = [...x, '@']
+    }
+
+    return x
+
+}
 const Quantity = (props) => {
 
     // should take in the quantity array
-    const [quantity, setQuantity] = useState(props.quantity)
-
-        console.log('in quantity', quantity)
-        return (
-            <SetOfBoxes>
-                <Boxes>
+    const [quantity, setQuantity] = useState(makeQuantity(props.total))
+    const [value, setValue] = useState(props.value)
+    const [backgroundColor, setBackgroundColor] = useState(props.backgroundColor)
+    
+    // const [difference, setDifference] = useState(total - quantity)
+    // console.log('in quantity', quantity, value)
+    return (
+        <SetOfBoxes>
+            <Boxes>
+                {/* i : [0, total] quantity: [0, < total] */}
                 {quantity.map((item, i) => {
+                    const truthFlag = (value - 1) < i
+
+                    // console.log(value < i)
                     if(i === 0) {
-                        return <StartBox key={i}>{item}</StartBox>
+                        return <StartBox
+                                    key={i}
+                                    isColor={truthFlag}
+                                    backgroundColor={backgroundColor}>{item}</StartBox>
 
                     } else if(i > 0 && i < quantity.length - 1) {
-                        return <MiddleBox key={i}>{item}</MiddleBox>
+                        return <MiddleBox
+                                    key={i}
+                                    isColor={truthFlag}
+                                    backgroundColor={backgroundColor}>{item}</MiddleBox>
 
                     } else if(i === quantity.length - 1) {
-                        return <EndBox key={i}>{item}</EndBox>
+                        return <EndBox
+                                    key={i}
+                                    isColor={truthFlag}
+                                    backgroundColor={backgroundColor}>{item}</EndBox>
                     }
                 })}
             </Boxes>
-            </SetOfBoxes>
-            
-        )
+        </SetOfBoxes>
+        
+    )
     
 }
 

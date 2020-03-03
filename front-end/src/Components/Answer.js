@@ -23,7 +23,7 @@ const Value = styled.p`
 
 `
 
-const OneValue = (props) => {
+const Answer = (props) => {
 
     // what if I added padding to ensure there was always the same 
     // should take in a single value and display it along with the quantity
@@ -35,7 +35,8 @@ const OneValue = (props) => {
     // this.makeQuantity()
     return (
         <Container>
-            <Value>{value}</Value>
+            {/* form for entering in the answer */}
+            <Value>{props.total}</Value>
             <Quantity
                 total={props.total}
                 value={props.value}
@@ -46,4 +47,4 @@ const OneValue = (props) => {
     )
 }
 
-export default OneValue
+export default Answer
