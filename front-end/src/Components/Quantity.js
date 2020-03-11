@@ -48,21 +48,13 @@ const Boxes = styled.div`
 `
 
 
-const makeQuantity = (total) => {
-    let x = []
-    for(let i = 0; i < total; i++) {
-        x = [...x, '@']
-    }
-
-    return x
-
-}
 const Quantity = (props) => {
 
+    const {quantity, backgroundColor} = props
     // should take in the quantity array
-    const [quantity, setQuantity] = useState(makeQuantity(props.total))
-    const [value, setValue] = useState(props.value)
-    const [backgroundColor, setBackgroundColor] = useState(props.backgroundColor)
+    // We should already have the array by this point
+    // const [value, setValue] = useState(value)
+    // const [backgroundColor, setBackgroundColor] = useState(backgroundColor)
     
     // const [difference, setDifference] = useState(total - quantity)
     // console.log('in quantity', quantity, value)
@@ -73,6 +65,8 @@ const Quantity = (props) => {
                 {quantity.map((item, i) => {
                     const truthFlag = (value - 1) < i
 
+                    // read the quantity [1, 1, 0] and an @ followed by the background color
+                    // depending on which one it is
                     // console.log(value < i)
                     if(i === 0) {
                         return <StartBox

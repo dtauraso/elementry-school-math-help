@@ -1,12 +1,12 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import AddTwoValues from './Components/AddTwoValues'
+import { AddTwoValues, PresentProblems } from './Components/AddTwoValues'
 function App() {
   return (
     <div className="App">
       
-      <AddTwoValues value={2}/>
+      <AddTwoValues a={4} b={3}/>
     </div>
   );
 }

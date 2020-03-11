@@ -25,9 +25,10 @@ const Value = styled.p`
 
 const Answer = (props) => {
 
+    const {value, total, backgroundColor} = props
     // what if I added padding to ensure there was always the same 
     // should take in a single value and display it along with the quantity
-    const [value, setValue] = useState(props.value)
+    // const [value, setValue] = useState(props.value)
     
     // why isn't quantiy's prob being updated when oneValue's is being updated?
 
@@ -35,12 +36,13 @@ const Answer = (props) => {
     // this.makeQuantity()
     return (
         <Container>
+
             {/* form for entering in the answer */}
-            <Value>{props.total}</Value>
+            <Value>{total}</Value>
             <Quantity
-                total={props.total}
-                value={props.value}
-                backgroundColor={props.backgroundColor}
+                total={total}
+                value={value}
+                backgroundColor={backgroundColor}
                 />
                 
         </Container>

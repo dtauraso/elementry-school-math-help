@@ -25,9 +25,11 @@ const Value = styled.p`
 
 const OneValue = (props) => {
 
+    let {value, quantity, total, backgroundColor} = props
     // what if I added padding to ensure there was always the same 
     // should take in a single value and display it along with the quantity
-    const [value, setValue] = useState(props.value)
+    // why am I using useState on props?
+    // const [value, setValue] = useState(props.value)
     
     // why isn't quantiy's prob being updated when oneValue's is being updated?
 
@@ -37,9 +39,8 @@ const OneValue = (props) => {
         <Container>
             <Value>{value}</Value>
             <Quantity
-                total={props.total}
-                value={props.value}
-                backgroundColor={props.backgroundColor}
+                quantity={quantity}
+                backgroundColor={backgroundColor}
                 />
                 
         </Container>
