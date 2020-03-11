@@ -41,6 +41,7 @@ problemSet: {
 */
 
 const makeQuantity = (value, total) => {
+    // hilights when to print out an @ and when not to using 1's and 0's
     let x = []
     for(let i = 0; i < total; i++) {
         if(i < value) {
@@ -62,15 +63,20 @@ export const PresentProblems = (props) => {
         0: {
             a: {
                 value: 4,
-                quantity: makeQuantity(4, answer)
+                quantity: makeQuantity(4, answer),
+                isForm: false
             },
             b: {
                 value: 3,
-                quantity:makeQuantity(3, answer)
+                quantity: makeQuantity(3, answer),
+                isForm: false
+
             },
             answerForm: {
-                theirAnswer: undefined,
-                actualAnswer: answer
+                value: undefined,
+                actualAnswer: answer,
+                isForm: true
+
             }
         }
     })

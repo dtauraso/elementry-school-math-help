@@ -37,6 +37,8 @@ const OneValue = (props) => {
     // this.makeQuantity()
     return (
         <Container>
+            {/* if there is a form, display the extra component holding the form */}
+            {/* don't show value if it's undefined */}
             <Value>{value}</Value>
             <Quantity
                 quantity={quantity}
