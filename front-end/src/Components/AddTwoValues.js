@@ -126,8 +126,8 @@ export const AddTwoValues = (props) => {
                 path={[...path, "b"]}
 
                 backgroundColor={backgroundColor}/>
-            <Answer
-                value={total} 
+            <OneValue
+                problemPart={problem.answerForm} 
                 total={total}
                 path={[...path, "answerForm"]}
 
