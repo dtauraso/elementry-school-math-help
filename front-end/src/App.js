@@ -5,8 +5,8 @@ import { AddTwoValues, PresentProblems } from './Components/AddTwoValues'
 function App() {
   return (
     <div className="App">
-      
-      <AddTwoValues a={4} b={3}/>
+      <PresentProblems />
+      {/* <AddTwoValues a={4} b={3}/> */}
     </div>
   );
 }

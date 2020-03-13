@@ -7,7 +7,7 @@ const Box = styled.p`
 
     border-top: 1px solid black;
     border-bottom: 1px solid black;
-    color: ${props => props.isColor ? props.backgroundColor: "black"};
+    color: ${props => props.isColor ? "black": props.backgroundColor};
 
 `
 
@@ -47,44 +47,48 @@ const Boxes = styled.div`
     border: 1px solid black;
 `
 
-
+const showAt = (flag) => {
+ 
+    return flag ? "@": "@"
+}
 const Quantity = (props) => {
 
     const {quantity, backgroundColor} = props
+
     // should take in the quantity array
     // We should already have the array by this point
     // const [value, setValue] = useState(value)
     // const [backgroundColor, setBackgroundColor] = useState(backgroundColor)
     
     // const [difference, setDifference] = useState(total - quantity)
-    // console.log('in quantity', quantity, value)
+    console.log('in quantity', quantity)
     return (
         <SetOfBoxes>
             <Boxes>
                 {/* i : [0, total] quantity: [0, < total] */}
                 {quantity.map((item, i) => {
-                    const truthFlag = (value - 1) < i
-
+                    // const truthFlag = (value - 1) < i
+                    console.log(item)
                     // read the quantity [1, 1, 0] and an @ followed by the background color
                     // depending on which one it is
                     // console.log(value < i)
                     if(i === 0) {
                         return <StartBox
                                     key={i}
-                                    isColor={truthFlag}
-                                    backgroundColor={backgroundColor}>{item}</StartBox>
+                                    isColor={item}
+                                    backgroundColor={backgroundColor}>{showAt(item)}</StartBox>
 
                     } else if(i > 0 && i < quantity.length - 1) {
                         return <MiddleBox
                                     key={i}
-                                    isColor={truthFlag}
-                                    backgroundColor={backgroundColor}>{item}</MiddleBox>
+                                    isColor={item}
+                                    backgroundColor={backgroundColor}>{showAt(item)}</MiddleBox>
 
                     } else if(i === quantity.length - 1) {
                         return <EndBox
                                     key={i}
-                                    isColor={truthFlag}
-                                    backgroundColor={backgroundColor}>{item}</EndBox>
+                                    isColor={item}
+                                    backgroundColor={backgroundColor}>{showAt(item)}</EndBox>
                     }
                 })}
             </Boxes>

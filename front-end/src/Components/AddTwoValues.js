@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import OneValue from './OneValue';
 import styled from 'styled-components'
-import Answer from './Answer'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
@@ -74,16 +73,19 @@ export const PresentProblems = (props) => {
             },
             answerForm: {
                 value: undefined,
+                quantity: makeQuantity(0, answer),
+
                 actualAnswer: answer,
                 isForm: true
 
             }
         }
     })
+    console.log(problemSet)
     return (
         <div>
 
-        {Object.keys(problemSet).map(problemId => {
+        {Object.keys(problemSet).map(problemId => (
             
             <AddTwoValues
                 key={problemId}
@@ -93,7 +95,7 @@ export const PresentProblems = (props) => {
 
                 />
 
-        })}
+    ))}
         {/* < bla i={i} problem={problem} setProblemSet={setProblemSet} setProblemSet={setProblemSet} /> */}
 
         </div>
@@ -110,28 +112,35 @@ export const AddTwoValues = (props) => {
         setProblemSet
     } = props
     const total = problem.a.value + problem.b.value
+    console.log(problem)
     return (
         // needs a form and both values with the solution
         <Container backgroundColor={backgroundColor}>
             {/* <h1>testing</h1> */}
-            <OneValue
-                problemPart={problem.a}
-                total={total}
-                path={[...path, "a"]}
-                backgroundColor={backgroundColor}/>
-            <OneValue
+            {Object.keys(problem).map(problemKey => (
+                <OneValue
+                    problemPart={problem[problemKey]}
+                    pathDownObject={[...pathDownObject, problemKey]}
+                    backgroundColor={backgroundColor}/>
+            ))}
+            {/* // <OneValue
+            //     problemPart={problem["a"]}
+            //     total={total}
+            //     path={[...path, "a"]}
+            //     backgroundColor={backgroundColor}/>
+            // <OneValue
                 
-                problemPart={problem.b} 
-                total={total}
-                path={[...path, "b"]}
+            //     problemPart={problem["b"]} 
+            //     total={total}
+            //     path={[...path, "b"]}
 
-                backgroundColor={backgroundColor}/>
-            <OneValue
-                problemPart={problem.answerForm} 
-                total={total}
-                path={[...path, "answerForm"]}
+            //     backgroundColor={backgroundColor}/>
+            // <OneValue
+            //     problemPart={problem["answerForm"]} 
+            //     total={total}
+            //     path={[...path, "answerForm"]}
 
-                backgroundColor={backgroundColor}/>
+            //     backgroundColor={backgroundColor}/> */}
         </Container>
     )
 }

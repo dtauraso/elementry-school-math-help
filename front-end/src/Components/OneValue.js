@@ -25,7 +25,18 @@ const Value = styled.p`
 
 const OneValue = (props) => {
 
-    let {value, quantity, total, backgroundColor} = props
+    console.log("one value", props)
+    let {
+        problemPart,
+        pathDownObject,
+        backgroundColor} = props
+
+
+    let {value,
+        quantity,
+        isForm,
+        actualAnswer} = problemPart
+
     // what if I added padding to ensure there was always the same 
     // should take in a single value and display it along with the quantity
     // why am I using useState on props?
@@ -33,13 +44,40 @@ const OneValue = (props) => {
     
     // why isn't quantiy's prob being updated when oneValue's is being updated?
 
-    // console.log('here', value, quantity)
+    console.log('here', value, quantity)
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log(event)
+        // const data = new FormData(event.target);
+        
+        // fetch('/api/form-submit-url', {
+        //   method: 'POST',
+        //   body: data,
+        // });
+      }
     // this.makeQuantity()
     return (
+        // if you don't have a solid styling plan, your webapp is screwed
         <Container>
             {/* if there is a form, display the extra component holding the form */}
             {/* don't show value if it's undefined */}
-            <Value>{value}</Value>
+            {isForm && (
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="username">Best Guess -> </label>
+                    <input id="username" name="username" type="text"
+                    onChange={(e) => {
+                        console.log(e.target.value)
+                    }} />
+                    <button>Send data!</button>
+
+                </form>
+            )}
+            {!isForm && (
+            <Value>
+                {value}
+            </Value>)}
+
             <Quantity
                 quantity={quantity}
                 backgroundColor={backgroundColor}
