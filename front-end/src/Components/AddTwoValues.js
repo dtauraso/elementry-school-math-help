@@ -63,12 +63,15 @@ export const PresentProblems = (props) => {
             a: {
                 value: 4,
                 quantity: makeQuantity(4, answer),
-                isForm: false
+                isForm: false,
+                operationType: ''
+
             },
             b: {
                 value: 3,
                 quantity: makeQuantity(3, answer),
-                isForm: false
+                isForm: false,
+                operationType: '+'
 
             },
             answerForm: {

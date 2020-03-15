@@ -28,22 +28,13 @@ const EndBox = styled(Box/*, props */)`
 
 `
 // things are expanding from the center
-// I want them to expand to the right only
-const SetOfBoxes = styled.div`
+const Boxes = styled.div`
+
     width: 50%;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    align-items: center;
-    border: 1px solid black;
-`
-const Boxes = styled.div`
-
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     border: 1px solid black;
 `
 
@@ -63,7 +54,6 @@ const Quantity = (props) => {
     // const [difference, setDifference] = useState(total - quantity)
     console.log('in quantity', quantity)
     return (
-        <SetOfBoxes>
             <Boxes>
                 {/* i : [0, total] quantity: [0, < total] */}
                 {quantity.map((item, i) => {
@@ -92,7 +82,6 @@ const Quantity = (props) => {
                     }
                 })}
             </Boxes>
-        </SetOfBoxes>
         
     )
     

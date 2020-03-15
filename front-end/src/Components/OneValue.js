@@ -20,9 +20,26 @@ const Container = styled.div`
 const Value = styled.p`
     margin-left: 10px;
     margin-right: 10px;
+    // padding-bottom: 20px;
+    border-bottom: ${props => props.operationType === '+'? '2px solid black': ''} ;
+
+
 
 `
+const Form = styled.form`
 
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    // border: 1px solid #BADA55;
+
+`
+const InputField = styled.input`
+    width: 40%;
+    border: 1px solid black;
+
+`
 const OneValue = (props) => {
 
     console.log("one value", props)
@@ -34,6 +51,7 @@ const OneValue = (props) => {
 
     let {value,
         quantity,
+        operationType,
         isForm,
         actualAnswer} = problemPart
 
@@ -45,6 +63,40 @@ const OneValue = (props) => {
     // why isn't quantiy's prob being updated when oneValue's is being updated?
 
     console.log('here', value, quantity)
+
+
+    const showFormOrValue = (isForm, value) => {
+        if(isForm) {
+            return (
+                <Form onSubmit={handleSubmit}>
+                    <button>Send data!</button>
+
+                    {/* <label htmlFor="username">Best Guess -> </label> */}
+                    <InputField id="username" name="username" type="text"
+                    onChange={(e) => {
+                        console.log(e.target.value)
+                    }} />
+
+                </Form>
+            )
+            
+        } else {
+            return (
+                    <div>
+                        <Value operationType={operationType}>
+                        {(`${operationType}              ${value}`)}
+                        </Value>
+
+                        {/* {
+                            operationType === '+'?
+                            (<resultsLine></resultsLine>):
+                            (<div></div>)
+                        } */}
+                        
+                    </div>
+                    )
+        }
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -58,26 +110,16 @@ const OneValue = (props) => {
       }
     // this.makeQuantity()
     return (
-        // if you don't have a solid styling plan, your webapp is screwed
+        // ideally 50% of the screen should be the form or the value
+        // the other 50% of the screen shoudl be the quantity
         <Container>
             {/* if there is a form, display the extra component holding the form */}
             {/* don't show value if it's undefined */}
-            {isForm && (
-                <form onSubmit={handleSubmit}>
-                    <label htmlFor="username">Best Guess -> </label>
-                    <input id="username" name="username" type="text"
-                    onChange={(e) => {
-                        console.log(e.target.value)
-                    }} />
-                    <button>Send data!</button>
-
-                </form>
-            )}
-            {!isForm && (
-            <Value>
-                {value}
-            </Value>)}
-
+            {/* first half of the page */}
+            {/* conditional rendering */}
+            {showFormOrValue(isForm, value)}
+            
+            {/* second half of the page */}
             <Quantity
                 quantity={quantity}
                 backgroundColor={backgroundColor}
