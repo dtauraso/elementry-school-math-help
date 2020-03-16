@@ -118,13 +118,12 @@ export const AddTwoValues = (props) => {
     console.log(problem)
     return (
         // needs a form and both values with the solution
-        <Container backgroundColor={backgroundColor}>
+        <Container>
             {/* <h1>testing</h1> */}
             {Object.keys(problem).map(problemKey => (
                 <OneValue
                     problemPart={problem[problemKey]}
-                    pathDownObject={[...pathDownObject, problemKey]}
-                    backgroundColor={backgroundColor}/>
+                    pathDownObject={[...pathDownObject, problemKey]}/>
             ))}
             {/* // <OneValue
             //     problemPart={problem["a"]}

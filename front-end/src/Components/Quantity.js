@@ -7,7 +7,7 @@ const Box = styled.p`
 
     border-top: 1px solid black;
     border-bottom: 1px solid black;
-    color: ${props => props.isColor ? "black": props.backgroundColor};
+    color: ${props => props.isColor ? "black": "white"};
 
 `
 
@@ -44,7 +44,7 @@ const showAt = (flag) => {
 }
 const Quantity = (props) => {
 
-    const {quantity, backgroundColor} = props
+    const {quantity} = props
 
     // should take in the quantity array
     // We should already have the array by this point
@@ -65,20 +65,17 @@ const Quantity = (props) => {
                     if(i === 0) {
                         return <StartBox
                                     key={i}
-                                    isColor={item}
-                                    backgroundColor={backgroundColor}>{showAt(item)}</StartBox>
+                                    isColor={item}>{showAt(item)}</StartBox>
 
                     } else if(i > 0 && i < quantity.length - 1) {
                         return <MiddleBox
                                     key={i}
-                                    isColor={item}
-                                    backgroundColor={backgroundColor}>{showAt(item)}</MiddleBox>
+                                    isColor={item}>{showAt(item)}</MiddleBox>
 
                     } else if(i === quantity.length - 1) {
                         return <EndBox
                                     key={i}
-                                    isColor={item}
-                                    backgroundColor={backgroundColor}>{showAt(item)}</EndBox>
+                                    isColor={item}>{showAt(item)}</EndBox>
                     }
                 })}
             </Boxes>

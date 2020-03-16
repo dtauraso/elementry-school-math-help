@@ -45,8 +45,7 @@ const OneValue = (props) => {
     console.log("one value", props)
     let {
         problemPart,
-        pathDownObject,
-        backgroundColor} = props
+        pathDownObject} = props
 
 
     let {value,
@@ -122,7 +121,6 @@ const OneValue = (props) => {
             {/* second half of the page */}
             <Quantity
                 quantity={quantity}
-                backgroundColor={backgroundColor}
                 />
                 
         </Container>
