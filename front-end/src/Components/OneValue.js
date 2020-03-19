@@ -1,6 +1,9 @@
 import React, {useState} from 'react'
 import Quantity from './Quantity'
 import styled from 'styled-components'
+import { setToValue, append, getValue, deepAssign } from '../deepAssign'
+import { makeQuantity } from '../utility'
+
 // need another flexbox so the centering doesn't affect the flex-start
 // the flex-start should start from 1 spot and go right(its starting from different
 // positions on the left)
@@ -43,17 +46,26 @@ const InputField = styled.input`
 const OneValue = (props) => {
 
     console.log("one value", props)
+    // need the entire problem part
     let {
-        problemPart,
+        problemSet,
+        setProblemSet,
         pathDownObject} = props
 
-
+    console.log(pathDownObject, problemSet)
+    // console.log(getValue(problemSet, pathDownObject))
+    const answerForm = getValue(problemSet, pathDownObject)
+    console.log(answerForm)
     let {value,
         quantity,
         operationType,
         isForm,
-        actualAnswer} = problemPart
+        actualAnswer,
+        correctFirstTime,
+        correct,
+        firstTimeSubmitting} = answerForm
 
+    console.log("they right?", correctFirstTime, correct)
     // what if I added padding to ensure there was always the same 
     // should take in a single value and display it along with the quantity
     // why am I using useState on props?
@@ -61,19 +73,62 @@ const OneValue = (props) => {
     
     // why isn't quantiy's prob being updated when oneValue's is being updated?
 
-    console.log('here', value, quantity)
+    // console.log('here', value, quantity)
 
-
+    // return (<div></div>)
     const showFormOrValue = (isForm, value) => {
         if(isForm) {
             return (
                 <Form onSubmit={handleSubmit}>
-                    <button>Send data!</button>
+                    <p>{firstTimeSubmitting !== "notYetSubmitted"?
+                        (correct? "O": "X"):
+                        ""
+                    }</p>
+                    <button>Check Answer</button>
 
                     {/* <label htmlFor="username">Best Guess -> </label> */}
                     <InputField id="username" name="username" type="text"
                     onChange={(e) => {
-                        console.log(e.target.value)
+                        // console.log(e.target.value)
+                        // console.log(pathDownObject)
+                        // console.log(answerForm)
+                        let y = deepAssign(
+                            problemSet,
+                            [...pathDownObject, 'value'],
+                            parseInt(e.target.value),
+                            setToValue
+                        )
+                        y = deepAssign(
+                            y,
+                            [...pathDownObject, 'quantity'],
+                            makeQuantity(parseInt(e.target.value), actualAnswer),
+                            setToValue
+                        )
+
+                        if(firstTimeSubmitting === "notYetSubmitted") {
+                            y = deepAssign(
+                                y,
+                                [...pathDownObject, 'firstTimeSubmitting'],
+                                "firstTime",
+                                setToValue
+                            )
+                            // check answer
+                            y = deepAssign(
+                                y,
+                                [...pathDownObject, 'correctFirstTime'],
+                                actualAnswer === parseInt(e.target.value),
+                                setToValue
+                            )
+
+                        }
+                        y = deepAssign(
+                            y,
+                            [...pathDownObject, 'correct'],
+                            actualAnswer === parseInt(e.target.value),
+                            setToValue
+                        )
+                        setProblemSet(y)
+                        
                     }} />
 
                 </Form>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import OneValue from './OneValue';
 import styled from 'styled-components'
+import { setToValue, append, getValue, deepAssign } from '../deepAssign'
+import { makeQuantity } from '../utility'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
@@ -39,27 +41,16 @@ problemSet: {
 < bla i={i} problem={problem} setProblemSet={setProblemSet} setProblemSet={setProblemSet} />
 */
 
-const makeQuantity = (value, total) => {
-    // hilights when to print out an @ and when not to using 1's and 0's
-    let x = []
-    for(let i = 0; i < total; i++) {
-        if(i < value) {
-            x = [...x, 1]
 
-        } else {
-            x = [...x, 0]
-        }
-    }
-
-    return x
-
-}
-
+// switch to redux
+// https://github.com/erikras/ducks-modular-redux
+// currently doing redux "prop grilling" style without reducer hooks
 export const PresentProblems = (props) => {
 
     const answer = 4 + 3
+    // pass problemSet, setProblemSet, and the path to all components onvolved with the problemset
     const [problemSet, setProblemSet] = useState({
-        0: {
+        '0': {
             a: {
                 value: 4,
                 quantity: makeQuantity(4, answer),
@@ -79,7 +70,12 @@ export const PresentProblems = (props) => {
                 quantity: makeQuantity(0, answer),
 
                 actualAnswer: answer,
-                isForm: true
+                isForm: true,
+                correctFirstTime: false,
+                correct: false,
+                // possible values: notYetSubmitted, firstTime
+                firstTimeSubmitting: "notYetSubmitted"
+
 
             }
         }
@@ -93,7 +89,7 @@ export const PresentProblems = (props) => {
             <AddTwoValues
                 key={problemId}
                 pathDownObject={[problemId]}
-                problem={problemSet[problemId]}
+                problemSet={problemSet}
                 setProblemSet={setProblemSet}
 
                 />
@@ -111,18 +107,26 @@ export const AddTwoValues = (props) => {
     const {
 
         pathDownObject,
-        problem,
+        problemSet,
         setProblemSet
     } = props
+    // const total = problem.a.value + problem.b.value
+    // console.log(pathDownObject, problemSet)
+    // console.log(getValue(problemSet, pathDownObject))
+    const problem = getValue(problemSet, pathDownObject)
     const total = problem.a.value + problem.b.value
-    console.log(problem)
+    
     return (
+        // <div></div>
         // needs a form and both values with the solution
         <Container>
             {/* <h1>testing</h1> */}
             {Object.keys(problem).map(problemKey => (
                 <OneValue
-                    problemPart={problem[problemKey]}
+                    key={problemKey}
+                // pass entire object and the path to the part we want
+                    problemSet={problemSet}
+                    setProblemSet={setProblemSet}
                     pathDownObject={[...pathDownObject, problemKey]}/>
             ))}
             {/* // <OneValue
