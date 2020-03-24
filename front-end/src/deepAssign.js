@@ -18,6 +18,20 @@ export const getValue = (state, path) => {
         }
     }
 }
+export const objectExistsAtPath = (state, path) => {
+
+    if(path.length === 0) {
+        return true
+    } else if(path.length > 0) {
+        const firstNode = path[0]
+        if(!state.hasOwnProperty(firstNode)) {
+            return false
+        } else {
+            return getValue(state[firstNode], path.filter((node, i) => i > 0))
+        }
+    }
+}
+
 export const deepAssign = (state, path, value, cb) => {
     // state is an object
     // console.log("deep copy", path)

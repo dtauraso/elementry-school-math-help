@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import OneValue from './OneValue';
 import styled from 'styled-components'
+import { connect } from 'react-redux'
+import { getCat } from './Redux/catActions'
 import { setToValue, append, getValue, deepAssign } from '../deepAssign'
 import { makeQuantity } from '../utility'
 // AddTwoValues box
@@ -102,7 +104,7 @@ export const PresentProblems = (props) => {
 }
 
 // need to know all the values so the right total spaces can be calculated
-export const AddTwoValues = (props) => {
+const AddTwoValues = (props) => {
     // have useState here
     const {
 
@@ -151,4 +153,14 @@ export const AddTwoValues = (props) => {
     )
 }
 
+const mapStateToProps = state => {
+    return {
+        Cat: state
+    }
+}
+export default connect(
+    mapStateToProps,
+    { getCat }
+
+)(AddTwoValues)
 // export default AddTwoValues;
