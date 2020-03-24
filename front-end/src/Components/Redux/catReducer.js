@@ -62,7 +62,7 @@ const submitValue = (state, action/*e*/) => {
         makeQuantity(parseInt(e.target.value), actualAnswer),
         setToValue
     )
-
+    // return [y, true]
     if(firstTimeSubmitting === "notYetSubmitted") {
         y = deepAssign(
             y,
@@ -87,6 +87,34 @@ const submitValue = (state, action/*e*/) => {
     )
     return y
     
+}
+const isFirstTimeSubmitting = (state, action/*e*/) => {
+    const {
+        problemSet,
+        pathDownObject,
+        actualAnswer,
+        e,
+        firstTimeSubmitting
+    } = action.payload
+    return [state, actualAnswer === parseInt(e.target.value)]
+}
+const allOtherTimesSubmitting = (state, action/*e*/) => {
+    const {
+        problemSet,
+        pathDownObject,
+        actualAnswer,
+        e,
+        firstTimeSubmitting
+    } = action.payload
+    // if(actualAnswer === parseInt(e.target.value))
+    y = deepAssign(
+        y,
+        [...pathDownObject, 'correct'],
+        actualAnswer === parseInt(e.target.value),
+        setToValue
+    )
+    return [y, true]
+    // return actualAnswer === parseInt(e.target.value)
 }
 // const updateState = (state, currentStatePath, cb, event) => {
 //     return cb(state, currentStatePath, event)
@@ -168,12 +196,22 @@ export const Cat = {
                                 // possible values: notYetSubmitted, firstTime
                                 firstTimeSubmitting: "notYetSubmitted"
                             },
+                            nextStates: [['isFirstTimeSubmitting'], ['allOtherTimesSubmitting']],
+
                             'function': submitValue
                             
             
             
                         }
                     }
+                },
+                // should be able to be used for each answer form state
+                'isFirstTimeSubmitting' : {
+                    'function': isFirstTimeSubmitting
+                },
+                'allOtherTimesSubmitting': {
+                    'function': allOtherTimesSubmitting
+
                 }
             }
         },

@@ -65,6 +65,18 @@ export const deepAssign = (state, path, value, cb) => {
         }
     }
 }
+
+const breathFirstTraversal = (stateState, startPayload, endState) => {
+    // we can use the payload from the user for the entire traversal
+    // from start state to end state
+    // bft
+    // try all the options
+    // for each one
+        // return the state then the stateSuceded flag
+    // return the state once endState is reached
+}
+
+
 /*
 assume the path is a tree
 "0", "answerForm" "value"

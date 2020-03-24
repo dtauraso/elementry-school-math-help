@@ -34,6 +34,7 @@ const universalReducer = (state = initialState, action) => {
     }
 
     // console.log('going to run a state', action.type)
+    // run bft on the reducer path
 
     return state[solutionName]['tree'][stateFirstName]['functions'][context](state, action)
 
