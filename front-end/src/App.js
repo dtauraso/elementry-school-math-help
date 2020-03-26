@@ -1,7 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { AddTwoValues, PresentProblems } from './Components/AddTwoValues'
+// import { AddTwoValues } from './Components/AddTwoValues'
+import PresentProblems from './Components/PresentProblems'
 function App() {
   return (
     <div className="App">

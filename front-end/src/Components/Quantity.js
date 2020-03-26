@@ -1,5 +1,9 @@
 import React, {useState} from 'react'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
+import { getCat } from './Redux/catActions'
+import { setToValue, append, getValue, deepAssign } from '../deepAssign'
+import { makeQuantity } from '../utility'
 
 const Box = styled.p`
 
@@ -38,13 +42,12 @@ const Boxes = styled.div`
     border: 1px solid black;
 `
 
-const showAt = (flag) => {
- 
-    return flag ? "@": "@"
-}
 const Quantity = (props) => {
 
-    const {quantity} = props
+    const {
+        quantity,
+        statePath,
+        Cat} = props
 
     // should take in the quantity array
     // We should already have the array by this point
@@ -52,30 +55,30 @@ const Quantity = (props) => {
     // const [backgroundColor, setBackgroundColor] = useState(backgroundColor)
     
     // const [difference, setDifference] = useState(total - quantity)
-    console.log('in quantity', quantity)
+    console.log('in quantity', getValue(Cat, statePath))
     return (
             <Boxes>
                 {/* i : [0, total] quantity: [0, < total] */}
-                {quantity.map((item, i) => {
+                {getValue(Cat, statePath).map((item, i) => {
                     // const truthFlag = (value - 1) < i
-                    console.log(item)
+                    // console.log(item)
                     // read the quantity [1, 1, 0] and an @ followed by the background color
                     // depending on which one it is
                     // console.log(value < i)
                     if(i === 0) {
                         return <StartBox
                                     key={i}
-                                    isColor={item}>{showAt(item)}</StartBox>
+                                    isColor={item}>@</StartBox>
 
                     } else if(i > 0 && i < quantity.length - 1) {
                         return <MiddleBox
                                     key={i}
-                                    isColor={item}>{showAt(item)}</MiddleBox>
+                                    isColor={item}>@</MiddleBox>
 
                     } else if(i === quantity.length - 1) {
                         return <EndBox
                                     key={i}
-                                    isColor={item}>{showAt(item)}</EndBox>
+                                    isColor={item}>@</EndBox>
                     }
                 })}
             </Boxes>
@@ -84,4 +87,13 @@ const Quantity = (props) => {
     
 }
 
-export default Quantity
+const mapStateToProps = state => {
+    return {
+        Cat: state
+    }
+}
+export default connect(
+    mapStateToProps,
+    { getCat }
+
+)(Quantity)

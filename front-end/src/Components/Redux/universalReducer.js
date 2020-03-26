@@ -1,6 +1,11 @@
 
 import { Cat } from './catReducer'
-import { setToValue, append, getValue, objectExistsAtPath, deepAssign, } from '../../deepAssign'
+import { setToValue,
+         append,
+         getValue,
+         objectExistsAtPath,
+         deepAssign,
+         breathFirstTraversal} from '../../deepAssign'
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
@@ -18,23 +23,43 @@ const initialState = {
 // down to the target js object we want to be called state name
 const universalReducer = (state = initialState, action) => {
 
+    console.log("in the reducer")
+    console.log(state, action)
+    // action.type always holds the start state
     // console.log(action.type, state, Cat)
     if(typeof(action.type) === 'string') {
         return state
     }
-    // if(!objectExistsAtPath(state, action.type)) {
-    //     return state
-    // } else {
-    //     return getValue(state, action.type)['function'](state, action)
-    // }
+    if(!objectExistsAtPath(state, action.type)) {
+        return state
+    } else {
+        let { meta } = action
+        let { stateStateName } = meta
+
+        // console.log("can we send action?", action)
+        return breathFirstTraversal(
+                state,
+                action,
+                stateStateName)
+
+
+        // return getValue(state, action.type)['function'](state, action)
+    }
     let [solutionName, stateFirstName, context] = action.type
     // console.log('got name parts', action.type)
     if(!Object.keys(state[solutionName]['tree']).includes(stateFirstName)) {
         return state
     }
-
+    // let { meta } = action
+    // let [ pathToState, stateStateName, endStateName ] = meta
     // console.log('going to run a state', action.type)
     // run bft on the reducer path
+    // return breathFirstTraversal(
+    //         state,
+    //         action,
+    //         stateStateName,
+    //         startPayload action.payload,
+    //          endStateName)
 
     return state[solutionName]['tree'][stateFirstName]['functions'][context](state, action)
 

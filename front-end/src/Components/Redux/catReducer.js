@@ -1,3 +1,4 @@
+import React from 'react'
 import { makeQuantity } from '../../utility'
 import { setToValue, append, getValue, deepAssign } from '../../deepAssign'
 
@@ -37,66 +38,59 @@ export const fetchCatFailure = (state, action) => {
     }
 }
 const returnState = (state, action) => {
-    return state
+    return [state, true]
+}
+const invalidValue = (state, action) => {
+    console.log("is invalid")
+    return [state, isNaN(action.payload.newValue) === true]
+}
+const validValue = (state, action) => {
+    console.log("is invalid")
+
+    return [state, isNaN(action.payload.newValue) === false]
+
 }
 const submitValue = (state, action/*e*/) => {
     // console.log(e.target.value)
     // console.log(pathDownObject)
     // console.log(answerForm)
-    const {
-        problemSet,
-        pathDownObject,
-        actualAnswer,
-        e,
-        firstTimeSubmitting
-    } = action.payload
-    let y = deepAssign(
-        problemSet,
-        [...pathDownObject, 'value'],
-        parseInt(e.target.value),
-        setToValue
-    )
-    y = deepAssign(
-        y,
-        [...pathDownObject, 'quantity'],
-        makeQuantity(parseInt(e.target.value), actualAnswer),
-        setToValue
-    )
-    // return [y, true]
-    if(firstTimeSubmitting === "notYetSubmitted") {
-        y = deepAssign(
-            y,
-            [...pathDownObject, 'firstTimeSubmitting'],
-            "firstTime",
-            setToValue
-        )
-        // check answer
-        y = deepAssign(
-            y,
-            [...pathDownObject, 'correctFirstTime'],
-            actualAnswer === parseInt(e.target.value),
-            setToValue
-        )
+    console.log("submit value")
+    console.log("current state", action.meta.currentState)
+    // fails when the user puts in an empty value
+    
+    console.log(state, action)
+    // all the info has made it this far
+    const { newValue } = action.payload
 
-    }
-    y = deepAssign(
-        y,
-        [...pathDownObject, 'correct'],
-        actualAnswer === parseInt(e.target.value),
+    // [...action.type, 'variables'] is the path to the vars for the answer form
+    console.log(getValue(state, [...action.type, 'variables']))
+    const basePath = [...action.type, 'variables']
+    let y = deepAssign(
+        state,
+        [...basePath, 'value'],
+        newValue,
         setToValue
     )
-    return y
+    console.log(y)
+    y = deepAssign(
+        y,
+        [...basePath, 'quantity'],
+        makeQuantity(newValue, getValue(state, [...basePath, 'actualAnswer']) ),
+        setToValue
+    )
+    console.log(y)
+    return [y, true]
     
 }
 const isFirstTimeSubmitting = (state, action/*e*/) => {
-    const {
-        problemSet,
-        pathDownObject,
-        actualAnswer,
-        e,
-        firstTimeSubmitting
-    } = action.payload
-    return [state, actualAnswer === parseInt(e.target.value)]
+    const { newValue } = action.payload
+    const basePath = [...action.type, 'variables']
+    console.log("current state", action.meta.currentState)
+
+    console.log('is first time submitting?', basePath)
+
+    return [state, getValue(state, [...basePath, 'actualAnswer']) === newValue]
+    // actualAnswer === parseInt(e.target.value)]
 }
 const allOtherTimesSubmitting = (state, action/*e*/) => {
     const {
@@ -106,8 +100,9 @@ const allOtherTimesSubmitting = (state, action/*e*/) => {
         e,
         firstTimeSubmitting
     } = action.payload
+    console.log("all remaining times")
     // if(actualAnswer === parseInt(e.target.value))
-    y = deepAssign(
+    let y = deepAssign(
         y,
         [...pathDownObject, 'correct'],
         actualAnswer === parseInt(e.target.value),
@@ -125,7 +120,7 @@ const allOtherTimesSubmitting = (state, action/*e*/) => {
 // group by context of problem, not by kind of coding construct
 
 // start state
-export const Cat = {
+export var Cat = {
     redux: {
         // have a cat category
         // have a BreakApp category
@@ -155,11 +150,10 @@ export const Cat = {
             // 'children': {'0': {'char':'0'}},
             'functions': fetchCatFailure
         },
-
         'elementary school' : {
             children: {
                 'problem set': {
-                    '0': {
+                    0: {
                         a: {
                             // array of primitives or primitives
                             variables: {
@@ -169,8 +163,6 @@ export const Cat = {
                                 operationType: ''
                             },
                             'function': returnState
-                            
-            
                         },
                         b: {
                             variables: {
@@ -180,9 +172,6 @@ export const Cat = {
                                 operationType: '+'
                             },
                             'function': returnState
-
-                            
-            
                         },
                         answerForm: {
                             variables: {
@@ -194,27 +183,45 @@ export const Cat = {
                                 correctFirstTime: false,
                                 correct: false,
                                 // possible values: notYetSubmitted, firstTime
-                                firstTimeSubmitting: "notYetSubmitted"
+                                firstTimeSubmitting: 'notYetSubmitted'
                             },
-                            nextStates: [['isFirstTimeSubmitting'], ['allOtherTimesSubmitting']],
-
-                            'function': submitValue
-                            
-            
-            
+                            // start with child states or start with a validation function?
+                            nextStates: [['redux', 'elementary school', 'children', 'invalidValue'],
+                                         ['redux', 'elementary school', 'children', 'validValue']],
+                            // can't have a state with a function returning the same value 2 times
+                            // that will tell us what option to pick
+                            'function': returnState//validateInput//submitValue
                         }
                     }
                 },
+                'invalidValue' : {
+                    nextStates: [],
+                    'function': invalidValue
+                },
+                'validValue' : {
+                    nextStates: [['redux', 'elementary school', 'children', 'submitValue']],
+                    'function': validValue
+
+                },
+                'submitValue' : {
+                    nextStates: [['redux', 'elementary school', 'children', 'isFirstTimeSubmitting'],
+                                ['redux', 'elementary school', 'children', 'allOtherTimesSubmitting']],
+                    'function': submitValue
+                },
                 // should be able to be used for each answer form state
                 'isFirstTimeSubmitting' : {
+                    // next is endSubmit
+                    nextStates: [],
                     'function': isFirstTimeSubmitting
                 },
                 'allOtherTimesSubmitting': {
+                    // next is endSubmit
+                    nextStates: [],
                     'function': allOtherTimesSubmitting
 
                 }
             }
-        },
+        }
         
     }
     

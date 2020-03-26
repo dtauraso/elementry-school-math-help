@@ -66,7 +66,9 @@ export const deepAssign = (state, path, value, cb) => {
     }
 }
 
-const breathFirstTraversal = (stateState, startPayload, endState) => {
+
+export const breathFirstTraversal = (state, action, startStateName) => {
+    // startStateName, endStateName are lists of strings
     // we can use the payload from the user for the entire traversal
     // from start state to end state
     // bft
@@ -74,6 +76,67 @@ const breathFirstTraversal = (stateState, startPayload, endState) => {
     // for each one
         // return the state then the stateSuceded flag
     // return the state once endState is reached
+    // let currentState = getValue(state, stateStateName)
+    console.log('breathFirstTraversal', startStateName)
+    // take out cropChildreaname
+    // let [ baseStateName, childStateName ] = cropChildName(startStateName)
+    let nextStates = [startStateName]
+    let currentStateName = startStateName
+    let keepGoing = true
+    // console.log(baseStateName, childStateName)
+    // have a list of end states and make sure the current state is not in the set
+    while(keepGoing) {
+        console.log(nextStates)
+        let passes = false
+        let winningStateName = ''
+        nextStates.forEach(nextState => {
+            if(nextState === undefined) {
+                console.log("the js formation for the next states failed")
+                keepGoing = false
+            } else {
+                if(!passes) {
+                    // action's current state is .type
+                    action.meta.currentState = nextState
+                    console.log("function to run", getValue(state, nextState), action)
+                    const result = getValue(state, nextState)['function'](state, action)
+                    state = result[0]
+                    const success = result[1]
+                    console.log("finished function")
+                    console.log(state, success)
+                    if(success) {
+                        passes = true
+                        winningStateName = nextState
+                    }
+        
+                }
+            }
+
+        })
+        if(passes) {
+            currentStateName = winningStateName
+            const currentStateObject = getValue(state, currentStateName)
+
+            if(currentStateObject.nextStates.length > 0) {
+                // console.log("we have a winner", winningStateName)
+                nextStates = currentStateObject.nextStates
+                // console.log("next set of edges", nextStates)
+            } else {
+                keepGoing = false
+
+            }
+        } else if(!passes && nextStates.length === 0) {
+            console.log('machine is done')
+            return state
+        } else {
+            console.log(currentStateName,
+                        "failed",
+                        "attempted next states",
+                        nextStates)
+            return state
+        }
+    
+    }
+    return state
 }
 
 

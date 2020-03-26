@@ -1,6 +1,8 @@
 import React, {useState} from 'react'
 import Quantity from './Quantity'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
+import { getCat, submitAnswer } from './Redux/catActions'
 import { setToValue, append, getValue, deepAssign } from '../deepAssign'
 import { makeQuantity } from '../utility'
 
@@ -45,14 +47,19 @@ const InputField = styled.input`
 `
 const OneValue = (props) => {
 
-    console.log("one value", props)
     // need the entire problem part
     let {
         problemSet,
         setProblemSet,
-        pathDownObject} = props
+        pathDownObject,
+        statePath,
+        Cat} = props
+    console.log("path to value", statePath)
+    console.log("one value", getValue(Cat, statePath))
 
-    console.log(pathDownObject, problemSet)
+    // console.log("path to value", statePath)
+    // console.log('value', getValue(Cat, statePath))
+    // console.log(pathDownObject, problemSet)
     // console.log(getValue(problemSet, pathDownObject))
     const answerForm = getValue(problemSet, pathDownObject)
     console.log(answerForm)
@@ -65,7 +72,7 @@ const OneValue = (props) => {
         correct,
         firstTimeSubmitting} = answerForm
 
-    console.log("they right?", correctFirstTime, correct)
+    // console.log("they right?", correctFirstTime, correct)
     // what if I added padding to ensure there was always the same 
     // should take in a single value and display it along with the quantity
     // why am I using useState on props?
@@ -89,6 +96,11 @@ const OneValue = (props) => {
                     {/* <label htmlFor="username">Best Guess -> </label> */}
                     <InputField id="username" name="username" type="text"
                     onChange={(e) => {
+                        console.log(Cat)
+                        console.log(getValue(Cat, statePath))
+                        props.submitAnswer({
+                            newValue: parseInt(e.target.value)
+                        }, statePath)
                         // console.log(e.target.value)
                         // console.log(pathDownObject)
                         // console.log(answerForm)
@@ -176,10 +188,20 @@ const OneValue = (props) => {
             {/* second half of the page */}
             <Quantity
                 quantity={quantity}
+                statePath={[...statePath, 'variables', 'quantity']}
                 />
                 
         </Container>
     )
 }
 
-export default OneValue
+const mapStateToProps = state => {
+    return {
+        Cat: state
+    }
+}
+export default connect(
+    mapStateToProps,
+    { getCat, submitAnswer }
+
+)(OneValue)

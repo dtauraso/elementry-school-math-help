@@ -47,71 +47,17 @@ problemSet: {
 // switch to redux
 // https://github.com/erikras/ducks-modular-redux
 // currently doing redux "prop grilling" style without reducer hooks
-export const PresentProblems = (props) => {
-
-    const answer = 4 + 3
-    // pass problemSet, setProblemSet, and the path to all components onvolved with the problemset
-    const [problemSet, setProblemSet] = useState({
-        '0': {
-            a: {
-                value: 4,
-                quantity: makeQuantity(4, answer),
-                isForm: false,
-                operationType: ''
-
-            },
-            b: {
-                value: 3,
-                quantity: makeQuantity(3, answer),
-                isForm: false,
-                operationType: '+'
-
-            },
-            answerForm: {
-                value: undefined,
-                quantity: makeQuantity(0, answer),
-
-                actualAnswer: answer,
-                isForm: true,
-                correctFirstTime: false,
-                correct: false,
-                // possible values: notYetSubmitted, firstTime
-                firstTimeSubmitting: "notYetSubmitted"
-
-
-            }
-        }
-    })
-    console.log(problemSet)
-    return (
-        <div>
-
-        {Object.keys(problemSet).map(problemId => (
-            
-            <AddTwoValues
-                key={problemId}
-                pathDownObject={[problemId]}
-                problemSet={problemSet}
-                setProblemSet={setProblemSet}
-
-                />
-
-    ))}
-        {/* < bla i={i} problem={problem} setProblemSet={setProblemSet} setProblemSet={setProblemSet} /> */}
-
-        </div>
-    )
-}
-
 // need to know all the values so the right total spaces can be calculated
-const AddTwoValues = (props) => {
+export const AddTwoValues = (props) => {
     // have useState here
     const {
 
         pathDownObject,
         problemSet,
-        setProblemSet
+        setProblemSet,
+        statePath
     } = props
+    console.log("path to problem", statePath)
     // const total = problem.a.value + problem.b.value
     // console.log(pathDownObject, problemSet)
     // console.log(getValue(problemSet, pathDownObject))
@@ -129,7 +75,8 @@ const AddTwoValues = (props) => {
                 // pass entire object and the path to the part we want
                     problemSet={problemSet}
                     setProblemSet={setProblemSet}
-                    pathDownObject={[...pathDownObject, problemKey]}/>
+                    pathDownObject={[...pathDownObject, problemKey]}
+                    statePath={[...statePath, problemKey]}/>
             ))}
             {/* // <OneValue
             //     problemPart={problem["a"]}

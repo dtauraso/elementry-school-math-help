@@ -26,12 +26,15 @@ export const getCat = () => dispatch => {
 
 export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
 
+    console.log("in the action")
     // prop drilling provides the path
     // ['redux', 'elementary school', 'children', 'problem set', '0', 'answerForm']
     // component provides the data the state function will use
-
+    // use the action meta property
     dispatch({
             type: pathToState,
-            payload: lotsOfThings});
+            payload: lotsOfThings,
+            meta: { stateStateName: pathToState }
+        });
 
 }
