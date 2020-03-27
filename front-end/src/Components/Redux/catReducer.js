@@ -1,6 +1,10 @@
 import React from 'react'
 import { makeQuantity } from '../../utility'
-import { setToValue, append, getValue, deepAssign } from '../../deepAssign'
+import {    setToValue,
+            append,
+            getValue,
+            deepAssign,
+            makeVariablePath } from '../../reducerHelpers'
 
 const answer = 4 + 3
 
@@ -42,21 +46,22 @@ const returnState = (state, action) => {
 }
 const invalidValue = (state, action) => {
     // console.log("is invalid")
-    const { basePath } = action.meta
     if(isNaN(action.payload.newValue)) {
 
-        const variableBasePath = [...basePath, 'variables']
+        // const variablesBasePath = [...action.meta.basePath, 'variables']
 
         let y = deepAssign(
             state,
-            [...variableBasePath, 'quantity'],
-            makeQuantity(0, getValue(state, [...variableBasePath, 'actualAnswer'])),
+            makeVariablePath(action, 'quantity'),
+            makeQuantity(0,
+                getValue(state,
+                    makeVariablePath(action, 'actualAnswer'))),
             setToValue
         )
         // will not show right untill all the data sources use Redux
         y = deepAssign(
             y,
-            [...variableBasePath, 'firstTimeSubmitting'],
+            makeVariablePath(action, 'firstTimeSubmitting'),
             'notYetSubmitted',
             setToValue
         )
@@ -76,22 +81,24 @@ const submitValue = (state, action/*e*/) => {
     // console.log(state, action)
     // all the info has made it this far
     const { newValue } = action.payload
-    const { basePath } = action.meta
+    // const { basePath } = action.meta.basePath
+    // const variablesBasePath = [...action.meta.basePath, 'variables']
 
     // [...action.type, 'variables'] is the path to the vars for the answer form
-    console.log(getValue(state, [...basePath, 'variables']))
-    const variableBasePath = [...basePath, 'variables']
+    // console.log(getValue(state, makeVariablesObjectPath(action)))
     let y = deepAssign(
         state,
-        [...variableBasePath, 'value'],
+        makeVariablePath(action, 'value'),
         newValue,
         setToValue
     )
     // console.log(y)
     y = deepAssign(
         y,
-        [...variableBasePath, 'quantity'],
-        makeQuantity(newValue, getValue(state, [...variableBasePath, 'actualAnswer']) ),
+        makeVariablePath(action, 'quantity'),
+        makeQuantity(newValue,
+            getValue(state,
+                makeVariablePath(action, 'actualAnswer'))),
         setToValue
     )
     // console.log(y)
@@ -100,30 +107,28 @@ const submitValue = (state, action/*e*/) => {
 }
 const isFirstTimeSubmitting = (state, action/*e*/) => {
     const { newValue } = action.payload
-    const { basePath } = action.meta
 
-    const variableBasePath = [...basePath, 'variables']
-    console.log("current state", action.type)
+    // is the answer right the first time?
+    if(getValue(state, makeVariablePath(action, 'visitCount')) === 0) {
+        
+    }
+    // const variablesBasePath = [...action.meta.basePath, 'variables']
+    // console.log("current state", action.type)
 
-    console.log('is first time submitting?', variableBasePath)
+    // console.log('is first time submitting?', makeVariablesObjectPath(action))
 
-    return [state, getValue(state, [...variableBasePath, 'actualAnswer']) === newValue]
+    return [state, getValue(state, makeVariablePath(action, 'actualAnswer')) === newValue]
     // actualAnswer === parseInt(e.target.value)]
 }
 const allOtherTimesSubmitting = (state, action/*e*/) => {
-    const {
-        problemSet,
-        pathDownObject,
-        actualAnswer,
-        e,
-        firstTimeSubmitting
-    } = action.payload
-    console.log("all remaining times")
+    const { newValue } = action.payload
+    // console.log("all remaining times")
+    // console.log(makeVariablesObjectPath(action), getValue(state, makeVariablePath(action, 'actualAnswer')))
     // if(actualAnswer === parseInt(e.target.value))
     let y = deepAssign(
-        y,
-        [...pathDownObject, 'correct'],
-        actualAnswer === parseInt(e.target.value),
+        state,
+        makeVariablePath(action, 'correct'),
+        getValue(state, makeVariablePath(action, 'actualAnswer')) === newValue,
         setToValue
     )
     return [y, true]
@@ -201,6 +206,7 @@ export var Cat = {
                                 correctFirstTime: false,
                                 correct: false,
                                 testingWithoutForm: false,
+                                visitCount: 0,
                                 // possible values: notYetSubmitted, firstTime
                                 firstTimeSubmitting: 'notYetSubmitted'
                             },

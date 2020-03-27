@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { connect } from 'react-redux'
 import { getCat } from './Redux/catActions'
-import { setToValue, append, getValue, deepAssign } from '../deepAssign'
+import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 import AddTwoValues from './AddTwoValues'
 const PresentProblems = (props) => {

@@ -3,7 +3,7 @@ import OneValue from './OneValue';
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/catActions'
-import { setToValue, append, getValue, deepAssign } from '../deepAssign'
+import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 // AddTwoValues box
 // mobile first
@@ -57,7 +57,7 @@ export const AddTwoValues = (props) => {
         setProblemSet,
         statePath
     } = props
-    console.log("path to problem", statePath)
+    // console.log("path to problem", statePath)
     // const total = problem.a.value + problem.b.value
     // console.log(pathDownObject, problemSet)
     // console.log(getValue(problemSet, pathDownObject))

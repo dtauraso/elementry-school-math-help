@@ -5,7 +5,7 @@ import { setToValue,
          getValue,
          objectExistsAtPath,
          deepAssign,
-         breathFirstTraversal} from '../../deepAssign'
+         breathFirstTraversal} from '../../reducerHelpers'
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
@@ -34,8 +34,6 @@ const universalReducer = (state = initialState, action) => {
     if(!objectExistsAtPath(state, type)) {
         return state
     } else {
-        // let { meta } = action
-        // let { startStateName } = meta
 
         return breathFirstTraversal(
                 state,

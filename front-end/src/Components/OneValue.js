@@ -3,7 +3,7 @@ import Quantity from './Quantity'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/catActions'
-import { setToValue, append, getValue, deepAssign } from '../deepAssign'
+import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 // convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action
 // https://codesandbox.io/s/wizardly-waterfall-w3vf2
@@ -56,8 +56,8 @@ const OneValue = (props) => {
         pathDownObject,
         statePath,
         Cat} = props
-    console.log("path to value", statePath)
-    console.log("one value", getValue(Cat, statePath))
+    // console.log("path to value", statePath)
+    // console.log("one value", getValue(Cat, statePath))
 
     // console.log("path to value", statePath)
     // console.log('value', getValue(Cat, statePath))

@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/catActions'
-import { setToValue, append, getValue, deepAssign } from '../deepAssign'
+import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
 const Box = styled.p`
@@ -55,7 +55,7 @@ const Quantity = (props) => {
     // const [backgroundColor, setBackgroundColor] = useState(backgroundColor)
     
     // const [difference, setDifference] = useState(total - quantity)
-    console.log('in quantity', getValue(Cat, statePath))
+    // console.log('in quantity', getValue(Cat, statePath))
     return (
             <Boxes>
                 {/* i : [0, total] quantity: [0, < total] */}

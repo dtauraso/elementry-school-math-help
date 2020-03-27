@@ -66,7 +66,10 @@ export const deepAssign = (state, path, value, cb) => {
     }
 }
 
+export const makeVariablePath = (action, variableName) => {
 
+    return [...action.meta.basePath, 'variables', variableName]
+}
 export const breathFirstTraversal = (state, action, startStateName) => {
     // startStateName, endStateName are lists of strings
     // we can use the payload from the user for the entire traversal
@@ -78,7 +81,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
     // return the state once endState is reached
     // let currentState = getValue(state, stateStateName)
     let temporaryState = state
-    console.log('breathFirstTraversal', startStateName)
+    // console.log('breathFirstTraversal', startStateName)
     // take out cropChildreaname
     // let [ baseStateName, childStateName ] = cropChildName(startStateName)
     let nextStates = [startStateName]
@@ -87,7 +90,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
     // console.log(baseStateName, childStateName)
     // have a list of end states and make sure the current state is not in the set
     while(keepGoing) {
-        console.log(nextStates)
+        // console.log(nextStates)
         let passes = false
         let winningStateName = ''
         nextStates.forEach(nextState => {
@@ -98,7 +101,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
                 if(!passes) {
                     // action's current state is .type
                     // action.meta.currentState = nextState // bad idea
-                    console.log("function to run", getValue(temporaryState, nextState), action)
+                    // console.log("function to run", getValue(temporaryState, nextState), action)
                     const result = getValue(temporaryState, nextState)['function'](temporaryState, action)
                     temporaryState = result[0]
                     const success = result[1]
