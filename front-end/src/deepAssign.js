@@ -77,6 +77,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
         // return the state then the stateSuceded flag
     // return the state once endState is reached
     // let currentState = getValue(state, stateStateName)
+    let temporaryState = state
     console.log('breathFirstTraversal', startStateName)
     // take out cropChildreaname
     // let [ baseStateName, childStateName ] = cropChildName(startStateName)
@@ -91,21 +92,22 @@ export const breathFirstTraversal = (state, action, startStateName) => {
         let winningStateName = ''
         nextStates.forEach(nextState => {
             if(nextState === undefined) {
-                console.log("the js formation for the next states failed")
+                console.log("the js syntax for the next states is wrong")
                 keepGoing = false
             } else {
                 if(!passes) {
                     // action's current state is .type
-                    action.meta.currentState = nextState
-                    console.log("function to run", getValue(state, nextState), action)
-                    const result = getValue(state, nextState)['function'](state, action)
-                    state = result[0]
+                    // action.meta.currentState = nextState // bad idea
+                    console.log("function to run", getValue(temporaryState, nextState), action)
+                    const result = getValue(temporaryState, nextState)['function'](temporaryState, action)
+                    temporaryState = result[0]
                     const success = result[1]
-                    console.log("finished function")
-                    console.log(state, success)
+                    // console.log("finished function")
+                    // console.log(temporaryState, success)
                     if(success) {
                         passes = true
                         winningStateName = nextState
+                        action.type = winningStateName
                     }
         
                 }
@@ -114,7 +116,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
         })
         if(passes) {
             currentStateName = winningStateName
-            const currentStateObject = getValue(state, currentStateName)
+            const currentStateObject = getValue(temporaryState, currentStateName)
 
             if(currentStateObject.nextStates.length > 0) {
                 // console.log("we have a winner", winningStateName)
@@ -126,17 +128,17 @@ export const breathFirstTraversal = (state, action, startStateName) => {
             }
         } else if(!passes && nextStates.length === 0) {
             console.log('machine is done')
-            return state
+            return temporaryState
         } else {
             console.log(currentStateName,
                         "failed",
                         "attempted next states",
                         nextStates)
-            return state
+            return temporaryState
         }
     
     }
-    return state
+    return temporaryState
 }
 
 

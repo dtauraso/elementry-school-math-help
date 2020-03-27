@@ -63,7 +63,8 @@ export const AddTwoValues = (props) => {
     // console.log(getValue(problemSet, pathDownObject))
     const problem = getValue(problemSet, pathDownObject)
     const total = problem.a.value + problem.b.value
-    
+    // if there are problems load them
+    // else run a genertive reducer
     return (
         // <div></div>
         // needs a form and both values with the solution

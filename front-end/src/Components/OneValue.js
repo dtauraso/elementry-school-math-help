@@ -5,7 +5,9 @@ import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/catActions'
 import { setToValue, append, getValue, deepAssign } from '../deepAssign'
 import { makeQuantity } from '../utility'
-
+// convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action
+// https://codesandbox.io/s/wizardly-waterfall-w3vf2
+// https://github.com/jaredpalmer/formik/issues/265
 // need another flexbox so the centering doesn't affect the flex-start
 // the flex-start should start from 1 spot and go right(its starting from different
 // positions on the left)

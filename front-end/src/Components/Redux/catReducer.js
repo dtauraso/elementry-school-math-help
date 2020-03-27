@@ -41,55 +41,73 @@ const returnState = (state, action) => {
     return [state, true]
 }
 const invalidValue = (state, action) => {
-    console.log("is invalid")
-    return [state, isNaN(action.payload.newValue) === true]
-}
-const validValue = (state, action) => {
-    console.log("is invalid")
+    // console.log("is invalid")
+    const { basePath } = action.meta
+    if(isNaN(action.payload.newValue)) {
 
-    return [state, isNaN(action.payload.newValue) === false]
+        const variableBasePath = [...basePath, 'variables']
 
+        let y = deepAssign(
+            state,
+            [...variableBasePath, 'quantity'],
+            makeQuantity(0, getValue(state, [...variableBasePath, 'actualAnswer'])),
+            setToValue
+        )
+        // will not show right untill all the data sources use Redux
+        y = deepAssign(
+            y,
+            [...variableBasePath, 'firstTimeSubmitting'],
+            'notYetSubmitted',
+            setToValue
+        )
+        return [y, true]
+    
+    }
+    return [state, false]
 }
 const submitValue = (state, action/*e*/) => {
     // console.log(e.target.value)
     // console.log(pathDownObject)
     // console.log(answerForm)
-    console.log("submit value")
-    console.log("current state", action.meta.currentState)
+    // console.log("submit value")
+    // console.log("current state", action.meta.currentState)
     // fails when the user puts in an empty value
     
-    console.log(state, action)
+    // console.log(state, action)
     // all the info has made it this far
     const { newValue } = action.payload
+    const { basePath } = action.meta
 
     // [...action.type, 'variables'] is the path to the vars for the answer form
-    console.log(getValue(state, [...action.type, 'variables']))
-    const basePath = [...action.type, 'variables']
+    console.log(getValue(state, [...basePath, 'variables']))
+    const variableBasePath = [...basePath, 'variables']
     let y = deepAssign(
         state,
-        [...basePath, 'value'],
+        [...variableBasePath, 'value'],
         newValue,
         setToValue
     )
-    console.log(y)
+    // console.log(y)
     y = deepAssign(
         y,
-        [...basePath, 'quantity'],
-        makeQuantity(newValue, getValue(state, [...basePath, 'actualAnswer']) ),
+        [...variableBasePath, 'quantity'],
+        makeQuantity(newValue, getValue(state, [...variableBasePath, 'actualAnswer']) ),
         setToValue
     )
-    console.log(y)
+    // console.log(y)
     return [y, true]
     
 }
 const isFirstTimeSubmitting = (state, action/*e*/) => {
     const { newValue } = action.payload
-    const basePath = [...action.type, 'variables']
-    console.log("current state", action.meta.currentState)
+    const { basePath } = action.meta
 
-    console.log('is first time submitting?', basePath)
+    const variableBasePath = [...basePath, 'variables']
+    console.log("current state", action.type)
 
-    return [state, getValue(state, [...basePath, 'actualAnswer']) === newValue]
+    console.log('is first time submitting?', variableBasePath)
+
+    return [state, getValue(state, [...variableBasePath, 'actualAnswer']) === newValue]
     // actualAnswer === parseInt(e.target.value)]
 }
 const allOtherTimesSubmitting = (state, action/*e*/) => {
@@ -182,15 +200,13 @@ export var Cat = {
                                 isForm: true,
                                 correctFirstTime: false,
                                 correct: false,
+                                testingWithoutForm: false,
                                 // possible values: notYetSubmitted, firstTime
                                 firstTimeSubmitting: 'notYetSubmitted'
                             },
-                            // start with child states or start with a validation function?
                             nextStates: [['redux', 'elementary school', 'children', 'invalidValue'],
-                                         ['redux', 'elementary school', 'children', 'validValue']],
-                            // can't have a state with a function returning the same value 2 times
-                            // that will tell us what option to pick
-                            'function': returnState//validateInput//submitValue
+                                         ['redux', 'elementary school', 'children', 'submitValue']],
+                            'function': returnState
                         }
                     }
                 },
@@ -198,24 +214,17 @@ export var Cat = {
                     nextStates: [],
                     'function': invalidValue
                 },
-                'validValue' : {
-                    nextStates: [['redux', 'elementary school', 'children', 'submitValue']],
-                    'function': validValue
-
-                },
                 'submitValue' : {
                     nextStates: [['redux', 'elementary school', 'children', 'isFirstTimeSubmitting'],
                                 ['redux', 'elementary school', 'children', 'allOtherTimesSubmitting']],
                     'function': submitValue
                 },
-                // should be able to be used for each answer form state
+                // should be able to be used for each answerForm state
                 'isFirstTimeSubmitting' : {
-                    // next is endSubmit
                     nextStates: [],
                     'function': isFirstTimeSubmitting
                 },
                 'allOtherTimesSubmitting': {
-                    // next is endSubmit
                     nextStates: [],
                     'function': allOtherTimesSubmitting
 
