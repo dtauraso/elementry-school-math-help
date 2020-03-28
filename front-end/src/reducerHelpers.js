@@ -84,19 +84,21 @@ export const breathFirstTraversal = (state, action, startStateName) => {
     // console.log('breathFirstTraversal', startStateName)
     // take out cropChildreaname
     // let [ baseStateName, childStateName ] = cropChildName(startStateName)
-    let nextStates = [startStateName]
+    let nextStates = [...startStateName]
     let currentStateName = startStateName
     let keepGoing = true
     // console.log(baseStateName, childStateName)
     // have a list of end states and make sure the current state is not in the set
-    while(keepGoing) {
+    while(true) {
         // console.log(nextStates)
         let passes = false
         let winningStateName = ''
         nextStates.forEach(nextState => {
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
-                keepGoing = false
+                // keepGoing = false
+                return [temporaryState, true]
+
             } else {
                 if(!passes) {
                     // action's current state is .type
@@ -107,10 +109,16 @@ export const breathFirstTraversal = (state, action, startStateName) => {
                     const success = result[1]
                     // console.log("finished function")
                     // console.log(temporaryState, success)
+                    // must keep the success value as we go up and down the call stack
                     if(success) {
                         passes = true
                         winningStateName = nextState
                         action.type = winningStateName
+                        // untested
+                        // if the winningStateName has any children
+                        // call the routing agin with next states holding the children
+                        // result = breathFirstTraversal(state, action, childrenStates)
+                        // if the submachine is false then this state is also false 
                     }
         
                 }
@@ -126,22 +134,28 @@ export const breathFirstTraversal = (state, action, startStateName) => {
                 nextStates = currentStateObject.nextStates
                 // console.log("next set of edges", nextStates)
             } else {
-                keepGoing = false
+                // keepGoing = false
+                return [temporaryState, true]
 
             }
         } else if(!passes && nextStates.length === 0) {
             console.log('machine is done')
-            return temporaryState
+            // return temporaryState
+            return [temporaryState, true]
+
         } else {
             console.log(currentStateName,
                         "failed",
                         "attempted next states",
                         nextStates)
-            return temporaryState
+            // return temporaryState
+            return [temporaryState, true]
+
         }
     
     }
-    return temporaryState
+    // machine is finished
+    // return [temporaryState, true]
 }
 
 

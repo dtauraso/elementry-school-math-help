@@ -20,28 +20,6 @@ const Container = styled.div`
     // }
     
 `
-/*
-make a component for this
-bring in the recursive object spread function for updating the forms
-problemSet: {
-    0: {
-        a: {
-            value: 4
-            quantity: makeQuantity(whatValueHas)
-        }
-        b: {
-            value: 3
-            quantity:
-        }
-        answerForm: {
-            theirAnswer:
-            actualAnswer: 4 + 3
-        }
-    }
-}
-
-< bla i={i} problem={problem} setProblemSet={setProblemSet} setProblemSet={setProblemSet} />
-*/
 
 
 // switch to redux
@@ -52,16 +30,10 @@ export const AddTwoValues = (props) => {
     // have useState here
     const {
 
-        pathDownObject,
-        problemSet,
-        setProblemSet,
-        statePath
+        statePath,
+        Cat
     } = props
-    // console.log("path to problem", statePath)
-    // const total = problem.a.value + problem.b.value
-    // console.log(pathDownObject, problemSet)
-    // console.log(getValue(problemSet, pathDownObject))
-    const problem = getValue(problemSet, pathDownObject)
+    const problem = getValue(Cat, statePath)
     const total = problem.a.value + problem.b.value
     // if there are problems load them
     // else run a genertive reducer
@@ -73,30 +45,9 @@ export const AddTwoValues = (props) => {
             {Object.keys(problem).map(problemKey => (
                 <OneValue
                     key={problemKey}
-                // pass entire object and the path to the part we want
-                    problemSet={problemSet}
-                    setProblemSet={setProblemSet}
-                    pathDownObject={[...pathDownObject, problemKey]}
                     statePath={[...statePath, problemKey]}/>
             ))}
-            {/* // <OneValue
-            //     problemPart={problem["a"]}
-            //     total={total}
-            //     path={[...path, "a"]}
-            //     backgroundColor={backgroundColor}/>
-            // <OneValue
-                
-            //     problemPart={problem["b"]} 
-            //     total={total}
-            //     path={[...path, "b"]}
-
-            //     backgroundColor={backgroundColor}/>
-            // <OneValue
-            //     problemPart={problem["answerForm"]} 
-            //     total={total}
-            //     path={[...path, "answerForm"]}
-
-            //     backgroundColor={backgroundColor}/> */}
+            
         </Container>
     )
 }
@@ -111,4 +62,3 @@ export default connect(
     { getCat }
 
 )(AddTwoValues)
-// export default AddTwoValues;

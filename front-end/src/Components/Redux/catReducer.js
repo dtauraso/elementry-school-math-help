@@ -8,6 +8,8 @@ import {    setToValue,
 
 const answer = 4 + 3
 
+// example states for the axios calls
+
 export const fetchCatStart = (state, action) => {
 
     return {...state,
@@ -17,7 +19,6 @@ export const fetchCatStart = (state, action) => {
             
     }
 }
-
 
 export const fetchCatSuccess = (state, action) => {
 
@@ -196,43 +197,100 @@ export var Cat = {
                             },
                             'function': returnState
                         },
+                        // this state chart will start on the bottom and end up on the 'top'
                         answerForm: {
                             variables: {
-                                value: undefined,
-                                quantity: makeQuantity(0, answer),
-                
-                                actualAnswer: answer,
-                                isForm: true,
-                                correctFirstTime: false,
-                                correct: false,
-                                testingWithoutForm: false,
-                                visitCount: 0,
-                                // possible values: notYetSubmitted, firstTime
-                                firstTimeSubmitting: 'notYetSubmitted'
+                                isForm: true
+
                             },
-                            nextStates: [['redux', 'elementary school', 'children', 'invalidValue'],
-                                         ['redux', 'elementary school', 'children', 'submitValue']],
-                            'function': returnState
+                            children: {
+                                // is it right to do this?
+                                // 1 context for each 
+                                // 2 different contexts but the message depends on the submission and we start execution at submission
+                                // a reducer will have to juggle code for 2 different states
+                                // the reducer can read from a neighboring state but can't write to it
+                                // ideally we would have 1 reducer at the top state to address this directly
+                                // we start at submission so there are no children states to run
+
+                                // the submission state travels to the progressMeter as we can only have reducers associated
+                                // with buttons and the progressMeter variables doesn't depend on a button
+                                submission: {
+                                    'function': returnState,
+
+                                    variables: {
+                                        value: undefined,
+                                        quantity: makeQuantity(0, answer),
+                                        correct: false, // true when the answer is right
+                                        actualAnswer: answer,
+                                        isValid: false
+                                        
+                                    },
+                                    nextStates: [['redux', 'elementary school', 'children', 'invalidValue'],
+                                                ['redux', 'elementary school', 'children', 'isInteger'],
+                                                ['redux', 'elementary school', 'children', 'isNotInteger']
+                                            ],
+                                    childrenStateLinks: []
+                                },
+                                progressMeter: {
+                                    'function': returnState,
+
+                                    variables: {
+                                        submitCount: 0,
+                                        correctFirstTime: false,  // true if submitCount === 0
+    
+                                        testingWithoutForm: false
+    
+                                    },
+                                    nextStates: [],
+                                    childrenStateLinks: []
+                                },
+                            }
                         }
                     }
                 },
-                'invalidValue' : {
+                // these are here so they aren't copied so many time inside the answerForm state
+               'invalidValue': {
+                    'function': invalidValue,
                     nextStates: [],
-                    'function': invalidValue
+                    childrenStateLinks: []
+
                 },
-                'submitValue' : {
+                'isInteger': {
+                    'function': returnState,
+                    // need to go to the progress meeter state instead
+                    nextStates: [['redux', 'elementary school', 'children', 'submitValue']],
+                    childrenStateLinks: []
+                },
+                'isNotInteger': {
+                    'function': returnState,
+                    nextStates: [],
+                    childrenStateLinks: []
+
+                },
+                'submitValue': {
+                    'function': submitValue,
                     nextStates: [['redux', 'elementary school', 'children', 'isFirstTimeSubmitting'],
                                 ['redux', 'elementary school', 'children', 'allOtherTimesSubmitting']],
-                    'function': submitValue
+                    childrenStateLinks: []
+
                 },
+
+
+
+
+
+
                 // should be able to be used for each answerForm state
                 'isFirstTimeSubmitting' : {
+                    'function': isFirstTimeSubmitting,
                     nextStates: [],
-                    'function': isFirstTimeSubmitting
+                    childrenStateLinks: []
+
                 },
                 'allOtherTimesSubmitting': {
+                    'function': allOtherTimesSubmitting,
                     nextStates: [],
-                    'function': allOtherTimesSubmitting
+                    childrenStateLinks: []
 
                 }
             }

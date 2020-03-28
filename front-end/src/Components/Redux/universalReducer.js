@@ -35,11 +35,13 @@ const universalReducer = (state = initialState, action) => {
         return state
     } else {
 
-        return breathFirstTraversal(
-                state,
-                action,
-                type)
-
+        // have type hold all the 
+        const [temporaryState, success] = breathFirstTraversal(state, action, [type])
+        if(success) {
+            return temporaryState
+        } else {
+            return state
+        }
 
     }
 }

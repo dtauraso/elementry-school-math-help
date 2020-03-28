@@ -51,9 +51,6 @@ const OneValue = (props) => {
 
     // need the entire problem part
     let {
-        problemSet,
-        setProblemSet,
-        pathDownObject,
         statePath,
         Cat} = props
     // console.log("path to value", statePath)
@@ -63,8 +60,8 @@ const OneValue = (props) => {
     // console.log('value', getValue(Cat, statePath))
     // console.log(pathDownObject, problemSet)
     // console.log(getValue(problemSet, pathDownObject))
-    const answerForm = getValue(problemSet, pathDownObject)
-    console.log(answerForm)
+    const answerForm = getValue(Cat, statePath)
+    console.log(answerForm.submission)
     let {value,
         quantity,
         operationType,
@@ -72,8 +69,8 @@ const OneValue = (props) => {
         actualAnswer,
         correctFirstTime,
         correct,
-        firstTimeSubmitting} = answerForm
-
+        firstTimeSubmitting} = answerForm.submission.variables
+    console.log(answerForm.submission.variables)
     // console.log("they right?", correctFirstTime, correct)
     // what if I added padding to ensure there was always the same 
     // should take in a single value and display it along with the quantity
@@ -85,6 +82,12 @@ const OneValue = (props) => {
     // console.log('here', value, quantity)
 
     // return (<div></div>)
+
+    const showSubmissionMesssage = () => {
+        // run reducer
+        // return the message
+    }
+    // should have made a separate form component
     const showFormOrValue = (isForm, value) => {
         if(isForm) {
             return (
@@ -103,45 +106,6 @@ const OneValue = (props) => {
                         props.submitAnswer({
                             newValue: parseInt(e.target.value)
                         }, statePath)
-                        // console.log(e.target.value)
-                        // console.log(pathDownObject)
-                        // console.log(answerForm)
-                        let y = deepAssign(
-                            problemSet,
-                            [...pathDownObject, 'value'],
-                            parseInt(e.target.value),
-                            setToValue
-                        )
-                        y = deepAssign(
-                            y,
-                            [...pathDownObject, 'quantity'],
-                            makeQuantity(parseInt(e.target.value), actualAnswer),
-                            setToValue
-                        )
-
-                        if(firstTimeSubmitting === "notYetSubmitted") {
-                            y = deepAssign(
-                                y,
-                                [...pathDownObject, 'firstTimeSubmitting'],
-                                "firstTime",
-                                setToValue
-                            )
-                            // check answer
-                            y = deepAssign(
-                                y,
-                                [...pathDownObject, 'correctFirstTime'],
-                                actualAnswer === parseInt(e.target.value),
-                                setToValue
-                            )
-
-                        }
-                        y = deepAssign(
-                            y,
-                            [...pathDownObject, 'correct'],
-                            actualAnswer === parseInt(e.target.value),
-                            setToValue
-                        )
-                        setProblemSet(y)
                         
                     }} />
 
@@ -153,14 +117,7 @@ const OneValue = (props) => {
                     <div>
                         <Value operationType={operationType}>
                         {(`${operationType}              ${value}`)}
-                        </Value>
-
-                        {/* {
-                            operationType === '+'?
-                            (<resultsLine></resultsLine>):
-                            (<div></div>)
-                        } */}
-                        
+                        </Value>                        
                     </div>
                     )
         }
@@ -190,7 +147,7 @@ const OneValue = (props) => {
             {/* second half of the page */}
             <Quantity
                 quantity={quantity}
-                statePath={[...statePath, 'variables', 'quantity']}
+                statePath={[...statePath, 'submission', 'variables', 'quantity']}
                 />
                 
         </Container>
