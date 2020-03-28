@@ -101,6 +101,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
 
             } else {
                 if(!passes) {
+                    // console.log(nextState)
                     // action's current state is .type
                     // action.meta.currentState = nextState // bad idea
                     // console.log("function to run", getValue(temporaryState, nextState), action)
@@ -114,6 +115,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
                         passes = true
                         winningStateName = nextState
                         action.type = winningStateName
+                        // console.log()
                         // untested
                         // if the winningStateName has any children
                         // call the routing agin with next states holding the children
@@ -130,7 +132,7 @@ export const breathFirstTraversal = (state, action, startStateName) => {
             const currentStateObject = getValue(temporaryState, currentStateName)
 
             if(currentStateObject.nextStates.length > 0) {
-                // console.log("we have a winner", winningStateName)
+                console.log("we have a winner", winningStateName)
                 nextStates = currentStateObject.nextStates
                 // console.log("next set of edges", nextStates)
             } else {

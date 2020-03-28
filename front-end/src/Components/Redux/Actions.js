@@ -11,7 +11,7 @@ export const getCat = () => dispatch => {
     dispatch({  type: ['redux', 'FETCH_CAT_START'] });
 
     axios
-        .get('https://aws.random.cat/meow')
+        .get('https://aws.random.Root/meow')
         .then(res => {
             // console.log("from api", res.data.file)
             dispatch({  type: ['redux', 'FETCH_CAT_SUCCESS'],
@@ -26,7 +26,7 @@ export const getCat = () => dispatch => {
 
 export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
 
-    console.log("in the action")
+    // console.log("in the action")
     // prop drilling provides the path
     // ['redux', 'elementary school', 'children', 'problem set', '0', 'answerForm']
     // component provides the data the state function will use

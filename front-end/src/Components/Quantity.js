@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { getCat } from './Redux/catActions'
+import { getCat } from './Redux/Actions'
 import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
@@ -45,21 +45,21 @@ const Boxes = styled.div`
 const Quantity = (props) => {
 
     const {
-        quantity,
         statePath,
-        Cat} = props
+        Root} = props
 
+    let quantity = getValue(Root, statePath)
     // should take in the quantity array
     // We should already have the array by this point
     // const [value, setValue] = useState(value)
     // const [backgroundColor, setBackgroundColor] = useState(backgroundColor)
     
     // const [difference, setDifference] = useState(total - quantity)
-    // console.log('in quantity', getValue(Cat, statePath))
+    // console.log('in quantity', getValue(Root, statePath))
     return (
             <Boxes>
                 {/* i : [0, total] quantity: [0, < total] */}
-                {getValue(Cat, statePath).map((item, i) => {
+                {quantity.map((item, i) => {
                     // const truthFlag = (value - 1) < i
                     // console.log(item)
                     // read the quantity [1, 1, 0] and an @ followed by the background color
@@ -89,7 +89,7 @@ const Quantity = (props) => {
 
 const mapStateToProps = state => {
     return {
-        Cat: state
+        Root: state
     }
 }
 export default connect(

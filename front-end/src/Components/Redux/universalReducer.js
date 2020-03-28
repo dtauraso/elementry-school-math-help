@@ -1,5 +1,5 @@
 
-import { Cat } from './catReducer'
+import { Root } from './Reducer'
 import { setToValue,
          append,
          getValue,
@@ -9,7 +9,7 @@ import { setToValue,
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
-    ...Cat,
+    ...Root,
     // breakAppTree: BreakApp
 }
 // vector state name
@@ -23,10 +23,10 @@ const initialState = {
 // down to the target js object that we want to be called the state name
 const universalReducer = (state = initialState, action) => {
 
-    console.log("in the reducer")
-    console.log(state, action)
+    // console.log("in the reducer")
+    // console.log(state, action)
     // action.type always holds the start state
-    // console.log(action.type, state, Cat)
+    // console.log(action.type, state, Root)
     const { type, payload, meta} = action
     if(typeof(type) === 'string') {
         return state

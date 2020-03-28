@@ -1,4 +1,3 @@
-import React from 'react'
 import { makeQuantity } from '../../utility'
 import {    setToValue,
             append,
@@ -27,7 +26,7 @@ export const fetchCatSuccess = (state, action) => {
             catTree : {...state.catTree,
                         error: '',
                         isFetching: false,
-                        cat: action.payload
+                        Root: action.payload
                 }
         
     }
@@ -36,7 +35,7 @@ export const fetchCatFailure = (state, action) => {
     return {...state,
             catTree : {...state.catTree,
                         error: action.payload,
-                        cat: null,
+                        Root: null,
                         isFetching: false
                 }
 
@@ -45,9 +44,9 @@ export const fetchCatFailure = (state, action) => {
 const returnState = (state, action) => {
     return [state, true]
 }
-const invalidValue = (state, action) => {
+const noValue = (state, action) => {
     // console.log("is invalid")
-    if(isNaN(action.payload.newValue)) {
+    if(action.payload.newValue.length === 0) {
 
         // const variablesBasePath = [...action.meta.basePath, 'variables']
 
@@ -59,18 +58,15 @@ const invalidValue = (state, action) => {
                     makeVariablePath(action, 'actualAnswer'))),
             setToValue
         )
-        // will not show right untill all the data sources use Redux
-        y = deepAssign(
-            y,
-            makeVariablePath(action, 'firstTimeSubmitting'),
-            'notYetSubmitted',
-            setToValue
-        )
         return [y, true]
     
     }
     return [state, false]
 }
+const isInteger = (state, action) => {
+    return [state, !isNaN(parseInt(action.payload.newValue)) === true]
+}
+
 const submitValue = (state, action/*e*/) => {
     // console.log(e.target.value)
     // console.log(pathDownObject)
@@ -144,13 +140,13 @@ const allOtherTimesSubmitting = (state, action/*e*/) => {
 // group by context of problem, not by kind of coding construct
 
 // start state
-export var Cat = {
+export var Root = {
     redux: {
-        // have a cat category
+        // have a Root category
         // have a BreakApp category
         // store the different reducer functions outside this function
         // break up the reducers but keep the store the same
-        cat: {
+        Root: {
             children: [['FETCH_CAT_START']],
             variables: [['error'], ['catPic']]
         },
@@ -179,6 +175,7 @@ export var Cat = {
                 'problem set': {
                     0: {
                         a: {
+                            'function': returnState,
                             // array of primitives or primitives
                             variables: {
                                 value: 4,
@@ -186,78 +183,76 @@ export var Cat = {
                                 isForm: false,
                                 operationType: ''
                             },
-                            'function': returnState
                         },
                         b: {
+                            'function': returnState,
                             variables: {
                                 value: 3,
                                 quantity: makeQuantity(3, answer),
                                 isForm: false,
                                 operationType: '+'
                             },
-                            'function': returnState
                         },
                         // this state chart will start on the bottom and end up on the 'top'
                         answerForm: {
+                            'function': returnState,
                             variables: {
-                                isForm: true
+                                isForm: true,
+                                operationType: ''
 
                             },
-                            children: {
-                                // is it right to do this?
-                                // 1 context for each 
-                                // 2 different contexts but the message depends on the submission and we start execution at submission
-                                // a reducer will have to juggle code for 2 different states
-                                // the reducer can read from a neighboring state but can't write to it
-                                // ideally we would have 1 reducer at the top state to address this directly
-                                // we start at submission so there are no children states to run
+                            // is it right to do this?
+                            // 1 context for each 
+                            // 2 different contexts but the message depends on the submission and we start execution at submission
+                            // a reducer will have to juggle code for 2 different states
+                            // the reducer can read from a neighboring state but can't write to it
+                            // ideally we would have 1 reducer at the top state to address this directly
+                            // we start at submission so there are no children states to run
 
-                                // the submission state travels to the progressMeter as we can only have reducers associated
-                                // with buttons and the progressMeter variables doesn't depend on a button
-                                submission: {
-                                    'function': returnState,
+                            // the submission state travels to the progressMeter as we can only have reducers associated
+                            // with buttons and the progressMeter variables doesn't depend on a button
+                            submission: {
+                                'function': returnState,
 
-                                    variables: {
-                                        value: undefined,
-                                        quantity: makeQuantity(0, answer),
-                                        correct: false, // true when the answer is right
-                                        actualAnswer: answer,
-                                        isValid: false
-                                        
-                                    },
-                                    nextStates: [['redux', 'elementary school', 'children', 'invalidValue'],
-                                                ['redux', 'elementary school', 'children', 'isInteger'],
-                                                ['redux', 'elementary school', 'children', 'isNotInteger']
-                                            ],
-                                    childrenStateLinks: []
+                                variables: {
+                                    value: undefined,
+                                    quantity: makeQuantity(0, answer),
+                                    correct: false, // true when the answer is right
+                                    actualAnswer: answer,
+                                    isValid: false
+
                                 },
-                                progressMeter: {
-                                    'function': returnState,
+                                nextStates: [['redux', 'elementary school', 'children', 'noValue'],
+                                            ['redux', 'elementary school', 'children', 'isInteger'],
+                                            ['redux', 'elementary school', 'children', 'isNotInteger']
+                                        ],
+                                childrenStateLinks: []
+                            },
+                            progressMeter: {
+                                'function': returnState,
 
-                                    variables: {
-                                        submitCount: 0,
-                                        correctFirstTime: false,  // true if submitCount === 0
-    
-                                        testingWithoutForm: false
-    
-                                    },
-                                    nextStates: [],
-                                    childrenStateLinks: []
+                                variables: {
+                                    submitCount: 0,
+                                    correctFirstTime: false,  // true if submitCount === 0
+
+                                    testingWithoutForm: false
+
                                 },
+                                nextStates: [],
+                                childrenStateLinks: []
                             }
                         }
                     }
                 },
                 // these are here so they aren't copied so many time inside the answerForm state
-               'invalidValue': {
-                    'function': invalidValue,
+               'noValue': {
+                    'function': noValue,
                     nextStates: [],
                     childrenStateLinks: []
 
                 },
                 'isInteger': {
-                    'function': returnState,
-                    // need to go to the progress meeter state instead
+                    'function': isInteger,
                     nextStates: [['redux', 'elementary school', 'children', 'submitValue']],
                     childrenStateLinks: []
                 },
@@ -269,7 +264,9 @@ export var Cat = {
                 },
                 'submitValue': {
                     'function': submitValue,
-                    nextStates: [['redux', 'elementary school', 'children', 'isFirstTimeSubmitting'],
+                    nextStates: [
+                        // go to the progressMeter state
+                        ['redux', 'elementary school', 'children', 'isFirstTimeSubmitting'],
                                 ['redux', 'elementary school', 'children', 'allOtherTimesSubmitting']],
                     childrenStateLinks: []
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import OneValue from './OneValue';
 import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { getCat } from './Redux/catActions'
+import { getCat } from './Redux/Actions'
 import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 // AddTwoValues box
@@ -31,9 +31,10 @@ export const AddTwoValues = (props) => {
     const {
 
         statePath,
-        Cat
+        Root
     } = props
-    const problem = getValue(Cat, statePath)
+    const problemPath = statePath
+    const problem = getValue(Root, statePath)
     const total = problem.a.value + problem.b.value
     // if there are problems load them
     // else run a genertive reducer
@@ -45,7 +46,7 @@ export const AddTwoValues = (props) => {
             {Object.keys(problem).map(problemKey => (
                 <OneValue
                     key={problemKey}
-                    statePath={[...statePath, problemKey]}/>
+                    statePath={[...problemPath, problemKey]}/>
             ))}
             
         </Container>
@@ -54,7 +55,7 @@ export const AddTwoValues = (props) => {
 
 const mapStateToProps = state => {
     return {
-        Cat: state
+        Root: state
     }
 }
 export default connect(
