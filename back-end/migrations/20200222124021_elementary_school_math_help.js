@@ -39,8 +39,14 @@ exports.up = function(knex) {
             tbl
                 .string('expression', 255)
                 .notNullable();
+            // they have to have gotten it right on their first attempt for this to say true
             tbl
                 .boolean('isRight');
+            // their first answer will be recorded
+            tbl
+                .integer('theirAnswer');
+            tbl
+                .integer("actualAnswer");
             tbl
                 .enu('kindOfOperation', [
                 'Add',
