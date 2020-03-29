@@ -33,9 +33,9 @@ export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
     // runs a graph of connected nodes
     // use the action meta property
     dispatch({
-            type: pathToState,        // change to the current state(first time is the start state)
+            type: pathToState, // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
             payload: lotsOfThings,
-            meta: { basePath: pathToState } // change to the base state(for the object data)
+            meta: { basePath: pathToState } // base state(for the object data)
         });
 
 }

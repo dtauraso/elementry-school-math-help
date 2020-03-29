@@ -26,6 +26,7 @@ const SubmitAnswer = (props) => {
         statePath,
         Root} = props
     console.log("submit answer form path", statePath)
+    // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     const answerForm = getValue(Root, statePath)
     console.log(answerForm.submission)
     const {value,

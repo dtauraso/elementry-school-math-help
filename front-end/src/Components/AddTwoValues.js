@@ -24,7 +24,7 @@ const Container = styled.div`
 
 // switch to redux
 // https://github.com/erikras/ducks-modular-redux
-// currently doing redux "prop grilling" style without reducer hooks
+// currently doing redux "prop grilling" style without Reducers hooks
 // need to know all the values so the right total spaces can be calculated
 export const AddTwoValues = (props) => {
     // have useState here
@@ -37,7 +37,7 @@ export const AddTwoValues = (props) => {
     const problem = getValue(Root, statePath)
     const total = problem.a.value + problem.b.value
     // if there are problems load them
-    // else run a genertive reducer
+    // else run a genertive Reducers
     return (
         // <div></div>
         // needs a form and both values with the solution

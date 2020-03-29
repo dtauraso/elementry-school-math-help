@@ -70,6 +70,11 @@ export const makeVariablePath = (action, variableName) => {
 
     return [...action.meta.basePath, 'variables', variableName]
 }
+export const makeVariablePath2 = (pathToStateObject, variableName) => {
+
+    return [pathToStateObject, 'variables', variableName]
+}
+
 export const breathFirstTraversal = (state, action, startStateName) => {
     // startStateName, endStateName are lists of strings
     // we can use the payload from the user for the entire traversal

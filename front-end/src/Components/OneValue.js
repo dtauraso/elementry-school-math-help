@@ -102,7 +102,7 @@ const OneValue = (props) => {
     // return (<div></div>)
 
     // const showSubmissionMesssage = () => {
-    //     // run reducer
+    //     // run Reducers
     //     // return the message
     // }
     // return (
