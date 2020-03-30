@@ -222,6 +222,200 @@ export var Root = {
             // 'children': {'0': {'char':'0'}},
             'functions': fetchCatFailure
         },
+        table : {
+            'root' : {
+                name: ['root'],
+                // all the starts of the links are right here
+                // needs to have key value pairs to make lookup O(1)
+                nextParts: {'elementary school':1,
+                            'problem set 0':1,
+                            'problem 0':1,
+                            'a 0':1,
+                            'value 0': 1,
+                            'quantity 0': 1,
+                            'isForm 0': 1,
+                            'operationType 0':1,
+
+                            'b 0': 1,
+                            'value 1': 1,
+                            'quantity 1': 1,
+                            'isForm 1': 1,
+                            'operationType 1':1,
+
+
+                            'answerForm 0': 1,
+                            'value 2': 1,
+                            'quantity 2': 1,
+                            'isForm 2': 1,
+                            'operationType 2': 1,
+                            'noValue 0': 1,
+                            'isInteger 0': 1,
+                            'isNotInteger 0': 1
+
+                            // more submission states here
+                        
+                        }
+            },
+            'elementary school': {
+                name: ['elementary school'],
+                children: [['problem set 0']],
+                variableNames: [['problemSets']]
+            },
+            'problemSets': {
+                name: ['problemSets'],
+                value: 1
+            },
+            'problem set 0': {
+                name: ['problem set 0'],
+                children: [['problem 0']],
+                variableNames: [['problems']]
+            },
+            'problems': {
+                name: ['problems'],
+                value: 1
+            },
+            'problem 0': {
+                name: ['problem 0'],
+                children: [['a 0'], ['b 0'], ['answerForm 0']],
+                variableNames: [['problemParts 0']]
+            },
+            'problemParts 0': {
+                name: ['problemParts 0'],
+                value: 3
+            },
+
+
+            'a 0': {
+                name: ['a 0'],
+                variableNames: ['value 0', 'quantity 0', 'isForm 0', 'operationType 0']
+            },
+            'value 0': {
+                name: ['value 0'],
+                value: 4
+            },
+            'quantity 0': {
+                name: ['quantity 0'],
+                value: makeQuantity(4, answer)
+            },
+            'isForm 0': {
+                name: ['isForm 0'],
+                value: false
+            },
+            'operationType 0': {
+                name: ['operationType 0'],
+                value: ''
+            },
+
+
+
+            'b 0': {
+                name: ['b 0'],
+                variableNames: ['value 1', 'quantity 1', 'isForm 1', 'operationType 1']
+            },
+            'value 1': {
+                name: ['value 1'],
+                value: 4
+            },
+            'quantity 1': {
+                name: ['quantity 1'],
+                value: makeQuantity(4, answer)
+            },
+            'isForm 1': {
+                name: ['isForm 1'],
+                value: false
+            },
+            'operationType 1': {
+                name: ['operationType 1'],
+                value: ''
+            },
+
+
+            'answerForm 0': {
+                name: ['answerForm 0'],
+                nextParts: {'submission 0':1,
+                            'progressMeter 0': 1},
+                variableNames: ['isForm 0', 'operationType 0']
+            },
+            // we start our submittion the answer with this cell
+            // this index corresponds to the total number of problems
+            'submission 0': {
+
+                name: ['answerForm 0', 'submission 0'],
+                'function': returnState,
+
+                nextStates: [['noValue 0'],
+                            ['isInteger 0'],
+                            ['isNotInteger 0']],
+                // indeces in variableNames corresponds to the number of problems * (3 - 1)
+
+                variableNames: ['value 2',
+                                'quantity 2',
+                                'correct 2',
+                                'actualAnswer 2',
+                                'submitCount 2']
+            },
+            'progressMeter 0': {
+                name: ['answerForm 0', 'progressMeter 0'],
+                variableNames: ['correctFirstTime 0',
+                                'testingWithoutForm 0']
+            },
+
+
+            // submit states
+            // for now keep them as next states
+            'noValue 0': {
+                'function': noValue,
+                nextStates: [],
+
+
+            },
+            'isInteger 0': {
+                'function': isInteger,
+                nextStates: [['submitValue 0']],
+            },
+            'isNotInteger 0': {
+                'function': returnState,
+                nextStates: [],
+            },
+            'submitValue 0': {
+                // need a context for each form
+                'function': submitValue,
+                nextStates: [
+                    // go to the progressMeter state
+                    ['isFirstTimeSubmitting 0'],
+                    ['allOtherTimesSubmitting 0']
+                ],
+
+            },
+            'isFirstTimeSubmitting 0' : {
+                'function': isFirstTimeSubmitting,
+                nextStates: [],
+                childrenStateLinks: []
+
+            },
+            'allOtherTimesSubmitting 0': {
+                'function': allOtherTimesSubmitting,
+                nextStates: [],
+                childrenStateLinks: []
+
+            },
+            'value 2': {
+                name: ['value 2'],
+                value: undefined
+            },
+            'quantity 2': {
+                name: ['quantity 2'],
+                value: makeQuantity(4, answer)
+            },
+            'isForm 2': {
+                name: ['isForm 2'],
+                value: false
+            },
+            'operationType 2': {
+                name: ['operationType 2'],
+                value: ''
+            }
+        },
         /*
         
         state table
@@ -240,123 +434,105 @@ export var Root = {
         make the state names keys searchable
 
         // it should be easy to get the variable name state from the user's variable name
-        // getVariable(getValue(tree, stateName), 'value') => 'value 0'
+        // getVariable(getValue(tree, stateName), 'value') => object from key 'value 0'
+        /*
+        name: ['root']
+        nextParts: {    'elementary school':1,
+                        'problem set 0':1,
+                        'problem 0':1}
+        function: returnState
+
+        nextStates: []
+        children: { 0: ['a 0']
+                    1: ['b 0']}
+        variableNames: ['value 1',
+                        'quantity 1',
+                        'isForm 1',
+                        'operationType 1']
 
         table : {
             0 : {
-            name: 'root',
+            name: ['root'],
             all the starts of the links are right here
             needs to have key value pairs to make lookup O(1)
-            nextParts: {1:1, 2:1, 5:1, 6:1, 7:1, 8:1}
-            nextStates: []
+            nextParts: {'elementary school':1,
+                        'problem set 0':1,
+                        'problem 0':1,
+                        'a 0':1,
+                        'value 0': 1,
+                        'quantity 0': 1,
+                        'isForm 0': 1,
+                        'operationType 0':1,
 
-            children: []
-            variableNames: []
+                        'b 0': 1,
+                        'value 1': 1,
+                        'quantity 1': 1,
+                        'isForm 1': 1,
+                        'operationType 1':1}
+
             },
-            {0: {'problem set': 2, '0': 3, 'a': 4}}
-{0: {'problem set': 9, '0': 10, 'b': 11}}
-            1: {
-                name: {'elementary school': 1},
-                nextParts: []
-                nextStates: []
-
-                need to know the names so we know what state it is going to 
+            'elementary school': {
+                name: ['elementary school'],
                 children: {0: ['problem set 0']}
                 variableNames: {problemSets: 1}
 
             },
-            // intermediate state name so show no state data
             'problem set 0': {
                 name: ['problem set 0'],
-                // nextParts: {'0 3': 1}
-                nextStates: []
-
                 children: { 0: ['problem 0']}
                 variableNames: {problems: 1}
+
             }
 
             'problem 0': {
                 name: ['problem 0']
                 children: { 0: ['a 0']
-                            1: {'problem': 11, '0': 12, 'b':13 }}
+                            1: ['b 0']}
+
             }
 
             'a 0': {
                 name: ['a 0'],
-                nextParts: {}
-                function: returnState
-                nextStates: []
-
-                children: []
-                variableNames: {'value 0': 1, 'quantity 0': 1, 'isForm 0': 1, 'operationType 0': 1}
-                value: null
+                variableNames: ['value 0', 'quantity 0', 'isForm 0', 'operationType 0']
 
             },
             'value 0': {
-                name: 'value 0'],
+                name: ['value 0'],
                 value: 4
             },
-            'quantity 0: {
-                name: {'quantity': 6},
+            'quantity 0': {
+                name: ['quantity 0'],
                 value: makeQuantity(4, answer)
             }
-            'isForm 0; {
-                name: {'isForm': 7},
+            'isForm 0'; {
+                name: ['isForm 0'],
                 value: false
             },
-            'operationType 0: {
-                name: {'operationType': 8},
+            'operationType 0': {
+                name: ['operationType 0'],
                 value: ''
             }
 
-
-
-
-
-            11: {
-                name: {'problem': 11},
-                nextParts: {5: 1}
-                nextStates: []
-
-                children: {}
-                variableNames: {}
+            'b 0': {
+                name: ['b 0'],
+                variableNames: ['value 1', 'quantity 1', 'isForm 1', 'operationType 1']
 
             },
-            12: {
-                name: {'0': 12},
-                nextParts: {13:1}
-                nextStates: []
-
-                children: []
-                variableNames: {}
-
+            'value 1': {
+                name: ['value 1'],
+                value: 4
             },
-            13: {
-                name: {'problem': 11, '0': 12, 'b': 13},
-                nextParts: {}
-                function: returnState
-                nextStates: []
-
-                children: []
-                variableNames: {value: 14, quantity: 15, isForm: 16, operationType: 17}
-                value: null
-
-            },
-            14: {
-                name: {'value': 14},
-                value: 3
-            },
-            15: {
-                name: {'quantity': 15},
-                value: makeQuantity(3, answer)
+            'quantity 1': {
+                name: ['quantity 1'],
+                value: makeQuantity(4, answer)
             }
-            16; {
-                name: {'isForm': 16},
+            'isForm 1'; {
+                name: ['isForm 1'],
                 value: false
             },
-            17: {
-                name: {'operationType': 17},
-                value: '+'
+            'operationType 1': {
+                name: ['operationType 1'],
+                value: ''
             }
 
 

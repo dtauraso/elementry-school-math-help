@@ -33,6 +33,7 @@ export const AddTwoValues = (props) => {
         statePath,
         Root
     } = props
+    // will need to pass index trackers instead of a single long path
     const problemPath = statePath
     const problem = getValue(Root, statePath)
     const total = problem.a.value + problem.b.value

@@ -18,6 +18,69 @@ export const getValue = (state, path) => {
         }
     }
 }
+// getVariable(getCell(tree, stateName), 'value') => object from key 'value 0'
+// tableAssign(tree,
+                // getVariableName(getCell(tree, stateName), 'value'),
+                // aValue,
+                // setCell)
+export const getCell = (state, path) => {
+
+    // for any valid cell the forEach must run at least 1 time
+    let currentCell = state.table.root
+    path.forEach(namePart => {
+        if(Object.keys(currentCell).includes('nextParts')) {
+            if(currentCell.nextParts[namePart]) {
+                currentCell = state.table[namePart]
+            }
+        }
+    })
+
+    // this will be the root if the state doesn't exist
+    return currentCell
+}
+
+export const getVariable = (state, cell, variableName) => {
+    // the variableName can just say 'value', 'quantity' instead of 'value 0'
+    if(cell) {
+        cell.variableNames.forEach(cellVariableName => {
+            if(cellVariableName.match(variableName) > -1) {
+                return state.table[cellVariableName].value
+            }
+        })
+    }
+    
+    return null
+}
+
+export const getVariableName = (state, cell, variableName) => {
+    // the variableName can just say 'value', 'quantity' instead of 'value 0'
+    if(cell) {
+        cell.variableNames.forEach(cellVariableName => {
+            if(cellVariableName.match(variableName) > -1) {
+                return state.table[cellVariableName].name
+            }
+        })
+    }
+    
+    return null
+}
+
+export const tableAssign = (state, stateName, value, cb) => {
+
+    // how does a js object map to multiple rows of stuff?
+    // stateName may just be a variable name
+    // cb(state, value) and the value is a set of rows
+    return {
+        ...state,
+        table: {
+            ...state.table,
+            ...cb(cell, value) // cb should always return a js object stateName: {stuff}
+        }
+    }
+}
+// have an assignment routine that updates a set of rows at once
+// ...(cb(cells, value).cells) // cb should always return a js object stateName: {stuff}
+
 export const objectExistsAtPath = (state, path) => {
 
     if(path.length === 0) {
