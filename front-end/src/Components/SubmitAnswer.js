@@ -3,7 +3,15 @@ import styled from 'styled-components'
 
 import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/Actions'
-import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
+import {
+    setToValue,
+    append,
+    getValue,
+    deepAssign,
+    getCell,
+    getVariable,
+    getChild,
+    tableAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 const Form = styled.form`
 
@@ -24,11 +32,21 @@ const SubmitAnswer = (props) => {
 
     let {
         statePath,
+        stateCoordinates,
         Root} = props
-    console.log("submit answer form path", statePath)
+    let answer = getCell(Root, [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`])
+    console.log('answer', answer)
+    let submission = getCell(Root, [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
+                                    `submission ${stateCoordinates.problemId}`])
+    console.log("submission context", submission)
+    
+    let y = getCell(Root, [getVariable(Root, submission, 'value').name])//[`value ${stateCoordinates.problemPart}`])
+    console.log("submission's value", y)
+
+    // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     const answerForm = getValue(Root, statePath)
-    console.log(answerForm.submission)
+    // console.log(answerForm.submission)
     const {value,
         quantity,
         correct,
@@ -38,7 +56,7 @@ const SubmitAnswer = (props) => {
         submitCount,
         correctFirstTime
     } = answerForm.progressMeter.variables
-    console.log(answerForm.submission.variables)
+    // console.log(answerForm.submission.variables)
 
     const handleSubmit = (event) => {
         event.preventDefault();

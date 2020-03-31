@@ -4,7 +4,15 @@ import SubmitAnswer from './SubmitAnswer'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/Actions'
-import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
+import {
+    setToValue,
+    append,
+    getValue,
+    deepAssign,
+    getCell,
+    getVariable,
+    getChild,
+    tableAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
 // convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action
@@ -40,7 +48,11 @@ const OneValue = (props) => {
     // need the entire problem part
     let {
         statePath,
+        stateCoordinates,
         Root} = props
+    // console.log(stateCoordinates)
+    let x = getCell(Root, [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`])
+    console.log('problem part', x)
     // we cannot assume there is a form right now
     const oneValue = getValue(Root, statePath)
     let { isForm, operationType } = oneValue.variables
@@ -48,7 +60,10 @@ const OneValue = (props) => {
     const formOrValue = (isForm, operationType, statePath) => {
         if(isForm) {
             const formPath = statePath
-            return (<SubmitAnswer statePath={formPath}/>)
+            return (<SubmitAnswer
+                        statePath={formPath}
+                        stateCoordinates={stateCoordinates}
+                        />)
         } else {
             const valuePath = statePath
             // console.log("Value", getValue(Root, [...valuePath, 'variables']))

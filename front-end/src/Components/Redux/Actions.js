@@ -1,5 +1,6 @@
 import axios from 'axios';
-
+import { store } from '../../index'
+// import univer
 // export const FETCH_CAT_START = 'FETCH_CAT_START'
 // export const FETCH_CAT_SUCCESS = 'FETCH_CAT_SUCCESS'
 // export const FETCH_CAT_FAILURE = 'FETCH_CAT_FAILURE'
@@ -32,6 +33,7 @@ export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
     // component provides the data the state function will use
     // runs a graph of connected nodes
     // use the action meta property
+    console.log(store.getState().redux.table)
     dispatch({
             type: pathToState, // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
             payload: lotsOfThings,

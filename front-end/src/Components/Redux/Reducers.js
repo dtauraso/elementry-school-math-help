@@ -42,6 +42,9 @@ export const fetchCatFailure = (state, action) => {
 
     }
 }
+const saveComponentProps = (state, action) => {
+    // adds the component props data to redux
+}
 const returnState = (state, action) => {
     return [state, true]
 }
@@ -198,7 +201,7 @@ export var Root = {
         // have a BreakApp category
         // store the different Reducers functions outside this function
         // break up the reducers but keep the store the same
-        Root: {
+        Cat: {
             children: [['FETCH_CAT_START']],
             variables: [['error'], ['catPic']]
         },
@@ -226,67 +229,67 @@ export var Root = {
             'root' : {
                 name: ['root'],
                 // all the starts of the links are right here
-                // needs to have key value pairs to make lookup O(1)
                 nextParts: {'elementary school':1,
                             'problem set 0':1,
                             'problem 0':1,
-                            'a 0':1,
+                            '0 0':1,
                             'value 0': 1,
                             'quantity 0': 1,
                             'isForm 0': 1,
                             'operationType 0':1,
 
-                            'b 0': 1,
+                            '1 0': 1,
                             'value 1': 1,
                             'quantity 1': 1,
                             'isForm 1': 1,
                             'operationType 1':1,
 
 
-                            'answerForm 0': 1,
+                            '2 0': 1,
                             'value 2': 1,
                             'quantity 2': 1,
                             'isForm 2': 1,
                             'operationType 2': 1,
                             'noValue 0': 1,
                             'isInteger 0': 1,
-                            'isNotInteger 0': 1
+                            'isNotInteger 0': 1,
 
-                            // more submission states here
-                        
+                            'submitValue 0': 1,
+                            'isFirstTimeSubmitting 0': 1,
+                            'allOtherTimesSubmitting 0': 1
                         }
             },
             'elementary school': {
                 name: ['elementary school'],
-                children: [['problem set 0']],
-                variableNames: [['problemSets']]
+                children: {'problem set 0': 1},
+                variableNames: ['problemSets 0']
             },
-            'problemSets': {
-                name: ['problemSets'],
+            'problemSets 0': {
+                name: ['problemSets 0'],
                 value: 1
             },
             'problem set 0': {
                 name: ['problem set 0'],
-                children: [['problem 0']],
-                variableNames: [['problems']]
+                children: {'problem 0': 1},
+                // variableNames: ['numberOfProblems 0']
             },
-            'problems': {
-                name: ['problems'],
-                value: 1
-            },
-            'problem 0': {
+            // 'numberOfProblems 0': {
+            //     name: ['numberOfProblems 0'],
+            //     value: 1
+            // },
+            'problem 0': { // key of AddTwoValues maps to this
                 name: ['problem 0'],
-                children: [['a 0'], ['b 0'], ['answerForm 0']],
-                variableNames: [['problemParts 0']]
+                children: {'0 0': 1, '1 0': 1, '2 0': 1}, // can use the OneValue key and the AddTwoValues key
+                // variableNames: ['problemParts 0']
             },
-            'problemParts 0': {
-                name: ['problemParts 0'],
-                value: 3
-            },
+            // 'problemParts 0': {
+            //     name: ['problemParts 0'],
+            //     value: 3
+            // },
 
 
-            'a 0': {
-                name: ['a 0'],
+            '0 0': {  // a
+                name: ['0 0'],
                 variableNames: ['value 0', 'quantity 0', 'isForm 0', 'operationType 0']
             },
             'value 0': {
@@ -308,8 +311,8 @@ export var Root = {
 
 
 
-            'b 0': {
-                name: ['b 0'],
+            '1 0': { // b
+                name: ['1 0'],
                 variableNames: ['value 1', 'quantity 1', 'isForm 1', 'operationType 1']
             },
             'value 1': {
@@ -329,12 +332,12 @@ export var Root = {
                 value: ''
             },
 
-
-            'answerForm 0': {
-                name: ['answerForm 0'],
+            // intermediate state that also has variable names
+            '2 0': { // anserForm
+                name: ['2 0'],
                 nextParts: {'submission 0':1,
                             'progressMeter 0': 1},
-                variableNames: ['isForm 0', 'operationType 0']
+                variableNames: ['isForm 2', 'operationType 2']
             },
             // we start our submittion the answer with this cell
             // this index corresponds to the total number of problems
@@ -443,8 +446,8 @@ export var Root = {
         function: returnState
 
         nextStates: []
-        children: { 0: ['a 0']
-                    1: ['b 0']}
+        children: {'a 0': 1, 'b 0': 1, 'answerForm 0': 1},
+
         variableNames: ['value 1',
                         'quantity 1',
                         'isForm 1',

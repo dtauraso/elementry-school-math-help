@@ -3,7 +3,15 @@ import OneValue from './OneValue';
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
-import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
+import {
+    setToValue,
+    append,
+    getValue,
+    deepAssign,
+    getCell,
+    getVariable,
+    getChild,
+    tableAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 // AddTwoValues box
 // mobile first
@@ -31,12 +39,20 @@ export const AddTwoValues = (props) => {
     const {
 
         statePath,
+        problemStateName,
+        stateCoordinates,
         Root
     } = props
+    // getValue(Root).table['AddTwoValues'][stateCoordinates.problemId] => #
+    // problem #
+    console.log('our key', stateCoordinates)
+    let x = getCell(Root, [`problem ${stateCoordinates.problemId}`])
+    console.log("our state", x)
     // will need to pass index trackers instead of a single long path
     const problemPath = statePath
     const problem = getValue(Root, statePath)
     const total = problem.a.value + problem.b.value
+    console.log(problemStateName)
     // if there are problems load them
     // else run a genertive Reducers
     return (
@@ -44,10 +60,12 @@ export const AddTwoValues = (props) => {
         // needs a form and both values with the solution
         <Container>
             {/* <h1>testing</h1> */}
-            {Object.keys(problem).map(problemKey => (
+            {Object.keys(problem).map((problemKey, i) => (
                 <OneValue
                     key={problemKey}
-                    statePath={[...problemPath, problemKey]}/>
+                    statePath={[...problemPath, problemKey]}
+                    stateCoordinates={{...stateCoordinates, problemPart: String(i)}}
+                    />
             ))}
             
         </Container>
