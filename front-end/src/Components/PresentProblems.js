@@ -26,7 +26,7 @@ const PresentProblems = (props) => {
     // get last child of state 'state name' via var 'count' as (n - 1)th 'child name'
 
     let elementarySchool = getCell(Root, ['elementary school'])
-    let problemSets = getVariable(Root, elementarySchool, 'problemSets')
+    let problemSets = getVariable(Root, ['elementary school'], 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)
     let problemSet = getChild(Root, elementarySchool, `problem set ${problemSets.value - 1}`)
     // console.log(problemSet)

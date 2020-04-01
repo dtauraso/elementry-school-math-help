@@ -11,6 +11,7 @@ import {
     getCell,
     getVariable,
     getChild,
+    getChildren,
     tableAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 const Form = styled.form`
@@ -40,7 +41,9 @@ const SubmitAnswer = (props) => {
                                     `submission ${stateCoordinates.problemId}`])
     console.log("submission context", submission)
     
-    let y = getCell(Root, [getVariable(Root, submission, 'value').name])//[`value ${stateCoordinates.problemPart}`])
+    let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
+                                `submission ${stateCoordinates.problemId}`]
+    let y = getCell(Root, [getVariable(Root, submissionStateName, 'value').name])//[`value ${stateCoordinates.problemPart}`])
     console.log("submission's value", y)
 
     // console.log("submit answer form path", statePath)
@@ -83,8 +86,13 @@ const SubmitAnswer = (props) => {
                     console.log(getValue(Root, [...statePath, 'submission']))
                     props.submitAnswer({
                         newValue: e.target.value
-                    }, [...statePath, 'submission'])
+                    }, 
+                    [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
+                    `submission ${stateCoordinates.problemId}`]
                     
+                    // [...statePath, 'submission']
+                    )
+
                 }} />
 
             </Form>

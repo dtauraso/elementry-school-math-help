@@ -1,11 +1,15 @@
 
 import { Root } from './Reducers'
-import { setToValue,
-         append,
-         getValue,
-         objectExistsAtPath,
-         deepAssign,
-         breathFirstTraversal} from '../../reducerHelpers'
+import {
+    setToValue,
+    append,
+    getValue,
+    deepAssign,
+    getCell,
+    getVariable,
+    getChild,
+    tableAssign,
+    breathFirstTraversal2 } from '../../reducerHelpers'
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
@@ -23,20 +27,21 @@ const initialState = {
 // down to the target js object that we want to be called the state name
 const universalReducer = (state = initialState, action) => {
 
-    // console.log("in the Reducers")
-    // console.log(state, action)
+    console.log("in the Reducers")
+    console.log(state, action)
     // action.type always holds the start state
     // console.log(action.type, state, Root)
     const { type, payload, meta} = action
     if(typeof(type) === 'string') {
+        console.log('caught', type)
         return state
     }
-    if(!objectExistsAtPath(state, type)) {
+    if(getCell(state, type) === null) {
         return state
     } else {
 
         // have type hold all the 
-        const [temporaryState, success] = breathFirstTraversal(state, action, [type])
+        const [temporaryState, success] = breathFirstTraversal2(state, action, type, 0)
         if(success) {
             return temporaryState
         } else {

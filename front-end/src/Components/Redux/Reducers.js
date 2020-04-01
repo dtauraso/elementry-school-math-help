@@ -1,10 +1,15 @@
 import { makeQuantity } from '../../utility'
 import {    setToValue,
+            setCell,
             append,
             getValue,
             deepAssign,
+            tableAssign,
             makeVariablePath,
-            makeVariablePath2 } from '../../reducerHelpers'
+            makeVariablePath2,
+            getCell,
+            getVariable,
+            getChild } from '../../reducerHelpers'
 
 const answer = 4 + 3
 
@@ -72,6 +77,8 @@ const isInteger = (state, action) => {
 }
 
 const submitValue = (state, action/*e*/) => {
+    // start changing this state
+    console.log("submit value", action.type, action.meta.parentStateName)
     // console.log(e.target.value)
     // console.log(pathDownObject)
     // console.log(answerForm)
@@ -80,14 +87,30 @@ const submitValue = (state, action/*e*/) => {
     // fails when the user puts in an empty value
 
     // in the submission state
-    // console.log(state, action)
+    // console.log(state, action.type)
     // all the info has made it this far
     const { newValue } = action.payload
+    const stateName = action.type
+    const parentStateName = action.meta.parentStateName
     // const { basePath } = action.meta.basePath
     // const variablesBasePath = [...action.meta.basePath, 'variables']
 
     // [...action.type, 'variables'] is the path to the vars for the answer form
     // console.log(getValue(state, makeVariablesObjectPath(action)))
+    console.log("set value", parentStateName, getVariable(state, parentStateName, 'value'))
+    // this line works
+    let newtree = tableAssign(state,
+                        getVariable(state, parentStateName, 'value'),
+                        parseInt(newValue))
+    console.log('new tree')
+    console.log(newtree, stateName)
+    console.log("correct", getVariable(state, parentStateName, 'correct'))
+    newtree = tableAssign(newtree,
+                    getVariable(state, parentStateName, 'quantity'),
+                    makeQuantity(newValue,
+                            getVariable(state, parentStateName, 'actualAnswer').value))
+    console.log('new tree 2', newtree, stateName)
+
     let y = deepAssign(
         state,
         makeVariablePath(action, 'value'),
@@ -196,6 +219,7 @@ const allOtherTimesSubmitting = (state, action/*e*/) => {
 
 // start state
 export var Root = {
+    // get rid of this level
     redux: {
         // have a Root category
         // have a BreakApp category
@@ -339,6 +363,14 @@ export var Root = {
                             'progressMeter 0': 1},
                 variableNames: ['isForm 2', 'operationType 2']
             },
+            'isForm 2': {
+                name: ['isForm 2'],
+                value: false
+            },
+            'operationType 2': {
+                name: ['operationType 2'],
+                value: ''
+            },
             // we start our submittion the answer with this cell
             // this index corresponds to the total number of problems
             'submission 0': {
@@ -346,9 +378,12 @@ export var Root = {
                 name: ['answerForm 0', 'submission 0'],
                 'function': returnState,
 
-                nextStates: [['noValue 0'],
-                            ['isInteger 0'],
-                            ['isNotInteger 0']],
+                nextStates: [],
+                children: {'noValue 0': 1,
+                            'isInteger 0': 1,
+                            'isNotInteger 0': 1},
+                            
+
                 // indeces in variableNames corresponds to the number of problems * (3 - 1)
 
                 variableNames: ['value 2',
@@ -369,8 +404,7 @@ export var Root = {
             'noValue 0': {
                 'function': noValue,
                 nextStates: [],
-
-
+                // parents: 
             },
             'isInteger 0': {
                 'function': isInteger,
@@ -410,13 +444,17 @@ export var Root = {
                 name: ['quantity 2'],
                 value: makeQuantity(4, answer)
             },
-            'isForm 2': {
-                name: ['isForm 2'],
+            'correct 2': {
+                name: ['correct 2'],
                 value: false
             },
-            'operationType 2': {
-                name: ['operationType 2'],
-                value: ''
+            'actualAnswer 2': {
+                name: ['actualAnswer 2'],
+                value: answer
+            },
+            'submitCount 2': {
+                name: ['submitCount 2'],
+                value: 0
             }
         },
         /*

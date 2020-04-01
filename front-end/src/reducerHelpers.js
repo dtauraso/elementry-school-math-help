@@ -1,6 +1,9 @@
 export const setToValue = (container, value) => {
     return value
 }
+export const setCell = (container, value) => {
+    return value
+}
 export const append = (container, value) => {
 
     return [...container, value]
@@ -195,8 +198,11 @@ export const getCell = (state, path) => {
     return currentCell
 }
 
-export const getVariable = (state, cell, variableName) => {
+export const getVariable = (state, parentStateName, variableName) => {
 
+
+    let cell = getCell(state, parentStateName)
+    console.log(cell)
     // the variableName can just say 'value', 'quantity' instead of 'value 0'
     if(!cell) {
         return null
@@ -209,6 +215,8 @@ export const getVariable = (state, cell, variableName) => {
         if(cellVariableName.search(variableName) === -1) {
             return null
         }
+        console.log(cellVariableName)
+
         variable = state.redux.table[cellVariableName]
     })
     return variable
@@ -228,29 +236,57 @@ export const getChild = (state, cell, childName) => {
     return state.redux.table[childName]
 }
 
-export const tableAssign = (state, stateName, value, cb) => {
+export const getChildren = (state, stateName) => {
 
-    if(stateName.length === 0) {
-        return state
-    }
     let cell = getCell(state, stateName)
+    // console.log('cell', cell)
+    if(!cell) {
+        return []
+    }
+    if(!Object.keys(cell).includes('children')) {
+        return []
+    }
+    
+    return Object.keys(cell.children).map(nextStateString => [nextStateString])
+}
+
+export const tableAssign = (state, cell, value) => {
+
     if(cell === null) {
         return state
     }
+    let cellName = cell.name[cell.name.length - 1]
+    return {
+        ...state,
+        redux: {
+            ...state.redux,
+            table: {
+                ...state.redux.table,
+                [cellName]: {
+                    ...state.redux.table[cellName],
+                    value: value
+                }
+            } 
+        }
+        
+    }
+    
+    /*
+    for premade cells
     return {
         ...state,
         table: {
-            ...state.table,
-            ...cb(cell, value) // cb should always return a js object stateName: {stuff}
+            ...state.redux.table,
+            ...cells
         }
     }
-    
-        
+
+    */
     
     
 }
 
-export const breathFirstTraversal2 = (state, action, startStateName) => {
+export const breathFirstTraversal2 = (state, action, startStateName, levelId) => {
     // startStateName, endStateName are lists of strings
     // we can use the payload from the user for the entire traversal
     // from start state to end state
@@ -264,7 +300,9 @@ export const breathFirstTraversal2 = (state, action, startStateName) => {
     // console.log('breathFirstTraversal', startStateName)
     // take out cropChildreaname
     // let [ baseStateName, childStateName ] = cropChildName(startStateName)
-    let nextStates = [...startStateName]
+    console.log("level", levelId)
+    let nextStates = startStateName
+    console.log('next states', nextStates, 'parent', action.type)
     let currentStateName = startStateName
     let keepGoing = true
     // console.log(baseStateName, childStateName)
@@ -274,12 +312,14 @@ export const breathFirstTraversal2 = (state, action, startStateName) => {
         let passes = false
         let winningStateName = ''
         nextStates.forEach(nextState => {
+            console.log('trying', nextState)
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
                 // keepGoing = false
                 return [temporaryState, true]
 
             } else {
+
                 if(!passes) {
 
                     let cell = getCell(temporaryState, nextState)
@@ -288,27 +328,46 @@ export const breathFirstTraversal2 = (state, action, startStateName) => {
                         console.log(cell, "doesn't have a function")
                         return [temporaryState, true]
                     }
-
+                    // action.type is the parent state untill this line is run(in the first level the parent == current state)
+                    console.log('parent state', action.meta.parentStateName)
+                    action.type = nextState
                     // console.log(nextState)
                     // action's current state is .type
                     // action.meta.currentState = nextState // bad idea
                     // console.log("function to run", getValue(temporaryState, nextState), action)
                     const result = cell['function'](temporaryState, action)
-                    temporaryState = result[0]
                     const success = result[1]
                     // console.log("finished function")
                     // console.log(temporaryState, success)
                     // must keep the success value as we go up and down the call stack
                     if(success) {
+                        temporaryState = result[0]
+
                         passes = true
                         winningStateName = nextState
-                        action.type = winningStateName
+                        // action.type = winningStateName
+                        console.log('passes', action.type)
                         // console.log()
                         // untested
                         // if the winningStateName has any children
-                        // call the routing agin with next states holding the children
-                        // result = breathFirstTraversal(state, action, childrenStates)
-                        // if the submachine is false then this state is also false 
+                        let childrenStates = getChildren(temporaryState, winningStateName)
+                        if(childrenStates.length > 0) {
+                            console.log("we have children", childrenStates)
+                            action.meta.parentStateName = [...action.type]
+                            // call the routing agin with next states holding the children
+                            const nestedResult = breathFirstTraversal2(state, action, childrenStates, levelId + 1)
+                            const submachineSuccess = nestedResult[1]
+                            if(submachineSuccess) {
+                                temporaryState = nestedResult[0]
+
+                            } else {
+
+                                // if the submachine is false then this state is also false 
+                                passes = false
+                            }
+                        }
+                        
+
                     }
         
                 }
@@ -325,12 +384,13 @@ export const breathFirstTraversal2 = (state, action, startStateName) => {
                 nextStates = currentStateObject.nextStates
                 // console.log("next set of edges", nextStates)
             } else {
+                console.log(`machine is done ${levelId}`)
                 // keepGoing = false
                 return [temporaryState, true]
 
             }
         } else if(!passes && nextStates.length === 0) {
-            console.log('machine is done')
+            console.log('machine is done 2')
             // return temporaryState
             return [temporaryState, true]
 
