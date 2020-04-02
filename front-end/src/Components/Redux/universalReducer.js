@@ -43,6 +43,7 @@ const universalReducer = (state = initialState, action) => {
         // have type hold all the 
         const [temporaryState, success] = breathFirstTraversal2(state, action, type, 0)
         if(success) {
+            console.log('all reducers are done', temporaryState)
             return temporaryState
         } else {
             return state

@@ -11,6 +11,7 @@ import {
     getCell,
     getVariable,
     getChild,
+    getChildren,
     tableAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 // AddTwoValues box
@@ -38,8 +39,6 @@ export const AddTwoValues = (props) => {
     // have useState here
     const {
 
-        statePath,
-        problemStateName,
         stateCoordinates,
         Root
     } = props
@@ -48,11 +47,16 @@ export const AddTwoValues = (props) => {
     console.log('our key', stateCoordinates)
     let x = getCell(Root, [`problem ${stateCoordinates.problemId}`])
     console.log("our state", x)
+    let problemParts = getChildren(Root, x.name)
+    // let problemParts = getVariable(Root, x.name, 'problemParts').value
+    console.log(problemParts)
+    // let problemParts = getVariable(Root, x.name, 'problemSets')
+
     // will need to pass index trackers instead of a single long path
-    const problemPath = statePath
-    const problem = getValue(Root, statePath)
-    const total = problem.a.value + problem.b.value
-    console.log(problemStateName)
+    // const problemPath = statePath
+    // const problem = getValue(Root, statePath)
+    // const total = problem.a.value + problem.b.value
+    // console.log(problemStateName)
     // if there are problems load them
     // else run a genertive Reducers
     return (
@@ -60,10 +64,9 @@ export const AddTwoValues = (props) => {
         // needs a form and both values with the solution
         <Container>
             {/* <h1>testing</h1> */}
-            {Object.keys(problem).map((problemKey, i) => (
+            {problemParts.map((problemKey, i) => (
                 <OneValue
-                    key={problemKey}
-                    statePath={[...problemPath, problemKey]}
+                    key={i}
                     stateCoordinates={{...stateCoordinates, problemPart: String(i)}}
                     />
             ))}

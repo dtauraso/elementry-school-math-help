@@ -35,27 +35,13 @@ const PresentProblems = (props) => {
     return (
         <div>
 
-        {Object.keys(getValue(Root, ['redux', 'elementary school', 'children', 'problem set'])).map(problemId => (
+        {problems.map((problem, i) => (
             
-            // record this into a table
-            // run a fuction that stores this data into an external table
-            // import the table everyware I use this stuff
-            // component that renders this and saves the ith one
-
-
-            //      stateCoordinates={{problemId: 1}}
-            //      destinationComponentName={'AddTwoValues'}
-            // make a HOC that wraps the component insde of context api
-            // that way the 'global' context is global only for the AddTwoValues component and its sub components
-            // use context api? store the table inside context api
-            // using context api to associate the data with the component for just that part
-
-            // make sure this works with the prop drillng first
             <AddTwoValues
-                key={problemId}
+                key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                statePath={['redux', 'elementary school', 'children', 'problem set', parseInt(problemId)]}
-                stateCoordinates={{problemId: problemId}}
+                // statePath={['elementary school', 'children', 'problem set', parseInt(problemId)]}
+                stateCoordinates={{problemId: i}}
                 />
 
         ))}

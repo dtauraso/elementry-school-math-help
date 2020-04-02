@@ -2,7 +2,15 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
-import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
+import {
+    setToValue,
+    append,
+    getValue,
+    deepAssign,
+    getCell,
+    getVariable,
+    getChild,
+    tableAssign } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
 const Box = styled.p`
@@ -45,10 +53,31 @@ const Boxes = styled.div`
 const Quantity = (props) => {
 
     const {
-        statePath,
+        stateCoordinates,
         Root} = props
 
-    let quantity = getValue(Root, statePath)
+    // should have the form flag and the problem, problem part coordinates
+    // if form
+        // get it from problem, problem part(2 0, submission 0) quntity call
+    // else
+        // get it from problem, problem part(1 0) quntity call
+    let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    let x = getCell(Root, problemPartName)
+    let quantity = []
+    console.log('problem for quantity', x)
+    if(stateCoordinates.isForm) {
+        quantity = getVariable(Root,
+            [...problemPartName, `submission ${stateCoordinates.problemId}`],
+            'quantity'
+            ).value
+    } else {
+        quantity = getVariable(Root,
+            problemPartName,
+            'quantity'
+            ).value
+
+    }
+    // let quantity = getValue(Root, statePath)
     // should take in the quantity array
     // We should already have the array by this point
     // const [value, setValue] = useState(value)

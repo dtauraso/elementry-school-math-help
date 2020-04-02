@@ -179,20 +179,21 @@ export const breathFirstTraversal = (state, action, startStateName) => {
 
 export const getCell = (state, path) => {
 
+    // console.log('path', path)
     // for any valid cell the forEach must run at least 1 time
-    let currentCell = state.redux.table.root
+    let currentCell = state.table.root
     path.forEach(namePart => {
-        // console.log(currentCell)
+        // console.log("|", namePart, "|")
         if(!Object.keys(currentCell).includes('nextParts')) {
             currentCell = null
         }
         if(!currentCell.nextParts[namePart]) {
             currentCell = null
         }
-        currentCell = state.redux.table[namePart]
+        currentCell = state.table[namePart]
         
     })
-
+    // console.log(currentCell)
     // this will be the root if the path doesn't exist
     // this will be null if the state the path refers to doesn't exist
     return currentCell
@@ -200,10 +201,14 @@ export const getCell = (state, path) => {
 
 export const getVariable = (state, parentStateName, variableName) => {
 
+    // The parent state should only be linked to one variable name at a time
+    // in the below example:
+    // You can say 'quantity 2' then call it 'quantity' when using it in the reducers
+    // as long as the same parent doesn't also have a variable name called 'quantity 3'.
+    // This is to allow the user to use variable names with this contextual state chart
+    // at a simular level of detail they would use in a programming lnagugae
 
     let cell = getCell(state, parentStateName)
-    console.log(cell)
-    // the variableName can just say 'value', 'quantity' instead of 'value 0'
     if(!cell) {
         return null
     }
@@ -211,14 +216,20 @@ export const getVariable = (state, parentStateName, variableName) => {
         return null
     }
     let variable = null
+
+    let variableNameIsInCellVariableNamesCount = 0
     cell.variableNames.forEach(cellVariableName => {
         if(cellVariableName.search(variableName) === -1) {
             return null
         }
-        console.log(cellVariableName)
+        variableNameIsInCellVariableNamesCount ++
 
-        variable = state.redux.table[cellVariableName]
+        variable = state.table[cellVariableName]
     })
+    if(variableNameIsInCellVariableNamesCount > 1) {
+        console.log(`You cannot have more than 1 variable name that contains ${variableName}`)
+        return null
+    }
     return variable
 }
 
@@ -233,7 +244,7 @@ export const getChild = (state, cell, childName) => {
     if(!cell.children[childName]) {
         return null
     }
-    return state.redux.table[childName]
+    return state.table[childName]
 }
 
 export const getChildren = (state, stateName) => {
@@ -246,7 +257,7 @@ export const getChildren = (state, stateName) => {
     if(!Object.keys(cell).includes('children')) {
         return []
     }
-    
+    // we want the children to return like this [['one', 'two'], ['three'], ['four', 'five']]
     return Object.keys(cell.children).map(nextStateString => [nextStateString])
 }
 
@@ -258,15 +269,16 @@ export const tableAssign = (state, cell, value) => {
     let cellName = cell.name[cell.name.length - 1]
     return {
         ...state,
-        redux: {
-            ...state.redux,
-            table: {
-                ...state.redux.table,
-                [cellName]: {
-                    ...state.redux.table[cellName],
-                    value: value
-                }
-            } 
+        // redux: {
+        //     ...state.redux,
+            
+        //     } 
+        table: {
+            ...state.table,
+            [cellName]: {
+                ...state.table[cellName],
+                value: value
+            }
         }
         
     }
@@ -302,7 +314,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
     // let [ baseStateName, childStateName ] = cropChildName(startStateName)
     console.log("level", levelId)
     let nextStates = startStateName
-    console.log('next states', nextStates, 'parent', action.type)
+    // console.log('next states', nextStates, 'parent', action.type)
     let currentStateName = startStateName
     let keepGoing = true
     // console.log(baseStateName, childStateName)
@@ -312,7 +324,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
         let passes = false
         let winningStateName = ''
         nextStates.forEach(nextState => {
-            console.log('trying', nextState)
+            // console.log('trying', nextState)
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
                 // keepGoing = false
@@ -321,7 +333,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             } else {
 
                 if(!passes) {
-
+                    
                     let cell = getCell(temporaryState, nextState)
                     // ignore the state if it doesn't have a function to run
                     if(!Object.keys(cell).includes('function')) {
@@ -329,7 +341,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
                         return [temporaryState, true]
                     }
                     // action.type is the parent state untill this line is run(in the first level the parent == current state)
-                    console.log('parent state', action.meta.parentStateName)
+                    // console.log('parent state', action.meta.parentStateName)
                     action.type = nextState
                     // console.log(nextState)
                     // action's current state is .type
@@ -346,19 +358,21 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
                         passes = true
                         winningStateName = nextState
                         // action.type = winningStateName
-                        console.log('passes', action.type)
+                        // console.log('passes', action.type)
                         // console.log()
                         // untested
                         // if the winningStateName has any children
                         let childrenStates = getChildren(temporaryState, winningStateName)
                         if(childrenStates.length > 0) {
-                            console.log("we have children", childrenStates)
+                            // console.log("we have children", childrenStates)
                             action.meta.parentStateName = [...action.type]
                             // call the routing agin with next states holding the children
                             const nestedResult = breathFirstTraversal2(state, action, childrenStates, levelId + 1)
                             const submachineSuccess = nestedResult[1]
                             if(submachineSuccess) {
+                                // console.log('submachine passes', nestedResult[0])
                                 temporaryState = nestedResult[0]
+                                // console.log('submachine passes', temporaryState)
 
                             } else {
 
@@ -384,7 +398,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
                 nextStates = currentStateObject.nextStates
                 // console.log("next set of edges", nextStates)
             } else {
-                console.log(`machine is done ${levelId}`)
+                console.log(`machine is done 1 ${levelId}`)
                 // keepGoing = false
                 return [temporaryState, true]
 

@@ -32,33 +32,36 @@ const InputField = styled.input`
 const SubmitAnswer = (props) => {
 
     let {
-        statePath,
+        // statePath,
         stateCoordinates,
         Root} = props
-    let answer = getCell(Root, [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`])
+
+    // should assume the coordinates for the answer form were passed in
+    let answerFormStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    let answer = getCell(Root, answerFormStateName)
     console.log('answer', answer)
-    let submission = getCell(Root, [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
-                                    `submission ${stateCoordinates.problemId}`])
+    let submissionStateName = [...answerFormStateName, `submission ${stateCoordinates.problemId}`]
+    let submission = getCell(Root, submissionStateName)
     console.log("submission context", submission)
     
-    let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
-                                `submission ${stateCoordinates.problemId}`]
-    let y = getCell(Root, [getVariable(Root, submissionStateName, 'value').name])//[`value ${stateCoordinates.problemPart}`])
+    // let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
+    //                             `submission ${stateCoordinates.problemId}`]
+    let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
     console.log("submission's value", y)
 
     // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
-    const answerForm = getValue(Root, statePath)
-    // console.log(answerForm.submission)
-    const {value,
-        quantity,
-        correct,
-        actualAnswer,
-        isValid} = answerForm.submission.variables
-    const {
-        submitCount,
-        correctFirstTime
-    } = answerForm.progressMeter.variables
+    // const answerForm = getValue(Root, statePath)
+    // // console.log(answerForm.submission)
+    // const {value,
+    //     quantity,
+    //     correct,
+    //     actualAnswer,
+    //     isValid} = answerForm.submission.variables
+    // const {
+    //     submitCount,
+    //     correctFirstTime
+    // } = answerForm.progressMeter.variables
     // console.log(answerForm.submission.variables)
 
     const handleSubmit = (event) => {
@@ -83,12 +86,11 @@ const SubmitAnswer = (props) => {
                 <InputField id="username" name="username" type="text"
                 onChange={(e) => {
                     console.log(Root)
-                    console.log(getValue(Root, [...statePath, 'submission']))
+                    // console.log(getValue(Root, [...statePath, 'submission']))
                     props.submitAnswer({
                         newValue: e.target.value
                     }, 
-                    [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
-                    `submission ${stateCoordinates.problemId}`]
+                    submissionStateName
                     
                     // [...statePath, 'submission']
                     )
