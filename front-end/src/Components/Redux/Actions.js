@@ -33,14 +33,25 @@ export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
     // component provides the data the state function will use
     // runs a graph of connected nodes
     // use the action meta property
-    // console.log(store.getState().redux.table)
+    console.log(store.getState())
     dispatch({
             type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
             payload: lotsOfThings,
             meta: {
                     basePath: pathToState, // base state(for the object data)
-                    parentStateName: pathToState
+                    parentStateName: pathToState,
+                    // testPayload: store.getState()
                 }
         });
-
+    let x = store.getState()
+    console.log('after action is done', x)
+    // dispatch({
+    //         type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+    //         payload: lotsOfThings,
+    //         meta: {
+    //                 basePath: pathToState, // base state(for the object data)
+    //                 parentStateName: pathToState,
+    //                 // testPayload: store.getState()
+    //             }
+    //     });
 }

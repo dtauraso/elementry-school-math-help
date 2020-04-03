@@ -28,6 +28,10 @@ const InputField = styled.input`
     border: 1px solid black;
 
 `
+const FeedbackMessage = styled.p`
+    width: 30px;
+    color: ${props => props.backgroundColor};
+`
 
 const SubmitAnswer = (props) => {
 
@@ -48,7 +52,8 @@ const SubmitAnswer = (props) => {
     //                             `submission ${stateCoordinates.problemId}`]
     let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
     console.log("submission's value", y)
-
+    let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
+    let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value
     // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     // const answerForm = getValue(Root, statePath)
@@ -66,7 +71,7 @@ const SubmitAnswer = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(event)
+        // console.log(event)
         // const data = new FormData(event.target);
         
         // fetch('/api/form-submit-url', {
@@ -76,11 +81,13 @@ const SubmitAnswer = (props) => {
       }
     return (
             <Form onSubmit={handleSubmit}>
-                {/* <p>{firstTimeSubmitting !== "notYetSubmitted"?
-                    (correct? "O": "X"):
-                    ""
-                }</p> */}
-                <button>Check Answer</button>
+
+                <FeedbackMessage backgroundColor={backgroundColor}>
+                    {feedbackMessage}
+                </FeedbackMessage>
+
+
+                {/* <button>Check Answer</button> */}
 
                 {/* <label htmlFor="username">Best Guess -> </label> */}
                 <InputField id="username" name="username" type="text"

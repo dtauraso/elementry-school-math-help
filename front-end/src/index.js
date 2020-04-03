@@ -16,6 +16,8 @@ export const store = createStore(
     univeralReducer,
     composeEnhancers(applyMiddleware(thunk, logger))
 )
+console.log(store.getState())
+
 ReactDOM.render(
     <Provider store={store}>
         <App />

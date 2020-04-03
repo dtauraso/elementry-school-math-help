@@ -14,9 +14,20 @@ import {
 import { makeQuantity } from '../utility'
 import AddTwoValues from './AddTwoValues'
 
+
+// const getProblems = (state) => {
+//   let elementarySchool = getCell(state, ['elementary school'])
+//   let problemSets = getVariable(state, ['elementary school'], 'problemSets')
+//   // console.log('stuff', elementarySchool, problemSets.value - 1)
+//   let problemSet = getChild(state, elementarySchool, `problem set ${problemSets.value - 1}`)
+//   // console.log(problemSet)
+//   let problems = Object.keys(problemSet.children)
+//   return problems
+// }
 const PresentProblems = (props) => {
 
     const {Root} = props
+
     /*
     problem set, #of problems, 
     */
@@ -24,9 +35,9 @@ const PresentProblems = (props) => {
     // console.log(Root)
     // get last child of state 'elementary school' via var 'problemSets' as (n - 1)th 'problem set'
     // get last child of state 'state name' via var 'count' as (n - 1)th 'child name'
-
-    let elementarySchool = getCell(Root, ['elementary school'])
-    let problemSets = getVariable(Root, ['elementary school'], 'problemSets')
+    let elementarySchoolName = ['elementary school']
+    let elementarySchool = getCell(Root, elementarySchoolName)
+    let problemSets = getVariable(Root, elementarySchoolName, 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)
     let problemSet = getChild(Root, elementarySchool, `problem set ${problemSets.value - 1}`)
     // console.log(problemSet)
@@ -40,7 +51,6 @@ const PresentProblems = (props) => {
             <AddTwoValues
                 key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                // statePath={['elementary school', 'children', 'problem set', parseInt(problemId)]}
                 stateCoordinates={{problemId: i}}
                 />
 

@@ -9,7 +9,9 @@ import {    setToValue,
             makeVariablePath2,
             getCell,
             getVariable,
-            getChild } from '../../reducerHelpers'
+            getChild,
+            set,
+            setArray } from '../../reducerHelpers'
 
 const answer = 4 + 3
 
@@ -59,12 +61,17 @@ const noValue = (state, action) => {
 
         const parentStateName = action.meta.parentStateName
 
-        let newState = tableAssign(
+        let newState = setArray(
             state,
-            getVariable(state, parentStateName, 'quantity'),
+            parentStateName,
+            'quantity',
             makeQuantity(0,
                     getVariable(state, parentStateName, 'actualAnswer').value))
-    
+
+        newState = set(newState, parentStateName, 'feedbackMessage', 'O')
+
+        newState = set(newState, parentStateName, 'backgroundColor', 'white')
+        
         return [newState, true]
     
     }
@@ -73,10 +80,19 @@ const noValue = (state, action) => {
 const isInteger = (state, action) => {
     return [state, !isNaN(parseInt(action.payload.newValue)) === true]
 }
+const determineAnswerMessage = (actualAnswer, value) => {
+    
+    return actualAnswer === value? 'O':'X'
+    // if correct first time
+        // append 1 to the returned result
+}
 
+const determineAnswer = (actualAnswer, value) => {
+    return actualAnswer === value
+}
 const submitValue = (state, action/*e*/) => {
     // start changing this state
-    // console.log("submit value", action.type, action.meta.parentStateName)
+    console.log("submit value", action.type, action.meta.parentStateName)
     // console.log(e.target.value)
     // console.log(pathDownObject)
     // console.log(answerForm)
@@ -98,39 +114,58 @@ const submitValue = (state, action/*e*/) => {
     // console.log(getValue(state, makeVariablesObjectPath(action)))
     // console.log("set value", parentStateName, getVariable(state, parentStateName, 'value'))
     // this line works
-    let newState = tableAssign(
-        state,
-        getVariable(state, parentStateName, 'value'),
-        parseInt(newValue))
+    let newState = set(state, parentStateName, 'value', parseInt(newValue))
     
     // console.log('new tree')
     // console.log(newState, stateName)
     // console.log("correct", getVariable(state, parentStateName, 'correct'))
-    newState = tableAssign(
+    let actualAnswer = getVariable(newState, parentStateName, 'actualAnswer').value
+    let maxValue = newValue > actualAnswer? newValue: actualAnswer
+    newState = setArray(
         newState,
-        getVariable(newState, parentStateName, 'quantity'),
+        parentStateName,
+        'quantity',
         makeQuantity(newValue,
-                getVariable(newState, parentStateName, 'actualAnswer').value))
+            maxValue)
+                )
     // console.log('new tree 2', newState, stateName)
+// pass in correctFirstTime
+    newState = set(newState, parentStateName, 'correct', ['actualAnswer', 'value'], determineAnswer)
 
-    newState = tableAssign(
-        newState,
-        getVariable(newState, parentStateName, 'correct'),
+    newState = set(newState, parentStateName, 'feedbackMessage', ['actualAnswer', 'value'], determineAnswerMessage)
 
-        getVariable(newState, parentStateName, 'actualAnswer').value ===
-        getVariable(newState, parentStateName, 'value').value
-    )
+    newState = set(newState, parentStateName, 'backgroundColor', 'black')
+
     // console.log('new tree 3', newState, stateName)
+    const submitCount = getVariable(newState, parentStateName, 'submitCount').value
+    newState = set(newState, parentStateName, 'submitCount', getVariable(newState, parentStateName, 'submitCount').value + 1)
+    // so this matches gotItRightTheFirstTime
+    if(submitCount === 1) {
+        newState = set(newState, parentStateName, 'firstAnswer', getVariable(newState, parentStateName, 'value').value)
 
-    newState = tableAssign(
-        newState,
-        getVariable(newState, parentStateName, 'submitCount'),
-        getVariable(newState, parentStateName, 'submitCount').value + 1
-    )
-    // console.log('new tree 4', newState, stateName)
+    }
+
+    console.log('new tree 4', newState, stateName)
 
     return [newState, true]
     
+}
+const gotItRightTheFirstTime = (state, action) => {
+    console.log("here", action, state)
+    const stateName = action.type
+    // the vars are from the basePath
+    const parentStateName = action.meta.basePath
+    console.log('parent', parentStateName)
+    let submitCount = getVariable(state, parentStateName, 'submitCount').value
+    let correct = getVariable(state, parentStateName, 'correct').value
+    let newState = state
+    if(submitCount === 1 && correct) {
+        newState = set(newState, parentStateName, 'correctFirstTime', true)
+        return [newState, true]
+
+    }
+    return [newState, false]
+
 }
 // keep as reference incase it needs to be used
 const measureProgress = (state, action) => {
@@ -203,7 +238,7 @@ const allOtherTimesSubmitting = (state, action/*e*/) => {
 // group by context of problem, not by kind of coding construct
 
 // start state
-export var Root = {
+let Root2 = {
     // get rid of this level
     // redux: {
         // have a Root category
@@ -234,227 +269,256 @@ export var Root = {
         //     // 'children': {'0': {'char':'0'}},
         //     'functions': fetchCatFailure
         // },
-        table : {
-            'root' : {
-                name: ['root'],
-                // all the starts of the links are right here
-                nextParts: {'elementary school':1,
-                            'problem set 0':1,
-                            'numberOfProblems 0': 1,
-                            'problem 0':1,
-                            'problemParts 0': 1,
-                            '0 0':1,
-                            'value 0': 1,
-                            'quantity 0': 1,
-                            'isForm 0': 1,
-                            'operationType 0':1,
+        'root' : {
+            name: ['root'],
+            // all the starts of the links are right here
+            // only the states need to be listed here.  the variables can be accessed from their parent states
+            nextParts: {'elementary school':1,
+                        'problem set 0':1,
 
-                            '1 0': 1,
-                            'value 1': 1,
-                            'quantity 1': 1,
-                            'isForm 1': 1,
-                            'operationType 1':1,
+                        'problem 0':1,
+                        'problemParts 0': 1,
+                        '0 0':1,
 
+                        
+                        '1 0': 1,
 
-                            '2 0': 1,
-                            'value 2': 1,
-                            'quantity 2': 1,
-                            'isForm 2': 1,
-                            'operationType 2': 1,
-                            'noValue 0': 1,
-                            'isInteger 0': 1,
-                            'isNotInteger 0': 1,
+                        '2 0': 1,
 
-                            'submitValue 0': 1,
-                            'isFirstTimeSubmitting 0': 1,
-                            'allOtherTimesSubmitting 0': 1
-                        }
-            },
-            'elementary school': {
-                name: ['elementary school'],
-                children: {'problem set 0': 1},
-                variableNames: ['problemSets 0']
-            },
-            'problemSets 0': {
-                name: ['problemSets 0'],
-                value: 1
-            },
-            'problem set 0': {
-                name: ['problem set 0'],
-                children: {'problem 0': 1},
-                variableNames: ['numberOfProblems 0']
-            },
-            'numberOfProblems 0': {
-                name: ['numberOfProblems 0'],
-                value: 1
-            },
-            'problem 0': { // key of AddTwoValues maps to this
-                name: ['problem 0'],
-                children: {'0 0': 1, '1 0': 1, '2 0': 1}, // can use the OneValue key and the AddTwoValues key
-                variableNames: ['problemParts 0']
-            },
-            'problemParts 0': {
-                name: ['problemParts 0'],
-                value: 3
-            },
+                        'noValue 0': 1,
+                        'isInteger 0': 1,
+                        'isNotInteger 0': 1,
 
 
-            '0 0': {  // a
-                name: ['0 0'],
-                variableNames: ['value 0', 'quantity 0', 'isForm 0', 'operationType 0']
+                        'submitValue 0': 1,
+
+
+                        'got it right the first time 0': 1,
+                        'else 0': 1,
+
+                        // 'isFirstTimeSubmitting 0': 1,
+                        // 'allOtherTimesSubmitting 0': 1
+                    }
+        },
+        'elementary school': {
+            name: ['elementary school'],
+            children: {'problem set 0': 1},
+            variableNames: ['problemSets 0']
+        },
+        'problemSets 0': {
+            name: ['problemSets 0'],
+            value: 1
+        },
+        'problem set 0': {
+            name: ['problem set 0'],
+            children: {'problem 0': 1},
+            variableNames: ['numberOfProblems 0']
+        },
+        'numberOfProblems 0': {
+            name: ['numberOfProblems 0'],
+            value: 1
+        },
+        'problem 0': { // key of AddTwoValues maps to this
+            name: ['problem 0'],
+            children: {'0 0': 1, '1 0': 1, '2 0': 1}, // can use the OneValue key and the AddTwoValues key
+            variableNames: ['problemParts 0']
+        },
+        'problemParts 0': {
+            name: ['problemParts 0'],
+            value: 3
+        },
+
+
+        '0 0': {  // a
+            name: ['0 0'],
+            variableNames: ['value 0', 'quantity 0', 'isForm 0', 'operationType 0']
+        },
+        'value 0': {
+            name: ['value 0'],
+            value: 4
+        },
+        'quantity 0': {
+            name: ['quantity 0'],
+            value: makeQuantity(4, answer)
+        },
+        'isForm 0': {
+            name: ['isForm 0'],
+            value: false
+        },
+        'operationType 0': {
+            name: ['operationType 0'],
+            value: ''
+        },
+
+
+
+        '1 0': { // b
+            name: ['1 0'],
+            variableNames: ['value 1', 'quantity 1', 'isForm 1', 'operationType 1']
+        },
+        'value 1': {
+            name: ['value 1'],
+            value: 3
+        },
+        'quantity 1': {
+            name: ['quantity 1'],
+            value: makeQuantity(3, answer)
+        },
+        'isForm 1': {
+            name: ['isForm 1'],
+            value: false
+        },
+        'operationType 1': {
+            name: ['operationType 1'],
+            value: '+'
+        },
+
+        // intermediate state that also has variable names
+        '2 0': { // anserForm
+            name: ['2 0'],
+            nextParts: {'submission 0':1,
+                        'progressMeter 0': 1},
+            variableNames: ['isForm 2', 'operationType 2']
+        },
+            'isForm 2': {
+                name: ['isForm 2'],
+                value: true
             },
-            'value 0': {
-                name: ['value 0'],
-                value: 4
-            },
-            'quantity 0': {
-                name: ['quantity 0'],
-                value: makeQuantity(4, answer)
-            },
-            'isForm 0': {
-                name: ['isForm 0'],
-                value: false
-            },
-            'operationType 0': {
-                name: ['operationType 0'],
+            'operationType 2': {
+                name: ['operationType 2'],
                 value: ''
             },
+        // we start our submitting the answer with this cell
+        // this index corresponds to the total number of problems
+        'submission 0': {
 
+            name: ['2 0', 'submission 0'],
+            'function': returnState,
 
+            nextStates: [['2 0', 'progressMeter 0']],
+            children: {'noValue 0': 1,
+                        'isInteger 0': 1,
+                        'isNotInteger 0': 1},
+                        
 
-            '1 0': { // b
-                name: ['1 0'],
-                variableNames: ['value 1', 'quantity 1', 'isForm 1', 'operationType 1']
+            // indeces in variableNames corresponds to the number of problems * (3 - 1)
+
+            variableNames: ['value 2',
+                            'quantity 2',
+                            'correct 2',
+                            'firstAnswer 2',
+                            'actualAnswer 2',
+                            'submitCount 2',
+                            'feedbackMessage 2',
+                            'backgroundColor 2']
+        },
+            // just indenting the code
+            'value 2': {
+                name: ['value 2'],
+                value: undefined
             },
-            'value 1': {
-                name: ['value 1'],
-                value: 3
+            'quantity 2': {
+                name: ['quantity 2'],
+                value: makeQuantity(0, answer)
             },
-            'quantity 1': {
-                name: ['quantity 1'],
-                value: makeQuantity(3, answer)
-            },
-            'isForm 1': {
-                name: ['isForm 1'],
+            'correct 2': {
+                name: ['correct 2'],
                 value: false
             },
-            'operationType 1': {
-                name: ['operationType 1'],
-                value: '+'
+            'firstAnswer 2': {
+                name: ['firstAnswer 2'],
+                value: null
             },
-
-            // intermediate state that also has variable names
-            '2 0': { // anserForm
-                name: ['2 0'],
-                nextParts: {'submission 0':1,
-                            'progressMeter 0': 1},
-                variableNames: ['isForm 2', 'operationType 2']
+            'actualAnswer 2': {
+                name: ['actualAnswer 2'],
+                value: answer
             },
-                'isForm 2': {
-                    name: ['isForm 2'],
-                    value: true
-                },
-                'operationType 2': {
-                    name: ['operationType 2'],
-                    value: ''
-                },
-            // we start our submitting the answer with this cell
-            // this index corresponds to the total number of problems
-            'submission 0': {
-
-                name: ['2 0', 'submission 0'],
-                'function': returnState,
-
-                nextStates: [['2 0', 'progressMeter 0']],
-                children: {'noValue 0': 1,
-                            'isInteger 0': 1,
-                            'isNotInteger 0': 1},
-                            
-
-                // indeces in variableNames corresponds to the number of problems * (3 - 1)
-
-                variableNames: ['value 2',
-                                'quantity 2',
-                                'correct 2',
-                                'actualAnswer 2',
-                                'submitCount 2']
-            },
-                // just indenting the code
-                'value 2': {
-                    name: ['value 2'],
-                    value: undefined
-                },
-                'quantity 2': {
-                    name: ['quantity 2'],
-                    value: makeQuantity(0, answer)
-                },
-                'correct 2': {
-                    name: ['correct 2'],
-                    value: false
-                },
-                'actualAnswer 2': {
-                    name: ['actualAnswer 2'],
-                    value: answer
-                },
-                'submitCount 2': {
-                    name: ['submitCount 2'],
-                    value: 0
-                },
-                // submit states
-                // for now keep them as next states
-                'noValue 0': {
-                    'function': noValue,
-                    nextStates: [],
-                    // parents: 
-                },
-                'isInteger 0': {
-                    'function': isInteger,
-                    nextStates: [['submitValue 0']],
-                },
-                'isNotInteger 0': {
-                    'function': returnState,
-                    nextStates: [],
-                },
-                'submitValue 0': {
-                    // need a context for each form
-                    'function': submitValue,
-                    nextStates: [
-                        // go to the progressMeter state
-                        // ['isFirstTimeSubmitting 0'],
-                        // ['allOtherTimesSubmitting 0']
-                    ],
-
-                },
-
-
-
-            'progressMeter 0': {
-                name: ['2 0', 'progressMeter 0'],
-                'function': (state, action) => {
-                    console.log("at progress meter")
-                    return [state, true]
-                },
-                nextStates: [],
-                children: {},
-                variableNames: [
-                                'correctFirstTime 0',
-                                'testingWithoutForm 0'
-                            ]
-            },
-            'isFirstTimeSubmitting 0' : {
-                'function': isFirstTimeSubmitting,
-                nextStates: [],
-                childrenStateLinks: []
-
-            },
-            'allOtherTimesSubmitting 0': {
-                'function': allOtherTimesSubmitting,
-                nextStates: [],
-                childrenStateLinks: []
-
-            }
             
+            'submitCount 2': {
+                name: ['submitCount 2'],
+                value: 0
+            },
+            'feedbackMessage 2': {
+                name: ['feedbackMessage 2'],
+                value: 'O'
+            },
+            'backgroundColor 2': {
+                name: ['backgroundColor 2'],
+                value: 'white'
+            },
+            // submit states
+            // for now keep them as next states
+            'noValue 0': {
+                'function': noValue,
+                nextStates: [],
+                // parents: 
+            },
+            'isInteger 0': {
+                'function': isInteger,
+                nextStates: [['submitValue 0']],
+            },
+            'isNotInteger 0': {
+                'function': returnState,
+                nextStates: [],
+            },
+            'submitValue 0': {
+                // need a context for each form
+                'function': submitValue,
+                nextStates: [],
+
+            },
+
+
+        // can enter a submachine again
+        'progressMeter 0': {
+            name: ['2 0', 'progressMeter 0'],
+            'function': returnState,
+            // (state, action) => {
+            //     console.log("at progress meter", state)
+            //     return [state, true]
+            // },
+            nextStates: [],
+            children: {
+                        'got it right the first time 0': 1, // passes if they are right and submission count == 1
+                        'else 0': 1
+                        },
+            variableNames: [
+                            'correctFirstTime 0',
+                            'testingWithoutForm 0'
+                        ]
         },
+        'correctFirstTime 0': {
+            name: ['correctFirstTime 0'],
+            value: false
+        },
+        'testingWithoutForm 0': {
+            name: ['testingWithoutForm 0'],
+            value: false
+        },
+        'got it right the first time 0': {
+            name: ['got it right the first time'],
+            'function': gotItRightTheFirstTime,
+            nextStates: []
+        },
+        'else 0': {
+            name: ['else 0'],
+            'function': returnState,
+            nextStates: []
+        },
+        
+        // 'isFirstTimeSubmitting 0' : {
+        //     'function': isFirstTimeSubmitting,
+        //     nextStates: [],
+        //     childrenStateLinks: []
+
+        // },
+        // 'allOtherTimesSubmitting 0': {
+        //     'function': allOtherTimesSubmitting,
+        //     nextStates: [],
+        //     childrenStateLinks: []
+
+        // }
+            
         /*
         
         state table
@@ -489,158 +553,11 @@ export var Root = {
                         'operationType 1']
 
         */
-        // 'elementary school' : {
-        //     children: {
-        //         'problem set': {
-        //             0: {
-        //                 a: {
-        //                     'function': returnState,
-        //                     // array of primitives or primitives
-        //                     variables: {
-        //                         value: 4,
-        //                         quantity: makeQuantity(4, answer),
-        //                         isForm: false,
-        //                         operationType: ''
-        //                     },
-        //                 },
-        //                 b: {
-        //                     'function': returnState,
-        //                     variables: {
-        //                         value: 3,
-        //                         quantity: makeQuantity(3, answer),
-        //                         isForm: false,
-        //                         operationType: '+'
-        //                     },
-        //                 },
-        //                 // this state chart will start on the bottom and end up on the 'top'
-        //                 answerForm: {
-        //                     'function': returnState,
-        //                     variables: {
-        //                         isForm: true,
-        //                         operationType: ''
 
-        //                     },
-        //                     // is it right to do this?
-        //                     // 1 context for each 
-        //                     // 2 different contexts but the message depends on the submission and we start execution at submission
-        //                     // a Reducers will have to juggle code for 2 different states
-        //                     // the Reducers can read from a neighboring state but can't write to it
-        //                     // ideally we would have 1 Reducers at the top state to address this directly
-        //                     // we start at submission so there are no children states to run
-
-        //                     // the submission state travels to the progressMeter as we can only have reducers associated
-        //                     // with buttons and the progressMeter variables doesn't depend on a button
-
-        //                     // for the contextual state chart philosophy, submission should be a child state of answerForm
-        //                     // and it's in reality a context of answerForm(fix it later)
-        //                     // children states were not originally meant to have variables of their own unless they were parents
-        //                     submission: {
-                                
-        //                         'function': returnState,
-
-        //                         variables: {
-        //                             value: undefined,
-        //                             quantity: makeQuantity(0, answer),
-        //                             correct: false, // true when the answer is right
-        //                             actualAnswer: answer,
-        //                             submitCount: 0,
-
-
-        //                         },
-        //                         nextStates: [['redux', 'elementary school', 'children', 'noValue'],
-        //                                     ['redux', 'elementary school', 'children', 'isInteger'],
-        //                                     ['redux', 'elementary school', 'children', 'isNotInteger']
-        //                                 ],
-        //                         childrenStateLinks: [],
-        //                         // can't relocate these states(as was done wtih the validator states) as they are contexts within the answerForm state
-        //                         checkSubmissionCount: {
-        //                             'function': returnState,
-        //                             nextStates: [
-        //                                 ['redux', 'elementary school', 'children', 'problem set', 0,
-        //                                 'answerForm',
-        //                                 'submission',
-        //                                 'checkCorrectnessFirstTime'],
-        //                                 ['redux', 'elementary school', 'children', 'allOtherTimesSubmitting']
-
-        //                             ],
-        //                             childrenStateLinks: [],
-
-        //                         },
-        //                         checkCorrectnessFirstTime: {
-        //                             'function': returnState,
-        //                             nextStates : [['redux', 'elementary school', 'children', 'problem set', 0,
-        //                                 'answerForm',
-        //                                 'progressMeter']],
-        //                             childrenStateLinks: [],
-
-        //                         }
-        //                     },
-        //                     progressMeter: {
-        //                         'function': returnState,
-
-        //                         variables: {
-        //                             correctFirstTime: false,  // true if submitCount === 0
-
-        //                             testingWithoutForm: false
-
-        //                         },
-        //                         nextStates: [],
-        //                         childrenStateLinks: []
-        //                     }
-        //                 }
-        //             }
-        //         },
-        //         // these are here so they aren't copied so many time inside the answerForm state
-        //        'noValue': {
-        //             'function': noValue,
-        //             nextStates: [],
-        //             childrenStateLinks: []
-
-        //         },
-        //         'isInteger': {
-        //             'function': isInteger,
-        //             nextStates: [['redux', 'elementary school', 'children', 'submitValue']],
-        //             childrenStateLinks: []
-        //         },
-        //         'isNotInteger': {
-        //             'function': returnState,
-        //             nextStates: [],
-        //             childrenStateLinks: []
-
-        //         },
-        //         'submitValue': {
-        //             // need a context for each form
-        //             'function': submitValue,
-        //             nextStates: [
-        //                 // go to the progressMeter state
-        //                 ['redux', 'elementary school', 'children', 'isFirstTimeSubmitting'],
-        //                         ['redux', 'elementary school', 'children', 'allOtherTimesSubmitting']],
-        //             childrenStateLinks: []
-
-        //         },
-
-
-
-
-
-
-        //         // should be able to be used for each answerForm state
-        //         'isFirstTimeSubmitting' : {
-        //             'function': isFirstTimeSubmitting,
-        //             nextStates: [],
-        //             childrenStateLinks: []
-
-        //         },
-        //         'allOtherTimesSubmitting': {
-        //             'function': allOtherTimesSubmitting,
-        //             nextStates: [],
-        //             childrenStateLinks: []
-
-        //         }
-        //     }
-        // }
-        
-    // }
     
     
 }
+// run init stuff here with bft
+// Root2 = {}
+
+export var Root = Root2;

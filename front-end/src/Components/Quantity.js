@@ -15,10 +15,13 @@ import { makeQuantity } from '../utility'
 
 const Box = styled.p`
 
-    width: 50%;
+    // what if this was dependent on the expected total number of @ symbols?
+    width: 25px;
 
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+    margin-top: 1px;
+    margin-bottom: 1px;
     color: ${props => props.isColor ? "black": "white"};
 
 `
@@ -42,9 +45,11 @@ const EndBox = styled(Box/*, props */)`
 // things are expanding from the center
 const Boxes = styled.div`
 
+    // what if this was dependent on the expected total number of @ symbols?
     width: 50%;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
     border: 1px solid black;

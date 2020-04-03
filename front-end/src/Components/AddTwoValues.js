@@ -20,10 +20,12 @@ const backgroundColor = "lightblue"
 const Container = styled.div`
 
     // @media(max-width: 400px) {
-        width: vw;
+        width: 50%;//vw;
         background-color: ${props => props.backgroundColor};
         border: 1px solid #BADA55;
-    
+        display: flex;
+        flex-direction: column;
+        // justify-content: flex-start;
         margin: 0 auto;
         // magin-left: 
     // }
