@@ -176,7 +176,67 @@ export const breathFirstTraversal = (state, action, startStateName) => {
                 // setCell)
 // have an assignment routine that updates a set of rows at once
 // ...(cb(cells, value).cells) // cb should always return a js object stateName: {stuff}
+export const makeCell = (stateObject) => {
+    const { name,
+            nextParts,
+            functionCode,
+            nextStates,
+            children,
+            variableNames,
+            value} = stateObject
+    let newCell = {}
 
+    let lastPosition = name.length - 1
+    if(name) {
+        newCell = {[name[lastPosition]]: {name: name}}
+    }
+    if(nextParts) {
+        let newNextParts = {}
+        nextParts.forEach(nextPart => {
+            newNextParts = {...newNextParts, [nextPart]: 1}
+        })
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], nextParts: newNextParts}}
+        }
+    if(functionCode) {
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], 'function': functionCode}}
+    }
+    if(nextStates) {
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], nextStates: nextStates}}
+    }
+    if(children) {
+        let newChildren = {}
+        children.forEach(nextChild => {
+            newChildren = {...newChildren, [nextChild]: 1}
+        })
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], children: newChildren}}
+        }
+    if(variableNames) {
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], variableNames: variableNames}}
+        // console.log('new cell', newCell)
+        }
+    if(value !== undefined) {
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], value: value}}
+        // console.log('new cell', newCell)
+        }
+
+    
+    return newCell
+    // name: ['root']
+    // nextParts: {    'elementary school':1,
+    //             'problem set 0':1,
+    //             'problem 0':1}
+    // function: returnState
+
+    // nextStates: []
+    // children: {'a 0': 1, 'b 0': 1, 'answerForm 0': 1},
+
+    // variableNames: ['value 1',
+    //             'quantity 1',
+    //             'isForm 1',
+    //             'operationType 1']
+    
+
+}
 export const getCell = (state, path) => {
 
     // console.log('path', path)

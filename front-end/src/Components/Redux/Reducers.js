@@ -1,5 +1,6 @@
 import { makeQuantity } from '../../utility'
 import {    setToValue,
+            makeCell,
             setCell,
             append,
             getValue,
@@ -137,8 +138,9 @@ const submitValue = (state, action/*e*/) => {
     newState = set(newState, parentStateName, 'backgroundColor', 'black')
 
     // console.log('new tree 3', newState, stateName)
-    const submitCount = getVariable(newState, parentStateName, 'submitCount').value
     newState = set(newState, parentStateName, 'submitCount', getVariable(newState, parentStateName, 'submitCount').value + 1)
+    const submitCount = getVariable(newState, parentStateName, 'submitCount').value
+
     // so this matches gotItRightTheFirstTime
     if(submitCount === 1) {
         newState = set(newState, parentStateName, 'firstAnswer', getVariable(newState, parentStateName, 'value').value)
@@ -151,16 +153,24 @@ const submitValue = (state, action/*e*/) => {
     
 }
 const gotItRightTheFirstTime = (state, action) => {
+
+    // complex reducer because within the context of contextual state charts it can update 2 different parent states
     console.log("here", action, state)
     const stateName = action.type
     // the vars are from the basePath
-    const parentStateName = action.meta.basePath
+    const parentStateName = action.meta.parentStateName
+    const submissionStateName = action.meta.basePath
     console.log('parent', parentStateName)
-    let submitCount = getVariable(state, parentStateName, 'submitCount').value
-    let correct = getVariable(state, parentStateName, 'correct').value
+    let submitCount = getVariable(state, submissionStateName, 'submitCount').value
+    let correct = getVariable(state, submissionStateName, 'correct').value
     let newState = state
     if(submitCount === 1 && correct) {
         newState = set(newState, parentStateName, 'correctFirstTime', true)
+
+        // need to use the same parent state name for getting and setting
+        const feedbackMessage = getVariable(state, submissionStateName, 'feedbackMessage').value
+        newState = set(newState, submissionStateName, 'feedbackMessage', feedbackMessage + '1')
+
         return [newState, true]
 
     }
@@ -269,137 +279,133 @@ let Root2 = {
         //     // 'children': {'0': {'char':'0'}},
         //     'functions': fetchCatFailure
         // },
-        'root' : {
+        /*
+        stateName0 : {
+            'roots next parts': 1
+            'state table': 1
+            'next states from': {
+                anotherstateName0: 1,
+            'state data': {
+
+            }
+            }
+        }
+        */
+       ...makeCell({
             name: ['root'],
-            // all the starts of the links are right here
-            // only the states need to be listed here.  the variables can be accessed from their parent states
-            nextParts: {'elementary school':1,
-                        'problem set 0':1,
-
-                        'problem 0':1,
-                        'problemParts 0': 1,
-                        '0 0':1,
-
-                        
-                        '1 0': 1,
-
-                        '2 0': 1,
-
-                        'noValue 0': 1,
-                        'isInteger 0': 1,
-                        'isNotInteger 0': 1,
-
-
-                        'submitValue 0': 1,
-
-
-                        'got it right the first time 0': 1,
-                        'else 0': 1,
-
-                        // 'isFirstTimeSubmitting 0': 1,
-                        // 'allOtherTimesSubmitting 0': 1
-                    }
-        },
-        'elementary school': {
+            nextParts : [   'elementary school',
+                            'problem set 0',
+                            'problem 0',
+                            'problemParts 0',
+                            '0 0',
+                            '1 0',
+                            '2 0',
+                            'noValue 0',
+                            'isInteger 0',
+                            'isNotInteger 0',
+                            'submitValue 0',
+                            'got it right the first time 0',
+                            'else 0'],
+        }),
+        ...makeCell({
             name: ['elementary school'],
-            children: {'problem set 0': 1},
+            children: ['problem set 0'],
             variableNames: ['problemSets 0']
-        },
-        'problemSets 0': {
+        }),
+        ...makeCell({
             name: ['problemSets 0'],
             value: 1
-        },
-        'problem set 0': {
+        }),
+
+        ...makeCell({
             name: ['problem set 0'],
-            children: {'problem 0': 1},
+            children: ['problem 0'],
             variableNames: ['numberOfProblems 0']
-        },
-        'numberOfProblems 0': {
+        }),
+        ...makeCell({
             name: ['numberOfProblems 0'],
             value: 1
-        },
-        'problem 0': { // key of AddTwoValues maps to this
+        }),
+        ...makeCell({  // key of AddTwoValues maps to this
             name: ['problem 0'],
-            children: {'0 0': 1, '1 0': 1, '2 0': 1}, // can use the OneValue key and the AddTwoValues key
+            children: ['0 0', '1 0', '2 0'], // can use the OneValue key and the AddTwoValues key
             variableNames: ['problemParts 0']
-        },
-        'problemParts 0': {
+        }),
+        ...makeCell({
             name: ['problemParts 0'],
             value: 3
-        },
-
-
-        '0 0': {  // a
+        }),
+        ...makeCell({ // a
             name: ['0 0'],
             variableNames: ['value 0', 'quantity 0', 'isForm 0', 'operationType 0']
-        },
-        'value 0': {
+        }),
+
+        ...makeCell({
             name: ['value 0'],
             value: 4
-        },
-        'quantity 0': {
+        }),
+
+        ...makeCell({
             name: ['quantity 0'],
             value: makeQuantity(4, answer)
-        },
-        'isForm 0': {
+        }),
+
+        ...makeCell({
             name: ['isForm 0'],
             value: false
-        },
-        'operationType 0': {
+        }),
+
+        ...makeCell({
             name: ['operationType 0'],
             value: ''
-        },
+        }),
 
 
-
-        '1 0': { // b
+        ...makeCell({ // b
             name: ['1 0'],
             variableNames: ['value 1', 'quantity 1', 'isForm 1', 'operationType 1']
-        },
-        'value 1': {
+        }),
+        ...makeCell({
             name: ['value 1'],
             value: 3
-        },
-        'quantity 1': {
+        }),
+        ...makeCell({
             name: ['quantity 1'],
             value: makeQuantity(3, answer)
-        },
-        'isForm 1': {
+        }),
+        ...makeCell({
             name: ['isForm 1'],
             value: false
-        },
-        'operationType 1': {
+        }),
+        ...makeCell({
             name: ['operationType 1'],
             value: '+'
-        },
+        }),
 
         // intermediate state that also has variable names
-        '2 0': { // anserForm
+        ...makeCell({ // anserForm
             name: ['2 0'],
-            nextParts: {'submission 0':1,
-                        'progressMeter 0': 1},
+            nextParts: ['submission 0', 'progressMeter 0'],
             variableNames: ['isForm 2', 'operationType 2']
-        },
-            'isForm 2': {
+        }),
+            ...makeCell({
                 name: ['isForm 2'],
                 value: true
-            },
-            'operationType 2': {
+            }),
+            ...makeCell({
                 name: ['operationType 2'],
                 value: ''
-            },
+            }),
+
         // we start our submitting the answer with this cell
         // this index corresponds to the total number of problems
-        'submission 0': {
 
+        ...makeCell({
             name: ['2 0', 'submission 0'],
-            'function': returnState,
-
+            functionCode: returnState,
             nextStates: [['2 0', 'progressMeter 0']],
-            children: {'noValue 0': 1,
-                        'isInteger 0': 1,
-                        'isNotInteger 0': 1},
-                        
+            children: ['noValue 0', 'isInteger 0', 'isNotInteger 0'],
+
 
             // indeces in variableNames corresponds to the number of problems * (3 - 1)
 
@@ -411,114 +417,98 @@ let Root2 = {
                             'submitCount 2',
                             'feedbackMessage 2',
                             'backgroundColor 2']
-        },
+        }),
             // just indenting the code
-            'value 2': {
+
+            ...makeCell({
                 name: ['value 2'],
-                value: undefined
-            },
-            'quantity 2': {
+                value: null
+            }),
+            ...makeCell({
                 name: ['quantity 2'],
                 value: makeQuantity(0, answer)
-            },
-            'correct 2': {
+            }),
+            ...makeCell({
                 name: ['correct 2'],
                 value: false
-            },
-            'firstAnswer 2': {
+            }),
+            ...makeCell({
                 name: ['firstAnswer 2'],
                 value: null
-            },
-            'actualAnswer 2': {
+            }),
+            ...makeCell({
                 name: ['actualAnswer 2'],
                 value: answer
-            },
-            
-            'submitCount 2': {
+            }),
+            ...makeCell({
                 name: ['submitCount 2'],
                 value: 0
-            },
-            'feedbackMessage 2': {
+            }),
+            ...makeCell({
                 name: ['feedbackMessage 2'],
                 value: 'O'
-            },
-            'backgroundColor 2': {
+            }),
+            ...makeCell({
                 name: ['backgroundColor 2'],
                 value: 'white'
-            },
+            }),
+
             // submit states
             // for now keep them as next states
-            'noValue 0': {
-                'function': noValue,
+            ...makeCell({
+                name: ['noValue 0'],
+                functionCode: noValue,
                 nextStates: [],
-                // parents: 
-            },
-            'isInteger 0': {
-                'function': isInteger,
+            }),
+            ...makeCell({
+                name: ['isInteger 0'],
+                functionCode: isInteger,
                 nextStates: [['submitValue 0']],
-            },
-            'isNotInteger 0': {
-                'function': returnState,
+            }),
+            ...makeCell({
+                name: ['isNotInteger 0'],
+                functionCode: returnState,
                 nextStates: [],
-            },
-            'submitValue 0': {
+            }),
+            ...makeCell({
+                name: ['submitValue 0'],
+
                 // need a context for each form
-                'function': submitValue,
+                functionCode: submitValue,
                 nextStates: [],
-
-            },
-
+            }),
 
         // can enter a submachine again
-        'progressMeter 0': {
+        ...makeCell({
             name: ['2 0', 'progressMeter 0'],
-            'function': returnState,
-            // (state, action) => {
-            //     console.log("at progress meter", state)
-            //     return [state, true]
-            // },
+            functionCode: returnState,
             nextStates: [],
-            children: {
-                        'got it right the first time 0': 1, // passes if they are right and submission count == 1
-                        'else 0': 1
-                        },
+            children: [ 'got it right the first time 0', // passes if they are right and submission count == 1
+                        'else 0'],
             variableNames: [
                             'correctFirstTime 0',
                             'testingWithoutForm 0'
                         ]
-        },
-        'correctFirstTime 0': {
+        }),
+        ...makeCell({
             name: ['correctFirstTime 0'],
             value: false
-        },
-        'testingWithoutForm 0': {
+        }),
+        ...makeCell({
             name: ['testingWithoutForm 0'],
             value: false
-        },
-        'got it right the first time 0': {
-            name: ['got it right the first time'],
-            'function': gotItRightTheFirstTime,
+        }),
+        ...makeCell({
+            name: ['got it right the first time 0'],
+            functionCode: gotItRightTheFirstTime,
             nextStates: []
-        },
-        'else 0': {
+        }),
+
+        ...makeCell({
             name: ['else 0'],
-            'function': returnState,
-            nextStates: []
-        },
-        
-        // 'isFirstTimeSubmitting 0' : {
-        //     'function': isFirstTimeSubmitting,
-        //     nextStates: [],
-        //     childrenStateLinks: []
-
-        // },
-        // 'allOtherTimesSubmitting 0': {
-        //     'function': allOtherTimesSubmitting,
-        //     nextStates: [],
-        //     childrenStateLinks: []
-
-        // }
-            
+            functionCode: returnState,
+            nextStates: [],
+        })            
         /*
         
         state table
@@ -559,5 +549,519 @@ let Root2 = {
 }
 // run init stuff here with bft
 // Root2 = {}
+// add another set of states for the next problem
+var x = {
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+        ...makeCell({
+            name: ['numberOfProblems 0'],
+            value: 1
+        }),
+
+//         // after add 1
+        ...makeCell({
+            name: [`problem numberOfProblems`],  // key of AddTwoValues maps to this
+
+            // 0, 1, 2    3, 4, 5   6, 7, 8
+            children: [ `3(numberOfProblems)+0 numberOfProblems`,
+                        `3(numberOfProblems)+1 numberOfProblems`,
+                        `3(numberOfProblems)+2 numberOfProblems`],   // can use the OneValue key and the AddTwoValues key
+            variableNames: [`problemParts numberOfProblems`]
+        }),
+
+        ...makeCell({
+            name: [`problemParts numberOfProblems`],
+            value: 3
+        }),
+
+
+        ...makeCell({ // a
+            name: [`3(numberOfProblems)+0 numberOfProblems`],
+            variableNames: [`value numberOfProblems`,
+                            `quantity numberOfProblems`,
+                            `isForm numberOfProblems`,
+                            `operationType numberOfProblems`]
+        }),
+
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `value numberOfProblems`: {
+//             name: [`value numberOfProblems`],
+//             value: 4
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `quantity numberOfProblems`: {
+//             name: [`quantity numberOfProblems`],
+//             value: makeQuantity(4, answer)
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `isForm numberOfProblems`: {
+//             name: [`isForm numberOfProblems`],
+//             value: false
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `operationType numberOfProblems`: {
+//             name: [`operationType numberOfProblems`],
+//             value: ''
+//         },
+
+
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `3(numberOfProblems)+1 numberOfProblems`: { // b
+//             name: [`3(numberOfProblems)+1 numberOfProblems`],
+//             variableNames: [`value 3(numberOfProblems)+1`,
+//                             `quantity 3(numberOfProblems)+1`,
+//                             `isForm 3(numberOfProblems)+1`,
+//                             `operationType 3(numberOfProblems)+1`]
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `value 3(numberOfProblems)+1`: {
+//             name: [`value 3(numberOfProblems)+1`],
+//             value: 3
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `quantity 3(numberOfProblems)+1`: {
+//             name: [`quantity 3(numberOfProblems)+1`],
+//             value: makeQuantity(3, answer)
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `isForm 3(numberOfProblems)+1`: {
+//             name: [`isForm 3(numberOfProblems)+1`],
+//             value: false
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `operationType 3(numberOfProblems)+1`: {
+//             name: [`operationType 3(numberOfProblems)+1`],
+//             value: '+'
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         // intermediate state that also has variable names
+//         `3(numberOfProblems)+2 numberOfProblems`: { // anserForm
+//             name: [`3(numberOfProblems)+2 numberOfProblems`],
+//             nextParts: {`submission numberOfProblems`:1,
+//                         `progressMeter numberOfProblems`: 1},
+//             variableNames: [`isForm 3(numberOfProblems)+2`, `operationType 3(numberOfProblems)+2`]
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `isForm 3(numberOfProblems)+2`: {
+//                 name: [`isForm 3(numberOfProblems)+2`],
+//                 value: true
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `operationType 3(numberOfProblems)+2`: {
+//                 name: [`operationType 3(numberOfProblems)+2`],
+//                 value: ''
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         // we start our submitting the answer with this cell
+//         // this index corresponds to the total number of problems
+//         `submission numberOfProblems`: {
+
+//             name: [`3(numberOfProblems)+2 numberOfProblems`, `submission numberOfProblems`],
+//             'function': returnState,
+
+//             nextStates: [[`3(numberOfProblems)+2 numberOfProblems`, `progressMeter numberOfProblems`]],
+//             children: {`noValue numberOfProblems`: 1,
+//                         `isInteger numberOfProblems`: 1,
+//                         `isNotInteger numberOfProblems`: 1},
+                        
+
+//             // indeces in variableNames corresponds to the number of problems * (3 - 1)
+
+//             variableNames: [`value 3(numberOfProblems)+2`,
+//                             `quantity 3(numberOfProblems)+2`,
+//                             `correct 3(numberOfProblems)+2`,
+//                             `firstAnswer 3(numberOfProblems)+2`,
+//                             `actualAnswer 3(numberOfProblems)+2`,
+//                             `submitCount 3(numberOfProblems)+2`,
+//                             `feedbackMessage 3(numberOfProblems)+2`,
+//                             `backgroundColor 3(numberOfProblems)+2`]
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             // just indenting the code
+//             `value 3(numberOfProblems)+2`: {
+//                 name: [`value 3(numberOfProblems)+2`],
+//                 value: undefined
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `quantity 3(numberOfProblems)+2`: {
+//                 name: [`quantity 3(numberOfProblems)+2`],
+//                 value: makeQuantity(0, answer)
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `correct 3(numberOfProblems)+2`: {
+//                 name: [`correct 3(numberOfProblems)+2`],
+//                 value: false
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `firstAnswer 3(numberOfProblems)+2`: {
+//                 name: ['firstAnswer 3(numberOfProblems)+2'],
+//                 value: null
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `actualAnswer 3(numberOfProblems)+2`: {
+//                 name: [`actualAnswer 3(numberOfProblems)+2`],
+//                 value: answer
+//             },
+                    // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `submitCount 3(numberOfProblems)+2`: {
+//                 name: [`submitCount 3(numberOfProblems)+2`],
+//                 value: 0
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `feedbackMessage 3(numberOfProblems)+2`: {
+//                 name: [`feedbackMessage 3(numberOfProblems)+2`],
+//                 value: 'O'
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `backgroundColor 3(numberOfProblems)+2`: {
+//                 name: [`backgroundColor 3(numberOfProblems)+2`],
+//                 value: 'white'
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             // submit states
+//             // for now keep them as next states
+//             `noValue numberOfProblems`: {
+//                 name: [`noValue numberOfProblems`]
+//                 'function': noValue,
+//                 nextStates: [],
+//                 // parents: 
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `isInteger numberOfProblems`: {
+//                 name: [`isInteger numberOfProblems`]
+//                 'function': isInteger,
+//                 nextStates: [[`submitValue numberOfProblems`]],
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `isNotInteger numberOfProblems`: {
+//                 name: [`isNotInteger numberOfProblems`]
+//                 'function': returnState,
+//                 nextStates: [],
+//             },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//             `submitValue numberOfProblems`: {
+//                 name: [`submitValue numberOfProblems`]
+//                 // need a context for each form
+//                 'function': submitValue,
+//                 nextStates: [],
+
+//             },
+
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         // can enter a submachine again
+//         `progressMeter numberOfProblems`: {
+//             name: [`3(numberOfProblems)+2 numberOfProblems`, `progressMeter numberOfProblems`],
+//             'function': returnState,
+//             nextStates: [],
+//             children: {
+//                         `got it right the first time numberOfProblems`: 1, // passes if they are right and submission count == 1
+//                         `else numberOfProblems`: 1
+//                         },
+//             variableNames: [
+//                             `correctFirstTime numberOfProblems`,
+//                             `testingWithoutForm numberOfProblems`
+//                         ]
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `correctFirstTime numberOfProblems`: {
+//             name: [`correctFirstTime numberOfProblems`],
+//             value: false
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `testingWithoutForm numberOfProblems`: {
+//             name: [`testingWithoutForm numberOfProblems`],
+//             value: false
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `got it right the first time numberOfProblems`: {
+//             name: [`got it right the first time numberOfProblems`],
+//             'function': gotItRightTheFirstTime,
+//             nextStates: []
+//         },
+        // ...makeCell({
+        //     name,
+        //     nextParts,
+        //     functionCode,
+        //     nextStates,
+        //     children,
+        //     variableNames
+        //     value
+        // })
+
+//         `else numberOfProblems`: {
+//             name: [`else numberOfProblems`],
+//             'function': returnState,
+//             nextStates: []
+//         }
+
+    }
 
 export var Root = Root2;
