@@ -129,6 +129,7 @@ const submitValue = (state, action/*e*/) => {
         makeQuantity(newValue,
             maxValue)
                 )
+    // we have no way of knowing if the value they entered is wrong or too small
     // console.log('new tree 2', newState, stateName)
 // pass in correctFirstTime
     newState = set(newState, parentStateName, 'correct', ['actualAnswer', 'value'], determineAnswer)
@@ -446,7 +447,7 @@ let Root2 = {
             }),
             ...makeCell({
                 name: ['feedbackMessage 2'],
-                value: 'O'
+                value: 'O2'
             }),
             ...makeCell({
                 name: ['backgroundColor 2'],
@@ -661,29 +662,29 @@ let x = {
 
         ...makeCell({ // a
             name: [`${iA} ${numberOfProblems}`],
-            variableNames: [`value ${numberOfProblems}`,
-                            `quantity ${numberOfProblems}`,
-                            `isForm ${numberOfProblems}`,
-                            `operationType ${numberOfProblems}`]
+            variableNames: [`value ${iA}`,
+                            `quantity ${iA}`,
+                            `isForm ${iA}`,
+                            `operationType ${iA}`]
         }),
 
                 ...makeCell({
-                    name: [`value ${numberOfProblems}`],
-                    value: 4
+                    name: [`value ${iA}`],
+                    value: 5
                 }),
 
                 ...makeCell({
-                    name: [`quantity ${numberOfProblems}`],
+                    name: [`quantity ${iA}`],
                     value: makeQuantity(4, answer)
                 }),
 
                 ...makeCell({
-                    name: [`isForm ${numberOfProblems}`],
+                    name: [`isForm ${iA}`],
                     value: false
                 }),
 
                 ...makeCell({
-                    name: [`operationType ${numberOfProblems}`],
+                    name: [`operationType ${iA}`],
                     value: ''
                 }),
 
@@ -699,7 +700,7 @@ let x = {
 
                 ...makeCell({
                     name: [`value ${iB}`],
-                    value: 3
+                    value: 6
                 }),
 
                 ...makeCell({

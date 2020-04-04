@@ -24,7 +24,19 @@ export const getCat = () => dispatch => {
         });
 
 };
+export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
 
+    // have a custom state that just lets you save to the field variable
+    // dispatch({
+    //     type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+    //     payload: lotsOfThings,
+    //     meta: {
+    //             basePath: pathToState, // base state(for the object data)
+    //             parentStateName: pathToState,
+    //             // testPayload: store.getState()
+    //         }
+    // });
+}
 export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
 
     // console.log("in the action")

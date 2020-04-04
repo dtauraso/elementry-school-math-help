@@ -51,7 +51,8 @@ export const AddTwoValues = (props) => {
     console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
-    console.log(problemParts)
+
+    console.log('problem parts', problemParts, stateCoordinates)
     // let problemParts = getVariable(Root, x.name, 'problemSets')
 
     // will need to pass index trackers instead of a single long path
@@ -69,7 +70,7 @@ export const AddTwoValues = (props) => {
             {problemParts.map((problemKey, i) => (
                 <OneValue
                     key={i}
-                    stateCoordinates={{...stateCoordinates, problemPart: String(i)}}
+                    stateCoordinates={{...stateCoordinates, problemPart: problemKey[0].split(' ')[0]}}
                     />
             ))}
             

@@ -71,6 +71,8 @@ const SubmitAnswer = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        console.log('we are submitting our answer')
+        // call submit answer here
         // console.log(event)
         // const data = new FormData(event.target);
         
@@ -82,16 +84,18 @@ const SubmitAnswer = (props) => {
     return (
             <Form onSubmit={handleSubmit}>
 
+                {/* put this outside the form */}
                 <FeedbackMessage backgroundColor={backgroundColor}>
                     {feedbackMessage}
                 </FeedbackMessage>
 
 
-                {/* <button>Check Answer</button> */}
+                <button>Check Answer</button>
 
                 {/* <label htmlFor="username">Best Guess -> </label> */}
                 <InputField id="username" name="username" type="text"
                 onChange={(e) => {
+                    // call add to answer here
                     console.log(Root)
                     // console.log(getValue(Root, [...statePath, 'submission']))
                     props.submitAnswer({

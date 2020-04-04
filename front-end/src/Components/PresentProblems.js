@@ -46,12 +46,14 @@ const PresentProblems = (props) => {
     return (
         <div>
 
+        {/* how the coordinates are calculated here is wrong 
+        use the problem name to get the coordinates*/}
         {problems.map((problem, i) => (
             
             <AddTwoValues
                 key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                stateCoordinates={{problemId: i}}
+                stateCoordinates={{problemId: problem.split(' ')[1]}}
                 />
 
         ))}
