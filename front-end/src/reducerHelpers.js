@@ -168,7 +168,6 @@ export const breathFirstTraversal = (state, action, startStateName) => {
     // return [temporaryState, true]
 }
 
-
 // getVariable(tree, getCell(tree, stateName), 'value').value => value from key 'value 0'
 // tableAssign(tree,
                 // getVariable(getCell(tree, stateName), 'value').name,
