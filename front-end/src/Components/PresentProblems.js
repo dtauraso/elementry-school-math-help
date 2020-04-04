@@ -39,9 +39,9 @@ const PresentProblems = (props) => {
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getVariable(Root, elementarySchoolName, 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)
-    let problemSet = getChild(Root, elementarySchool, `problem set ${problemSets.value - 1}`)
+    let problemSet = getChild(Root, elementarySchool, [`problem set ${problemSets.value - 1}`])
     console.log('problem set', problemSet)
-    let problems = Object.keys(problemSet.children)
+    let problems = problemSet.children//Object.keys(problemSet.children)
     console.log(problems)
     return (
         <div>
@@ -53,7 +53,7 @@ const PresentProblems = (props) => {
             <AddTwoValues
                 key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                stateCoordinates={{problemId: problem.split(' ')[1]}}
+                stateCoordinates={{problemId: problem[0].split(' ')[1]}}
                 />
 
         ))}

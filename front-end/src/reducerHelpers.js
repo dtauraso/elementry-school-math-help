@@ -168,6 +168,15 @@ export const breathFirstTraversal = (state, action, startStateName) => {
     // return [temporaryState, true]
 }
 
+export const makeSet = (array) => {
+    // this is the only way I know of to make a js object mimic a set
+    let jsObject = {}
+    array.forEach(item => {
+        jsObject = {...jsObject, [item]: 1}
+    })
+    return jsObject
+}
+
 // getVariable(tree, getCell(tree, stateName), 'value').value => value from key 'value 0'
 // tableAssign(tree,
                 // getVariable(getCell(tree, stateName), 'value').name,
@@ -203,11 +212,12 @@ export const makeCell = (stateObject) => {
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], nextStates: nextStates}}
     }
     if(children) {
-        let newChildren = {}
-        children.forEach(nextChild => {
-            newChildren = {...newChildren, [nextChild]: 1}
-        })
-        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], children: newChildren}}
+        // the children are only 1 dimentional and can't be instantly searched for it they are n dimentions
+        // let newChildren = {}
+        // children.forEach(nextChild => {
+        //     newChildren = {...newChildren, [nextChild]: 1}
+        // })
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], children: children}}
         }
     if(variableNames) {
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], variableNames: variableNames}}
@@ -302,6 +312,22 @@ export const getVariable = (state, parentStateName, variableName) => {
     return variable
 }
 
+export const findListInNestedList = (nestedList, list) => {
+
+    let isFound = false
+    nestedList.forEach(listItem => {
+        let count = 0
+        listItem.forEach((string, i) =>{
+            if(string === list[i]) {
+                count ++
+            }
+        })
+        if(count === listItem.length) {
+            isFound = true
+        }
+    })
+    return isFound
+}
 export const getChild = (state, cell, childName) => {
 
     if(!cell) {
@@ -310,12 +336,16 @@ export const getChild = (state, cell, childName) => {
     if(!Object.keys(cell).includes('children')) {
         return null
     }
-    if(!cell.children[childName]) {
-        return null
+    let child = null
+    
+    if(findListInNestedList(cell.children, childName)) {
+        child = getCell(state, childName)
     }
-    return state[childName]
+    
+    return child//state[childName]
 }
 
+// not being used anymore
 export const getChildren = (state, stateName) => {
 
     let cell = getCell(state, stateName)
@@ -326,8 +356,9 @@ export const getChildren = (state, stateName) => {
     if(!Object.keys(cell).includes('children')) {
         return []
     }
-    // we want the children to return like this [['one', 'two'], ['three'], ['four', 'five']]
-    return Object.keys(cell.children).map(nextStateString => [nextStateString])
+    // the children are 1 dimentional
+    // we want the children to return like this [['one'], ['three'], ['four']]
+    return cell.children//Object.keys(cell.children)//.map(nextStateString => [nextStateString])
 }
 
 export const tableAssign = (state, cell, value) => {
@@ -421,7 +452,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             if(passes) {
                 return null
             }
-                
+            console.log("getting state", temporaryState, nextState) 
             let cell = getCell(temporaryState, nextState)
             // ignore the state if it doesn't have a function to run
             if(!Object.keys(cell).includes('function')) {
@@ -453,10 +484,11 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             // untested
             // if the winningStateName has any children
             let childrenStates = getChildren(temporaryState, winningStateName)
+            console.log(childrenStates)
             if(childrenStates.length === 0) {
                 return null
             }
-            // console.log("we have children", childrenStates)
+            console.log("we have children", childrenStates)
             action.meta.parentStateName = [...action.type]
             // call the routing agin with next states holding the children
             
@@ -487,7 +519,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             }
             nextStates = currentStateObject.nextStates
 
-            // console.log("next set of edges", nextStates)
+            console.log("next set of edges", nextStates)
         } else if(!passes && nextStates.length === 0) {
             console.log('machine is done 2')
             // return temporaryState

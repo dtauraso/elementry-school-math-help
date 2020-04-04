@@ -5,6 +5,7 @@ import {    setToValue,
             append,
             getValue,
             deepAssign,
+            makeSet,
             tableAssign,
             makeVariablePath,
             makeVariablePath2,
@@ -310,7 +311,7 @@ let Root2 = {
         }),
         ...makeCell({
             name: ['elementary school'],
-            children: ['problem set 0'],
+            children: [['problem set 0']],
             variableNames: ['problemSets 0']
         }),
         ...makeCell({
@@ -320,7 +321,7 @@ let Root2 = {
 
         ...makeCell({
             name: ['problem set 0'],
-            children: ['problem 0'],
+            children: [['problem 0']],
             variableNames: ['numberOfProblems 0']
         }),
         ...makeCell({
@@ -329,7 +330,7 @@ let Root2 = {
         }),
         ...makeCell({  // key of AddTwoValues maps to this
             name: ['problem 0'],
-            children: ['0 0', '1 0', '2 0'], // can use the OneValue key and the AddTwoValues key
+            children: [['0 0'], ['1 0'], ['2 0']], // can use the OneValue key and the AddTwoValues key
             variableNames: ['problemParts 0']
         }),
         ...makeCell({
@@ -398,17 +399,17 @@ let Root2 = {
                 value: ''
             }),
 
+       
+
         // we start our submitting the answer with this cell
         // this index corresponds to the total number of problems
 
         ...makeCell({
             name: ['2 0', 'submission 0'],
+            nextParts: ['update Users\'s answer 0'],
             functionCode: returnState,
             nextStates: [['2 0', 'progressMeter 0']],
-            children: ['noValue 0', 'isInteger 0', 'isNotInteger 0'],
-
-
-            // indeces in variableNames corresponds to the number of problems * (3 - 1)
+            children: [['noValue 0'], ['isInteger 0'], ['isNotInteger 0']],
 
             variableNames: ['value 2',
                             'quantity 2',
@@ -419,6 +420,13 @@ let Root2 = {
                             'feedbackMessage 2',
                             'backgroundColor 2']
         }),
+                    ...makeCell({
+                        name: ['2 0', 'submission 0', 'update Users\'s answer 0'],
+                        functionCode: 'updateTypedAnswer',
+                        nextStates: [],
+                        chldren: []
+
+                    }),
             // just indenting the code
 
             ...makeCell({
@@ -484,8 +492,8 @@ let Root2 = {
             name: ['2 0', 'progressMeter 0'],
             functionCode: returnState,
             nextStates: [],
-            children: [ 'got it right the first time 0', // passes if they are right and submission count == 1
-                        'else 0'],
+            children: [ ['got it right the first time 0'], // passes if they are right and submission count == 1
+                        ['else 0']],
             variableNames: [
                             'correctFirstTime 0',
                             'testingWithoutForm 0'
@@ -571,6 +579,8 @@ new states to add to root
 increment the numberOfProblems
 add the new cells in
 */
+
+// add another problem
 Root2 = {
     ...Root2,
     
@@ -583,10 +593,11 @@ Root2 = {
 // the cordinates to the states also pointied to an invalid state and one of the values was an integer
 let numberOfProblems = getVariable(Root2, ['problem set 0'], 'numberOfProblems').value
 let iA = 3 * numberOfProblems
-let iB = (3 * numberOfProblems) + 1
-let iAnswer = (3 * numberOfProblems) + 2
+let iB = iA + 1
+let iAnswer = iA + 2
 console.log("new starting values", iA, iB, iAnswer)
-let nextParts = [
+// links for root
+let newNextParts = makeSet([
     `problem ${numberOfProblems}`,
     `${iA} ${numberOfProblems}`,
     `${iB} ${numberOfProblems}`,
@@ -597,24 +608,16 @@ let nextParts = [
     `submitValue ${numberOfProblems}`,
     `got it right the first time ${numberOfProblems}`,
     `else ${numberOfProblems}`
-]
-let newNextParts = {}
-    nextParts.forEach(nextPart => {
-        newNextParts = {...newNextParts, [nextPart]: 1}
-    })
+])
 
-
-let nextPartsForProblemSet = [
-    `problem ${numberOfProblems}`
+// new child for problem set 0
+let neChildrenForProblemSet = [
+    [`problem ${numberOfProblems}`]
 ]
-let newNextPartsForProblemSet = {}
-nextPartsForProblemSet.forEach(nextPart => {
-    newNextPartsForProblemSet = {...newNextPartsForProblemSet, [nextPart]: 1}
-})
 
 // console.log('new problemset', newNextPartsForProblemSet)
 // console.log("old stuff", {...Root2['problem set 0'].children})
-let newChildSet = {...Root2['problem set 0'].children, ...newNextPartsForProblemSet}
+// let newChildSet = {...Root2['problem set 0'].children, ...neChildrenForProblemSet}
 // console.log('combination', newChildSet)
 Root2 = {
     ...Root2,
@@ -628,10 +631,10 @@ Root2 = {
     },
     'problem set 0': {
         ...Root2['problem set 0'],
-        children: {...Root2['problem set 0'].children, ...newNextPartsForProblemSet}
+        children: [...Root2['problem set 0'].children, ...neChildrenForProblemSet]
     }
 }
-
+// the states representing the problem
 let x = {
         // ...makeCell({
         //     name,
@@ -648,9 +651,9 @@ let x = {
             name: [`problem ${numberOfProblems}`],  // key of AddTwoValues maps to this
 
             // 0, 1, 2    3, 4, 5   6, 7, 8
-            children: [ `${iA} ${numberOfProblems}`,
-                        `${iB} ${numberOfProblems}`,
-                        `${iAnswer} ${numberOfProblems}`],   // can use the OneValue key and the AddTwoValues key
+            children: [ [`${iA} ${numberOfProblems}`],
+                        [`${iB} ${numberOfProblems}`],
+                        [`${iAnswer} ${numberOfProblems}`]],   // can use the OneValue key and the AddTwoValues key
             variableNames: [`problemParts ${numberOfProblems}`]
         }),
 
@@ -675,7 +678,7 @@ let x = {
 
                 ...makeCell({
                     name: [`quantity ${iA}`],
-                    value: makeQuantity(4, answer)
+                    value: makeQuantity(5, 5 + 6)
                 }),
 
                 ...makeCell({
@@ -705,7 +708,7 @@ let x = {
 
                 ...makeCell({
                     name: [`quantity ${iB}`],
-                    value: makeQuantity(3, answer)
+                    value: makeQuantity(6, 5 + 6)
                 }),
 
                 ...makeCell({
@@ -743,8 +746,9 @@ let x = {
             functionCode: returnState,
             nextStates: [[`${iAnswer} ${numberOfProblems}`, `progressMeter ${numberOfProblems}`]],
 
-            // indeces in variableNames corresponds to the number of problems * (3 - 1)
-            children: [`noValue ${numberOfProblems}`, `isInteger ${numberOfProblems}`, `isNotInteger ${numberOfProblems}`],
+            children: [ [`noValue ${numberOfProblems}`],
+                        [`isInteger ${numberOfProblems}`],
+                        [`isNotInteger ${numberOfProblems}`]],
             variableNames: [`value ${iAnswer}`,
                             `quantity ${iAnswer}`,
                             `correct ${iAnswer}`,
@@ -763,7 +767,7 @@ let x = {
 
                 ...makeCell({
                     name: [`quantity ${iAnswer}`],
-                    value: makeQuantity(0, answer)
+                    value: makeQuantity(0, 5 + 6)
                 }),
 
                 ...makeCell({
@@ -829,8 +833,8 @@ let x = {
                 name: [`${iAnswer} ${numberOfProblems}`, `progressMeter ${numberOfProblems}`],
                 functionCode: returnState,
                 nextStates: [],
-                children: [ `got it right the first time ${numberOfProblems}`, // passes if they are right and submission count == 1
-                            `else ${numberOfProblems}`],
+                children: [ [`got it right the first time ${numberOfProblems}`], // passes if they are right and submission count == 1
+                            [`else ${numberOfProblems}`]],
                 variableNames:  [
                                 `correctFirstTime ${numberOfProblems}`,
                                 `testingWithoutForm ${numberOfProblems}`
