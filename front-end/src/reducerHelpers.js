@@ -185,6 +185,11 @@ export const makeSet = (array) => {
 // have an assignment routine that updates a set of rows at once
 // ...(cb(cells, value).cells) // cb should always return a js object stateName: {stuff}
 export const makeCell = (stateObject) => {
+
+
+    // the variables are stored as a single string for each name to let the user access them with only 1 string
+    // the nextParts are in a set styled js object to enable O(n) state fetch times reguardless of how many strings are
+    // in the state name(trie tree)
     const { name,
             nextParts,
             functionCode,
@@ -206,17 +211,17 @@ export const makeCell = (stateObject) => {
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], nextParts: newNextParts}}
         }
     if(functionCode) {
+
+        // if(typeof functionCode === String) {
+        //     console.log('function name is a string')
+        //     return newCell
+        // }
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], 'function': functionCode}}
     }
     if(nextStates) {
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], nextStates: nextStates}}
     }
     if(children) {
-        // the children are only 1 dimentional and can't be instantly searched for it they are n dimentions
-        // let newChildren = {}
-        // children.forEach(nextChild => {
-        //     newChildren = {...newChildren, [nextChild]: 1}
-        // })
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], children: children}}
         }
     if(variableNames) {
@@ -248,7 +253,7 @@ export const makeCell = (stateObject) => {
 }
 export const getCell = (state, path) => {
 
-    // console.log('path', path)
+    console.log('path', path)
     // for any valid cell the forEach must run at least 1 time
     let currentCell = state.root
     path.forEach(namePart => {
@@ -441,7 +446,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
         let passes = false
         let winningStateName = ''
         nextStates.forEach(nextState => {
-            console.log('trying', nextState)
+            // console.log('trying', nextState)
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
                 // keepGoing = false
@@ -452,7 +457,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             if(passes) {
                 return null
             }
-            console.log("getting state", temporaryState, nextState) 
+            // console.log("getting state", temporaryState, nextState) 
             let cell = getCell(temporaryState, nextState)
             // ignore the state if it doesn't have a function to run
             if(!Object.keys(cell).includes('function')) {

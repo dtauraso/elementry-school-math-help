@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { connect } from 'react-redux'
-import { getCat, submitAnswer } from './Redux/Actions'
+import { getCat, submitAnswer, addToAnswer } from './Redux/Actions'
 import {
     setToValue,
     append,
@@ -54,6 +54,8 @@ const SubmitAnswer = (props) => {
     console.log("submission's value", y)
     let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
     let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value
+
+    let updateTypedAnswerStateName = [...submissionStateName, `update typed answer ${stateCoordinates.problemId}`]
     // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     // const answerForm = getValue(Root, statePath)
@@ -73,6 +75,10 @@ const SubmitAnswer = (props) => {
         event.preventDefault();
         console.log('we are submitting our answer')
         // call submit answer here
+        // get the answer from Root
+        // getVariable(Root, submissionStateName, 'value')
+
+        props.submitAnswer(submissionStateName)
         // console.log(event)
         // const data = new FormData(event.target);
         
@@ -95,16 +101,15 @@ const SubmitAnswer = (props) => {
                 {/* <label htmlFor="username">Best Guess -> </label> */}
                 <InputField id="username" name="username" type="text"
                 onChange={(e) => {
+                    props.addToAnswer({
+                        newValue: e.target.value
+                    },
+                    updateTypedAnswerStateName
+                    )
                     // call add to answer here
                     console.log(Root)
                     // console.log(getValue(Root, [...statePath, 'submission']))
-                    props.submitAnswer({
-                        newValue: e.target.value
-                    }, 
-                    submissionStateName
                     
-                    // [...statePath, 'submission']
-                    )
 
                 }} />
 
@@ -119,6 +124,6 @@ const mapStateToProps = state => {
 }
 export default connect(
     mapStateToProps,
-    { getCat, submitAnswer }
+    { getCat, submitAnswer, addToAnswer }
 
 )(SubmitAnswer)
