@@ -5,14 +5,9 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/Actions'
 import {
-    setToValue,
-    append,
-    getValue,
-    deepAssign,
     getCell,
     getVariable,
-    getChild,
-    tableAssign } from '../reducerHelpers'
+    getChild } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
 // convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action

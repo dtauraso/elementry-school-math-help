@@ -24,6 +24,14 @@ export const getCat = () => dispatch => {
         });
 
 };
+export const autoSolve = (pathToState) => dispatch => {
+    dispatch({
+        type: [pathToState],
+        meta: {
+            parentStateName: pathToState
+        }
+    })
+}
 export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
 
     // have a custom state that just lets you save to the field variable

@@ -3,14 +3,8 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
 import {
-    setToValue,
-    append,
-    getValue,
-    deepAssign,
     getCell,
-    getVariable,
-    getChild,
-    tableAssign } from '../reducerHelpers'
+    getVariable } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
 const Box = styled.p`

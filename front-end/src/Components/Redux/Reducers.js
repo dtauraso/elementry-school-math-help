@@ -1,27 +1,23 @@
 import { makeQuantity } from '../../utility'
-import {    setToValue,
-            makeCell,
-            setCell,
-            append,
-            getValue,
-            deepAssign,
+import {    makeCell,
             makeSet,
-            tableAssign,
-            makeVariablePath,
-            makeVariablePath2,
-            getCell,
             getVariable,
-            getChild,
             set,
             setArray,
-            breathFirstTraversal2 } from '../../reducerHelpers'
+            breathFirstTraversal, 
+            getCell,
+            getChildren} from '../../reducerHelpers'
 
 const problems = [
     {a: 4, b: 3},
 
     {a: 5, b: 6},
 
-    {a: 2, b: 4}
+    {a: 2, b: 4},
+
+    {a: 9, b: 4},
+
+    {a: 5, b: 1}
 
 
 ]
@@ -79,7 +75,7 @@ const setupProblem = (state, action) => {
         ])
         
         // new child for problem set 0
-        let neChildrenForProblemSet = [
+        let newChildrenForProblemSet = [
             [`problem ${i}`]
         ]
         
@@ -97,7 +93,7 @@ const setupProblem = (state, action) => {
             },
             'problem set 0': {
                 ...Root2['problem set 0'],
-                children: [...Root2['problem set 0'].children, ...neChildrenForProblemSet]
+                children: [...Root2['problem set 0'].children, ...newChildrenForProblemSet]
             }
         }
         // the states representing the problem
@@ -382,9 +378,6 @@ export const fetchCatFailure = (state, action) => {
 
     }
 }
-const saveComponentProps = (state, action) => {
-    // adds the component props data to redux
-}
 const returnState = (state, action) => {
     return [state, true]
 }
@@ -530,72 +523,54 @@ const gotItRightTheFirstTime = (state, action) => {
     return [newState, false]
 
 }
-// keep as reference incase it needs to be used
-const measureProgress = (state, action) => {
-    // this state reads data from the answerForm.submission state
-    // to decide how to set data to the answerForm.measureProgress state
-    // action.type ends at submission
-    let y = state
-    // testing the submit state
 
-    if(getValue(state, makeVariablePath(action, 'submitCount')) === 1) {    
-        if(getValue(state, makeVariablePath(action, 'correct'))) {
+const autoSolve = (state, action) => {
+    // runs through all the forms and solve them for getting test data for the backend
+    // this is instead of solving the problems manuallly
+    // indexes of the form state
+    // 2   5   8
+    // 2 0, 5 1, 8 2
+    // 00, 10, 20
+    // "problem set 0" tells me how many problems we need to use to look for the forms
+    const parentStateName = action.meta.parentStateName
+    let problems = getChildren(state, ['problem set 0'])
+    let numberOfProblems = problems.length
+    console.log(numberOfProblems)
+    let temporaryState = state
+    // need 2 varaibles for this
+    // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
+    let i = 0
+    let j = -1
+    for(; i < numberOfProblems * 3; i += 3) {
 
-            let progressPath = [
-                ...action.meta.basePath.split(0, action.type.length - 1),
-                'progressMeter']
-            y = deepAssign(
-                state,
-                makeVariablePath2(progressPath, 'correctFirstTime'),
-                true,
-                setToValue
-            )
-            
-            // return [y, true]
+
+        if(i % 3 === 0) {
+            j += 1
         }
+        // console.log("i j", i, j)
+        // console.log("i j", i, j)
+
+        // console.log(`j${j} i${i}`)
+        let a = getVariable(state, [`${i} ${j}`], 'value').value
+        let b = getVariable(state, [`${i + 1} ${j}`], 'value').value
+        let c = getVariable(state, [`${i + 2} ${j}`, `submission ${j}`], 'value')
+        // console.log(a, b, c)
+        temporaryState = set(temporaryState, [`${i + 2} ${j}`, `submission ${j}`], 'value', a + b)
+        console.log('result', temporaryState)
+        // solve
+        // set the first time value
+        // set the submit value
+        // all the vars needed to make data for the backend should be set
         
     }
-    y = deepAssign(
-        state,
-        makeVariablePath(action, 'submitCount'),
-        getValue(state, makeVariablePath(action, 'submitCount')) + 1,
-        setToValue
-    )
-    return [y, true]
+    return [temporaryState, true]
+    // let problems = getChildren(myProblemSet)
+
 }
-const isFirstTimeSubmitting = (state, action/*e*/) => {
-    const { newValue } = action.payload
 
-    // is the answer right the first time?
-    if(getValue(state, makeVariablePath(action, 'visitCount')) === 0) {
-        
-    }
-    // const variablesBasePath = [...action.meta.basePath, 'variables']
-    // console.log("current state", action.type)
+const setupForBackend = (state, action) => {
 
-    // console.log('is first time submitting?', makeVariablesObjectPath(action))
-
-    return [state, getValue(state, makeVariablePath(action, 'actualAnswer')) === newValue]
-    // actualAnswer === parseInt(e.target.value)]
 }
-const allOtherTimesSubmitting = (state, action/*e*/) => {
-    const { newValue } = action.payload
-    // console.log("all remaining times")
-    // console.log(makeVariablesObjectPath(action), getValue(state, makeVariablePath(action, 'actualAnswer')))
-    // if(actualAnswer === parseInt(e.target.value))
-    let y = deepAssign(
-        state,
-        makeVariablePath(action, 'correct'),
-        getValue(state, makeVariablePath(action, 'actualAnswer')) === newValue,
-        setToValue
-    )
-    return [y, true]
-    // return actualAnswer === parseInt(e.target.value)
-}
-// const updateState = (state, currentStatePath, cb, event) => {
-//     return cb(state, currentStatePath, event)
-// }
-
 // reducers and the state for it in the same file
 // merge the states with 1 initialState
 // group by context of problem, not by kind of coding construct
@@ -662,7 +637,7 @@ let Root2 = {
         }),
         ...makeCell({
             name: ['elementary school'],
-            nextParts: ['utilities'],
+            nextParts: ['utilities', 'testing'],
             children: [['problem set 0']],
             variableNames: ['problemSets 0']
         }),
@@ -679,15 +654,18 @@ let Root2 = {
                 ...makeCell({
                     name: ['elementary school', 'utilities', 'create problem'],
                     functionCode: setupProblem,
-                    // children: [],
                     nextStates: [],
                     variableNames: ['problemCount']
                 }),
                     ...makeCell({
                         name: ['problemCount'],
-                        value: 3
+                        value: problems.length
                     }),
-
+            ...makeCell({
+                name: ['elementary school', 'testing'],
+                functionCode: autoSolve,
+                nextStates: []
+            }),
         ...makeCell({
             name: ['problem set 0'],
             children: [],
@@ -753,7 +731,7 @@ let action = {
             parentStateName: ['elementary school', 'utilities', 'create problem'],
         }
 }
-const [temporaryState, success] = breathFirstTraversal2(
+const [temporaryState, success] = breathFirstTraversal(
     Root2,
     action,
     action.type,
@@ -765,4 +743,4 @@ const [temporaryState, success] = breathFirstTraversal2(
 //     return state
 // }
 
-export var Root = temporaryState//machine2[0]//stateMachine[0]//Root2;
+export var Root = temporaryState

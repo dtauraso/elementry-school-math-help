@@ -4,15 +4,8 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer, addToAnswer } from './Redux/Actions'
 import {
-    setToValue,
-    append,
-    getValue,
-    deepAssign,
     getCell,
-    getVariable,
-    getChild,
-    getChildren,
-    tableAssign } from '../reducerHelpers'
+    getVariable } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 const Form = styled.form`
 

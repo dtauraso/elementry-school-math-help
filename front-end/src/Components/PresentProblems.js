@@ -1,16 +1,11 @@
 import React, { useState } from 'react'
 
 import { connect } from 'react-redux'
-import { getCat } from './Redux/Actions'
+import { getCat, autoSolve } from './Redux/Actions'
 import {
-    setToValue,
-    append,
-    getValue,
-    deepAssign,
     getCell,
     getVariable,
-    getChild,
-    tableAssign } from '../reducerHelpers'
+    getChild } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 import AddTwoValues from './AddTwoValues'
 
@@ -24,10 +19,15 @@ import AddTwoValues from './AddTwoValues'
 //   let problems = Object.keys(problemSet.children)
 //   return problems
 // }
+
 const PresentProblems = (props) => {
 
     const {Root} = props
-
+    
+    const autoSolve1 = () => {
+        props.autoSolve( ['elementary school', 'testing'])
+        
+    }
     /*
     problem set, #of problems, 
     */
@@ -57,6 +57,8 @@ const PresentProblems = (props) => {
                 />
 
         ))}
+        {/* need an autocompute and submit button here */}
+        <button onClick={() => autoSolve1()}>autoCompute</button>
 
         </div>
     )
@@ -69,6 +71,6 @@ const mapStateToProps = state => {
 }
 export default connect(
     mapStateToProps,
-    { getCat }
+    { getCat, autoSolve }
 
 )(PresentProblems)

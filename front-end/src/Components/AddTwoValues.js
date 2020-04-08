@@ -4,15 +4,8 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
 import {
-    setToValue,
-    append,
-    getValue,
-    deepAssign,
     getCell,
-    getVariable,
-    getChild,
-    getChildren,
-    tableAssign } from '../reducerHelpers'
+    getChildren } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 // AddTwoValues box
 // mobile first
