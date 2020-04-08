@@ -31,6 +31,10 @@ export const autoSolve = (pathToState) => dispatch => {
             parentStateName: pathToState
         }
     })
+    // let x = {...store.getState()['0 0']}
+    // x.name = ['testing']
+    // console.log(x)
+
 }
 export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
 
@@ -43,6 +47,8 @@ export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
                 parentStateName: pathToState,
             }
     });
+
+
 }
 export const submitAnswer = (pathToState) => dispatch => {
 
@@ -62,8 +68,8 @@ export const submitAnswer = (pathToState) => dispatch => {
                     // testPayload: store.getState()
                 }
         });
-    let x = store.getState()
-    console.log('after action is done', x)
+    // let x = store.getState()
+    // console.log('after action is done', x)
     // dispatch({
     //         type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
     //         payload: lotsOfThings,

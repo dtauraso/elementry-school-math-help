@@ -185,7 +185,7 @@ const setupProblem = (state, action) => {
         
                 // intermediate state that also has variable names
                 ...makeCell({
-                    name: [`${iAnswer} ${i}`],  // answer form
+                    name: [`${iAnswer} ${i}`],  // answerForm
                     nextParts: [`submission ${i}`, `progressMeter ${i}`],
                     variableNames: [`isForm ${iAnswer}`, `operationType ${iAnswer}`]
                 }),
@@ -214,6 +214,7 @@ const setupProblem = (state, action) => {
                     children: [ [`noValue ${i}`],
                                 [`isInteger ${i}`],
                                 [`isNotInteger ${i}`]],
+
                     variableNames: [`value ${iAnswer}`,
                                     `quantity ${iAnswer}`,
                                     `correct ${iAnswer}`,
@@ -386,7 +387,7 @@ const updateTypedAnswer = (state, action) => {
     const stateName = action.type
     const parentStateName = action.meta.parentStateName.slice(0, 2)
 
-    console.log("got here", parentStateName)
+    // console.log("got here", parentStateName)
     
     return [set(state, parentStateName, 'value', newValue), true]
 
@@ -418,8 +419,8 @@ const noValue = (state, action) => {
 const isInteger = (state, action) => {
     const parentStateName = action.meta.parentStateName
 
-    console.log(getVariable(state, parentStateName, 'value').value,
-            parseInt(getVariable(state, parentStateName, 'value').value))
+    // console.log(getVariable(state, parentStateName, 'value').value,
+            // parseInt(getVariable(state, parentStateName, 'value').value))
 
     return [state, !isNaN(parseInt(getVariable(state, parentStateName, 'value').value)) === true]
 }
@@ -435,7 +436,7 @@ const determineAnswer = (actualAnswer, value) => {
 }
 const submitValue = (state, action/*e*/) => {
     // start changing this state
-    console.log("submit value", action.type, action.meta.parentStateName)
+    // console.log("submit value", action.type, action.meta.parentStateName)
     // console.log(e.target.value)
     // console.log(pathDownObject)
     // console.log(answerForm)
@@ -493,7 +494,7 @@ const submitValue = (state, action/*e*/) => {
 
     }
 
-    console.log('new tree 4', newState, stateName)
+    // console.log('new tree 4', newState, stateName)
 
     return [newState, true]
     
@@ -501,12 +502,12 @@ const submitValue = (state, action/*e*/) => {
 const gotItRightTheFirstTime = (state, action) => {
 
     // complex reducer because within the context of contextual state charts it can update 2 different parent states
-    console.log("here", action, state)
+    // console.log("here", action, state)
     const stateName = action.type
     // the vars are from the basePath
     const parentStateName = action.meta.parentStateName
     const submissionStateName = action.meta.basePath
-    console.log('parent', parentStateName)
+    // console.log('parent', parentStateName)
     let submitCount = getVariable(state, submissionStateName, 'submitCount').value
     let correct = getVariable(state, submissionStateName, 'correct').value
     let newState = state
@@ -527,17 +528,17 @@ const gotItRightTheFirstTime = (state, action) => {
 const autoSolve = (state, action) => {
     // runs through all the forms and solve them for getting test data for the backend
     // this is instead of solving the problems manuallly
-    // indexes of the form state
-    // 2   5   8
-    // 2 0, 5 1, 8 2
-    // 00, 10, 20
+    // indexes of the states making up each part of the form
+    // a0, b0, answerForm0, ....
+    // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
+
     // "problem set 0" tells me how many problems we need to use to look for the forms
     const parentStateName = action.meta.parentStateName
     let problems = getChildren(state, ['problem set 0'])
     let numberOfProblems = problems.length
     console.log(numberOfProblems)
     let temporaryState = state
-    // need 2 varaibles for this
+
     // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
     let i = 0
     let j = -1
@@ -547,15 +548,11 @@ const autoSolve = (state, action) => {
         if(i % 3 === 0) {
             j += 1
         }
-        // console.log("i j", i, j)
-        // console.log("i j", i, j)
-
-        // console.log(`j${j} i${i}`)
         let a = getVariable(state, [`${i} ${j}`], 'value').value
         let b = getVariable(state, [`${i + 1} ${j}`], 'value').value
-        let c = getVariable(state, [`${i + 2} ${j}`, `submission ${j}`], 'value')
+        let submission =           [`${i + 2} ${j}`, `submission ${j}`]
         // console.log(a, b, c)
-        temporaryState = set(temporaryState, [`${i + 2} ${j}`, `submission ${j}`], 'value', a + b)
+        temporaryState = set(temporaryState, submission, 'value', a + b)
         console.log('result', temporaryState)
         // solve
         // set the first time value
@@ -625,6 +622,7 @@ let Root2 = {
                             'problem set 0',
                             'problem 0',
                             'problemParts 0',
+                            // rename to 'a 0 0' ? or 'a 0'?
                             '0 0',
                             '1 0',
                             '2 0',
@@ -641,6 +639,8 @@ let Root2 = {
             children: [['problem set 0']],
             variableNames: ['problemSets 0']
         }),
+            // the indents are for illustration only(ie, each node entire hierarchical tree is stored at the top level of
+            // this js object)
             // dummy intermediate state
             ...makeCell({
                 name: ['elementary school', 'utilities'],

@@ -45,19 +45,19 @@ const OneValue = (props) => {
         // statePath,
         stateCoordinates,
         Root} = props
-    console.log('redux tree', Root)
+    // console.log('redux tree', Root)
     let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
-    console.log(stateCoordinates)
+    // console.log(stateCoordinates)
     let x = getCell(Root, problemPartName)
-    console.log('problem part', x)
+    // console.log('problem part', x)
     let isForm = getVariable(Root,
                             problemPartName,
                             'isForm').value
-    console.log('isForm', isForm)
+    // console.log('isForm', isForm)
     let operationType = getVariable(Root,
         problemPartName,
         'operationType').value
-    console.log('operationType', "|", operationType, "|")
+    // console.log('operationType', "|", operationType, "|")
     let oneValue = null
     if(!isForm) {
         oneValue = getVariable(Root,

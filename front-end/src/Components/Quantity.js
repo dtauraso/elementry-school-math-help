@@ -63,7 +63,7 @@ const Quantity = (props) => {
     let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
     let x = getCell(Root, problemPartName)
     let quantity = []
-    console.log('problem for quantity', x)
+    // console.log('problem for quantity', x)
     if(stateCoordinates.isForm) {
         quantity = getVariable(Root,
             [...problemPartName, `submission ${stateCoordinates.problemId}`],

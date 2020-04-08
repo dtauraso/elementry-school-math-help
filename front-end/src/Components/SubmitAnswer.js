@@ -36,15 +36,15 @@ const SubmitAnswer = (props) => {
     // should assume the coordinates for the answer form were passed in
     let answerFormStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
     let answer = getCell(Root, answerFormStateName)
-    console.log('answer', answer)
+    // console.log('answer', answer)
     let submissionStateName = [...answerFormStateName, `submission ${stateCoordinates.problemId}`]
     let submission = getCell(Root, submissionStateName)
-    console.log("submission context", submission)
+    // console.log("submission context", submission)
     
     // let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
     //                             `submission ${stateCoordinates.problemId}`]
     let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
-    console.log("submission's value", y)
+    // console.log("submission's value", y)
     let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
     let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value
 

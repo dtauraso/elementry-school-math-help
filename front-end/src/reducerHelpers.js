@@ -33,7 +33,6 @@ export const makeCell = (stateObject) => {
             variableNames,
             value} = stateObject
     let newCell = {}
-
     let lastPosition = name.length - 1
     if(name) {
         newCell = {[name[lastPosition]]: {name: name}}
@@ -94,9 +93,11 @@ export const getCell = (state, path) => {
     path.forEach(namePart => {
         // console.log("|", namePart, "|")
         if(!Object.keys(currentCell).includes('nextParts')) {
+            // console.log(currentCell, 'doens\t have a next parts')
             currentCell = null
         }
         if(!currentCell.nextParts[namePart]) {
+            // console.log(`the path ends here ${namePart}`)
             currentCell = null
         }
         currentCell = state[namePart]

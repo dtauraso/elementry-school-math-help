@@ -39,13 +39,13 @@ export const AddTwoValues = (props) => {
     } = props
     // getValue(Root).table['AddTwoValues'][stateCoordinates.problemId] => #
     // problem #
-    console.log('our key', stateCoordinates)
+    // console.log('our key', stateCoordinates)
     let x = getCell(Root, [`problem ${stateCoordinates.problemId}`])
-    console.log("our state", x)
+    // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
 
-    console.log('problem parts', problemParts, stateCoordinates)
+    // console.log('problem parts', problemParts, stateCoordinates)
     // let problemParts = getVariable(Root, x.name, 'problemSets')
 
     // will need to pass index trackers instead of a single long path

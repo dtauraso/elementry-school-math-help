@@ -40,9 +40,9 @@ const PresentProblems = (props) => {
     let problemSets = getVariable(Root, elementarySchoolName, 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)
     let problemSet = getChild(Root, elementarySchool, [`problem set ${problemSets.value - 1}`])
-    console.log('problem set', problemSet)
+    // console.log('problem set', problemSet)
     let problems = problemSet.children//Object.keys(problemSet.children)
-    console.log(problems)
+    // console.log('problems', problems)
     return (
         <div>
 
