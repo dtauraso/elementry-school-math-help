@@ -4,7 +4,10 @@ import SubmitAnswer from './SubmitAnswer'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/Actions'
-import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
+import {
+    getCell,
+    getVariable,
+    getChild } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
 // convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action
@@ -39,34 +42,68 @@ const OneValue = (props) => {
 
     // need the entire problem part
     let {
-        statePath,
+        // statePath,
+        stateCoordinates,
         Root} = props
-    // we cannot assume there is a form right now
-    const oneValue = getValue(Root, statePath)
-    let { isForm, operationType } = oneValue.variables
-    // console.log("one value", oneValue)
-    const formOrValue = (isForm, operationType, statePath) => {
-        if(isForm) {
-            const formPath = statePath
-            return (<SubmitAnswer statePath={formPath}/>)
-        } else {
-            const valuePath = statePath
-            // console.log("Value", getValue(Root, [...valuePath, 'variables']))
-            return (
-                <Value operationType={operationType}>
-                    {(`${operationType}              ${getValue(Root, [...valuePath, 'variables']).value}`)}
-                </Value>
-                )
-        }
+    // console.log('redux tree', Root)
+    let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    // console.log(stateCoordinates)
+    let x = getCell(Root, problemPartName)
+    // console.log('problem part', x)
+    let isForm = getVariable(Root,
+                            problemPartName,
+                            'isForm').value
+    // console.log('isForm', isForm)
+    let operationType = getVariable(Root,
+        problemPartName,
+        'operationType').value
+    // console.log('operationType', "|", operationType, "|")
+    let oneValue = null
+    if(!isForm) {
+        oneValue = getVariable(Root,
+            problemPartName,
+            'value').value
     }
+    // we cannot assume there is a form right now
+    // const oneValue = getValue(Root, statePath)
+    // let { isForm, operationType } = oneValue.variables
+    // console.log("one value", oneValue)
+    // const formOrValue = (isForm, operationType) => {
+    //     if(isForm) {
+    //         // const formPath = statePath
+    //         return (<SubmitAnswer
+    //                     // statePath={formPath}
+    //                     stateCoordinates={stateCoordinates}
+    //                     />)
+    //     } else {
+    //         // const valuePath = statePath
+    //         // console.log("Value", getValue(Root, [...valuePath, 'variables']))
+    //         return (
+    //             <Value operationType={operationType}>
+    //                 {(`${operationType}              ${getValue(Root, ['variables']).value}`)}
+    //             </Value>
+    //             )
+    //     }
+    // }
     return (
         <Container>
-            {formOrValue(isForm, operationType, statePath)}
+            {/* {formOrValue(isForm, operationType)} */}
+            {isForm? 
+                <SubmitAnswer
+                // statePath={formPath}
+                stateCoordinates={stateCoordinates}
+                />:
+                <Value operationType={operationType}>
+                    {(`${operationType}              ${oneValue}`)}
+                </Value>
+                }
             <Quantity
                 // quantity comes from different locations
-                statePath={isForm?
-                    [...statePath, 'submission', 'variables', 'quantity']:
-                    [...statePath, 'variables', 'quantity']}
+                // statePath={isForm?
+                //     [...statePath, 'submission', 'variables', 'quantity']:
+                //     [...statePath, 'variables', 'quantity']}
+                stateCoordinates={{...stateCoordinates, isForm: isForm}}
+
                 />
 
         </Container>
@@ -102,7 +139,7 @@ const OneValue = (props) => {
     // return (<div></div>)
 
     // const showSubmissionMesssage = () => {
-    //     // run reducer
+    //     // run Reducers
     //     // return the message
     // }
     // return (

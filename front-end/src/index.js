@@ -12,10 +12,12 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(
+export const store = createStore(
     univeralReducer,
     composeEnhancers(applyMiddleware(thunk, logger))
 )
+console.log(store.getState())
+
 ReactDOM.render(
     <Provider store={store}>
         <App />

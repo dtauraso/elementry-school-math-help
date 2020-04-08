@@ -1,5 +1,6 @@
 import axios from 'axios';
-
+import { store } from '../../index'
+// import univer
 // export const FETCH_CAT_START = 'FETCH_CAT_START'
 // export const FETCH_CAT_SUCCESS = 'FETCH_CAT_SUCCESS'
 // export const FETCH_CAT_FAILURE = 'FETCH_CAT_FAILURE'
@@ -23,8 +24,33 @@ export const getCat = () => dispatch => {
         });
 
 };
+export const autoSolve = (pathToState) => dispatch => {
+    dispatch({
+        type: [pathToState],
+        meta: {
+            parentStateName: pathToState
+        }
+    })
+    // let x = {...store.getState()['0 0']}
+    // x.name = ['testing']
+    // console.log(x)
 
-export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
+}
+export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
+
+    // have a custom state that just lets you save to the field variable
+    dispatch({
+        type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+        payload: lotsOfThings,
+        meta: {
+                basePath: pathToState, // base state(for the object data)
+                parentStateName: pathToState,
+            }
+    });
+
+
+}
+export const submitAnswer = (pathToState) => dispatch => {
 
     // console.log("in the action")
     // prop drilling provides the path
@@ -32,10 +58,25 @@ export const submitAnswer = (lotsOfThings, pathToState) => dispatch => {
     // component provides the data the state function will use
     // runs a graph of connected nodes
     // use the action meta property
+    console.log(store.getState())
     dispatch({
-            type: pathToState,        // change to the current state(first time is the start state)
-            payload: lotsOfThings,
-            meta: { basePath: pathToState } // change to the base state(for the object data)
+            type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+            // payload: lotsOfThings,
+            meta: {
+                    basePath: pathToState, // base state(for the object data)
+                    parentStateName: pathToState,
+                    // testPayload: store.getState()
+                }
         });
-
+    // let x = store.getState()
+    // console.log('after action is done', x)
+    // dispatch({
+    //         type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+    //         payload: lotsOfThings,
+    //         meta: {
+    //                 basePath: pathToState, // base state(for the object data)
+    //                 parentStateName: pathToState,
+    //                 // testPayload: store.getState()
+    //             }
+    //     });
 }

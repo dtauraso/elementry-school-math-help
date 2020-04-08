@@ -2,15 +2,20 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
-import { setToValue, append, getValue, deepAssign } from '../reducerHelpers'
+import {
+    getCell,
+    getVariable } from '../reducerHelpers'
 import { makeQuantity } from '../utility'
 
 const Box = styled.p`
 
-    width: 50%;
+    // what if this was dependent on the expected total number of @ symbols?
+    width: 25px;
 
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+    margin-top: 1px;
+    margin-bottom: 1px;
     color: ${props => props.isColor ? "black": "white"};
 
 `
@@ -34,9 +39,11 @@ const EndBox = styled(Box/*, props */)`
 // things are expanding from the center
 const Boxes = styled.div`
 
+    // what if this was dependent on the expected total number of @ symbols?
     width: 50%;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
     border: 1px solid black;
@@ -45,10 +52,31 @@ const Boxes = styled.div`
 const Quantity = (props) => {
 
     const {
-        statePath,
+        stateCoordinates,
         Root} = props
 
-    let quantity = getValue(Root, statePath)
+    // should have the form flag and the problem, problem part coordinates
+    // if form
+        // get it from problem, problem part(2 0, submission 0) quntity call
+    // else
+        // get it from problem, problem part(1 0) quntity call
+    let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    let x = getCell(Root, problemPartName)
+    let quantity = []
+    // console.log('problem for quantity', x)
+    if(stateCoordinates.isForm) {
+        quantity = getVariable(Root,
+            [...problemPartName, `submission ${stateCoordinates.problemId}`],
+            'quantity'
+            ).value
+    } else {
+        quantity = getVariable(Root,
+            problemPartName,
+            'quantity'
+            ).value
+
+    }
+    // let quantity = getValue(Root, statePath)
     // should take in the quantity array
     // We should already have the array by this point
     // const [value, setValue] = useState(value)
