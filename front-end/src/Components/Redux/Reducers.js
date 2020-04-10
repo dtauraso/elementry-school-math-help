@@ -2,6 +2,9 @@ import { makeQuantity } from '../../utility'
 import {    makeCell,
             makeSet,
             getVariable,
+            getJsObject,
+            tableAssign,
+            tableAssignJsObject,
             set,
             setArray,
             breathFirstTraversal, 
@@ -524,6 +527,59 @@ const gotItRightTheFirstTime = (state, action) => {
     return [newState, false]
 
 }
+const processProblems = (state, action, cb) => {
+
+
+    // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
+    // "problem set 0" tells me how many problems we need to use to look for the forms
+
+    let problems = getChildren(state, ['problem set 0'])
+    let numberOfProblems = problems.length
+    let temporaryState = state
+    let i = 0
+    let j = -1
+    for(; i < numberOfProblems * 3; i += 3) {
+
+        if(i % 3 === 0) {
+            j += 1
+        }
+
+        temporaryState = cb(temporaryState, i, j)
+    }
+    return temporaryState
+
+}
+
+const solveProblem = (state, i, j) => {
+    let temporaryState = state
+    let a = getVariable(state, [`${i} ${j}`], 'value').value
+    let b = getVariable(state, [`${i + 1} ${j}`], 'value').value
+    let submission =           [`${i + 2} ${j}`, `submission ${j}`]
+    // console.log(a, b, c)
+    // randomly get it wrong
+    let randomValue = Math.floor(Math.random() * 10) % 2
+
+    if(randomValue == 0) {
+        temporaryState = set(temporaryState, submission, 'value', a + b)
+        let progressMeter = [`${i + 2} ${j}`, `progressMeter ${j}`]
+        temporaryState = set(temporaryState, progressMeter, 'correctFirstTime', true)
+    
+    }
+    else {
+        temporaryState = set(temporaryState, submission, 'value', a + 1)
+        let progressMeter = [`${i + 2} ${j}`, `progressMeter ${j}`]
+        temporaryState = set(temporaryState, progressMeter, 'correctFirstTime', false)
+
+    }
+    // console.log('result', temporaryState)
+    temporaryState = set(temporaryState, submission, 'correct', ['actualAnswer', 'value'], determineAnswer)
+
+    temporaryState = set(temporaryState, submission, 'submitCount', getVariable(temporaryState, submission, 'submitCount').value + 1)
+
+    temporaryState = set(temporaryState, submission, 'firstAnswer', getVariable(temporaryState, submission, 'value').value)
+
+    return temporaryState
+}
 
 const autoSolve = (state, action) => {
     // runs through all the forms and solve them for getting test data for the backend
@@ -533,40 +589,128 @@ const autoSolve = (state, action) => {
     // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
 
     // "problem set 0" tells me how many problems we need to use to look for the forms
-    const parentStateName = action.meta.parentStateName
-    let problems = getChildren(state, ['problem set 0'])
-    let numberOfProblems = problems.length
-    console.log(numberOfProblems)
-    let temporaryState = state
+    // const parentStateName = action.meta.parentStateName
 
-    // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
-    let i = 0
-    let j = -1
-    for(; i < numberOfProblems * 3; i += 3) {
-
-
-        if(i % 3 === 0) {
-            j += 1
-        }
-        let a = getVariable(state, [`${i} ${j}`], 'value').value
-        let b = getVariable(state, [`${i + 1} ${j}`], 'value').value
-        let submission =           [`${i + 2} ${j}`, `submission ${j}`]
-        // console.log(a, b, c)
-        temporaryState = set(temporaryState, submission, 'value', a + b)
-        console.log('result', temporaryState)
-        // solve
-        // set the first time value
-        // set the submit value
-        // all the vars needed to make data for the backend should be set
-        
-    }
+    let temporaryState = processProblems(state, action, solveProblem)
     return [temporaryState, true]
-    // let problems = getChildren(myProblemSet)
 
 }
+const collectProblems = (state, i, j) => {
 
+    // getCell(state, parentStateName)
+    // console.log('in collect problems', state)
+    let temporaryState = state
+    let a = getVariable(state, [`${i} ${j}`], 'value').value
+    let b = getVariable(state, [`${i + 1} ${j}`], 'value').value
+    let submission =           [`${i + 2} ${j}`, `submission ${j}`]
+    let progressMeter =        [`${i + 2} ${j}`, `progressMeter ${j}`]
+
+
+    let firstAnswer = getVariable(state, submission, 'firstAnswer').value
+
+    let actualAnswer = getVariable(state, submission, 'actualAnswer').value
+
+    let gotItRightTheFirstTime = getVariable(state, progressMeter, 'correctFirstTime').value
+
+    let row = {
+        a: a,
+        b: b,
+        theirAnswer: firstAnswer,
+        actualAnswer: actualAnswer,
+        gotItRightTheFirstTime: gotItRightTheFirstTime
+    }
+
+
+    let myProblemTable = getCell(state, ['payload'])
+    // console.log('my promblem table', myProblemTable)
+    temporaryState = tableAssignJsObject(
+        state,
+        myProblemTable, 
+        {   ...myProblemTable.jsObject,
+            'problem set table': [...myProblemTable.jsObject['problem set table'], row]
+
+        }
+        )
+
+    return temporaryState
+    // myProblemTable = [...myProblemTable, row]
+
+
+    // a0 | b0 | theirAnswer0 | actualAnswer | gotItRightTheFirstTime0
+}
 const setupForBackend = (state, action) => {
 
+    console.log('we are setting the completed form data for submitting to the backend')
+    console.log('state', state)
+
+    // make a single payload state
+    let problemTable = makeCell({
+        name: ['payload'],
+        jsObject: {'problem set table': []}
+    })
+
+    let temporaryState = state
+    temporaryState = {
+        ...temporaryState,
+        ...problemTable
+        
+    }
+    // temporaryState = tableAssignJsObject(temporaryState, problemTable['XXXXXXX'], [])
+    // console.log('added the problem set table', temporaryState)
+    temporaryState = processProblems(temporaryState, action, collectProblems)
+
+    // console.log("done with first part", temporaryState)
+    // let x = getCell(temporaryState, ['payload'])
+    let myCompletedProblems = getCell(temporaryState, ['payload'])
+    // console.log('completed problems', myCompletedProblems)
+    const correctProblems = myCompletedProblems.jsObject['problem set table'].filter(problem => problem.gotItRightTheFirstTime).length
+    // console.log('correctProblems', correctProblems)
+    // calculate % of correct problems
+    // round to largest whole number
+    // let problemSetTable = makeCell({
+    //     name: ['problem sets table'],
+    //     jsObject: {nameOfProblemSet: 'problem set 0',
+    //                     numberCorrect: correctProblems,
+    //                     totalProblems: myCompletedProblems.length
+    //                 }
+
+    // })
+    // temporaryState = {
+    //     ...temporaryState,
+    //     ...problemSetTable
+        
+    // }
+    temporaryState = tableAssignJsObject(
+        temporaryState,
+        myCompletedProblems, 
+        {   ...myCompletedProblems.jsObject,
+            'problem sets table': {nameOfProblemSet: 'problem set 0',
+                                numberCorrect: correctProblems,
+                                totalProblems: myCompletedProblems.jsObject['problem set table'].length
+                            }
+        }
+        )
+
+
+    /*
+
+    maybe just make a js object table
+    makeCell({
+        name: ['problem set table'],
+        jsObject: {
+            dddddddd
+        }
+    })
+    problem set table
+        the name of the problem set0 | % right
+
+    problems table
+        problem
+        a0 | b0 | answer0 | theirAnswer0 | gotItRightTheFirstTime0
+
+
+    */
+    return [temporaryState, true]
 }
 // reducers and the state for it in the same file
 // merge the states with 1 initialState
@@ -663,9 +807,21 @@ let Root2 = {
                     }),
             ...makeCell({
                 name: ['elementary school', 'testing'],
-                functionCode: autoSolve,
+                functionCode: returnState,
+                children: [['autoSolve']],
                 nextStates: []
             }),
+                ...makeCell({
+                    name: ['autoSolve'],
+                    functionCode: autoSolve,
+                    nextStates: [['setup for backend']]
+                }),
+                ...makeCell({
+                    name: ['setup for backend'],
+                    functionCode: setupForBackend,
+                    nextStates: []
+
+                }),
         ...makeCell({
             name: ['problem set 0'],
             children: [],

@@ -31,7 +31,8 @@ export const makeCell = (stateObject) => {
             nextStates,
             children,
             variableNames,
-            value} = stateObject
+            value,
+            jsObject} = stateObject
     let newCell = {}
     let lastPosition = name.length - 1
     if(name) {
@@ -57,15 +58,16 @@ export const makeCell = (stateObject) => {
     }
     if(children) {
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], children: children}}
-        }
+    }
     if(variableNames) {
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], variableNames: variableNames}}
-        // console.log('new cell', newCell)
-        }
+    }
     if(value !== undefined) {
         newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], value: value}}
-        // console.log('new cell', newCell)
-        }
+    }
+    if(jsObject !== undefined) {
+        newCell = {[name[lastPosition]]: {...newCell[name[lastPosition]], jsObject: jsObject}}
+    }
 
     
     return newCell
@@ -139,6 +141,50 @@ export const getVariable = (state, parentStateName, variableName) => {
     })
     if(variableNameIsInCellVariableNamesCount > 1) {
         console.log(`You cannot have more than 1 variable name that contains |${variableName}|`)
+        return null
+    }
+    if(!found) {
+        console.log(variableName, `may exist but there is no link from |${parentStateName}| to |${variableName}|`)
+        return null
+
+    }
+    if(variable === null) {
+        console.log(variableName, 'doesn\'t exist')
+        return null
+    }
+    return variable
+}
+
+export const getJsObject = (state, parentStateName, variableName) => {
+
+    // The parent state should only be linked to one variable name at a time
+    // in the below example:
+    // You can say 'quantity 2' then call it 'quantity' when using it in the reducers
+    // as long as the same parent doesn't also have a variable name called 'quantity 3'.
+    // This is to allow the user to use variable names with this contextual state chart
+    // at a simular level of detail they would use in a programming lnagugae
+
+    let cell = getCell(state, parentStateName)
+    if(!cell) {
+        return null
+    }
+    if(!Object.keys(cell).includes('jsObject')) {
+        return null
+    }
+    let variable = null
+
+    let variableNameIsInCellVariableNamesCount = 0
+    let found = false
+    cell.variableNames.forEach(cellVariableName => {
+        if(cellVariableName.search(variableName) === -1) {
+            return null
+        }
+        variableNameIsInCellVariableNamesCount ++
+        found = true
+        variable = state[cellVariableName]
+    })
+    if(variableNameIsInCellVariableNamesCount > 1) {
+        console.log(`You cannot have more than 1 js object name that contains |${variableName}|`)
         return null
     }
     if(!found) {
@@ -230,7 +276,21 @@ export const tableAssign = (state, cell, value) => {
     
     
 }
+export const tableAssignJsObject = (state, cell, value) => {
 
+    if(cell === null) {
+        return state
+    }
+    // console.log(cell, Object.keys(cell))
+    let cellName = cell.name[cell.name.length - 1]
+    return {
+        ...state,
+        [cellName]: {
+            ...state[cellName],
+            jsObject: value
+        }
+    }
+}
 export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
 
     // targetVar is a variable name
@@ -353,7 +413,11 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             currentStateName = winningStateName
             
             const currentStateObject = getCell(temporaryState, currentStateName)
-
+            // putting this in would force all states to have it as an attribute even if they have no edges
+            if(!Object.keys(currentStateObject).includes('nextStates')) {
+                console.log('The next states doesn\'t exist')
+                return [temporaryState, true]
+            }
             if(currentStateObject.nextStates.length === 0) {
                 console.log(`machine is done 1 ${levelId}`)
                 // keepGoing = false
