@@ -31,7 +31,10 @@ export const autoSolve = (pathToState) => dispatch => {
             parentStateName: pathToState
         }
     })
-    // let x = {...store.getState()['0 0']}
+    // let myProblemTable = getCell(state, ['payload'])
+
+    let x = store.getState()['payload']
+    console.log('submit this', x)
     // x.name = ['testing']
     // console.log(x)
 
