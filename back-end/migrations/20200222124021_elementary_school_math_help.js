@@ -2,16 +2,16 @@
 exports.up = function(knex) {
   // https://stackoverflow.com/questions/20619211/difference-between-cascade-and-restrict-sql-ddl-database/42774793
     return knex.schema
-        .createTable('users', tbl => {
-            tbl.increments();
-            tbl
-                .string('username', 128)
-                .notNullable()
-                .unique();
-            tbl.string('password', 128).notNullable();
+        // .createTable('users', tbl => {
+        //     tbl.increments();
+        //     tbl
+        //         .string('username', 128)
+        //         .notNullable()
+        //         .unique();
+        //     tbl.string('password', 128).notNullable();
 
 
-        })
+        // })
         .createTable('records', tbl => {
             tbl.increments();
             // day string
