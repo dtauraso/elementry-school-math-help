@@ -30,10 +30,13 @@ function getAllByFilter(filter, table) {
 //         .first();
 // }
 function make(newObject, table) {
+    // console.log(newObject, table)
     return db(table)
-        .insert(newObject)
-        .then(([id]) => getByFilter({ id }, table))
-        .catcH(err => console.log(err))
+        .insert(newObject, 'id')
+        .then(([id]) => {
+            return getOneByFilter({ id: id }, table)
+        })
+        .catch(err => console.log(err))
 }
 function updateById(id, body, table) {
     return db(table)
