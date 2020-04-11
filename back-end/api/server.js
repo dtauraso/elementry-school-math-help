@@ -8,13 +8,15 @@ const server = express();
 // const authRouter = require('../auth/auth-router');
 // const ticketRouter = require('../tickets/ticket-router');
 // const reactionRouter = require('../reactions/reaction-router')
-
+const problemSetRouter = require('./records/record-router')
 server.use(express.json());
 server.use(logger);
 server.use(cors());
 server.use(helmet());
 // console.log(server)
 // for register and login
+// console.log('here')
+server.use('/api', problemSetRouter)
 // server.use('/api', authRouter);
 
 // // for users

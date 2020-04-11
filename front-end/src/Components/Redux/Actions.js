@@ -35,6 +35,14 @@ export const autoSolve = (pathToState) => dispatch => {
 
     let x = store.getState()['payload']
     console.log('submit this', x)
+    axios
+        .post(`http://localhost:3001/api`, x.jsObject)
+        .then(res => {
+            if(res.status == 200) {
+                console.log('added the data')
+
+            }
+        })
     // x.name = ['testing']
     // console.log(x)
 

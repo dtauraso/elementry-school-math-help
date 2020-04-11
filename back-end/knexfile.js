@@ -6,7 +6,7 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      database: 'elementary-school-match-help-developement',
+      database: 'problems',
       user:     'postgres',
       // is this really an issue when they would need my actual computer to access my postgres?
       password: ';/U1waA=.dlE^59b\''
