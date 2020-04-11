@@ -1,11 +1,10 @@
-import React, {useState} from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
 import {
     getCell,
     getVariable } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
 
 const Box = styled.p`
 

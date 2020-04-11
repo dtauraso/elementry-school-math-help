@@ -1,4 +1,6 @@
-
+// There is one glitch here. We cannot autogenerate state graphs with using a single universal rule(adding a new string to the state name and incrememnting it
+// when there is a neighbor in the trie tree to keep all the state name vectors unique)
+// We are currently using a generator dependent on the problem domain(number of problems)
 export const setCell = (value) => {
     return value
 }
@@ -386,7 +388,10 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             // untested
             // if the winningStateName has any children
             let childrenStates = getChildren(temporaryState, winningStateName)
-            console.log(childrenStates)
+            // console.log(childrenStates)
+            if(childrenStates === null) {
+                return null
+            }
             if(childrenStates.length === 0) {
                 return null
             }

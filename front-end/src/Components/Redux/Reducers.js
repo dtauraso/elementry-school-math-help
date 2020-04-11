@@ -559,7 +559,7 @@ const solveProblem = (state, i, j) => {
     // randomly get it wrong
     let randomValue = Math.floor(Math.random() * 10) % 2
 
-    if(randomValue == 0) {
+    if(randomValue === 0) {
         temporaryState = set(temporaryState, submission, 'value', a + b)
         let progressMeter = [`${i + 2} ${j}`, `progressMeter ${j}`]
         temporaryState = set(temporaryState, progressMeter, 'correctFirstTime', true)
@@ -712,6 +712,53 @@ const setupForBackend = (state, action) => {
     */
     return [temporaryState, true]
 }
+const updateStateValue = (state, action) => {
+
+    const stateName = action.type
+
+    let newValue = action.payload
+    let temporaryState = state
+    temporaryState = {
+        ...temporaryState,
+        ...makeCell({
+            name: stateName,
+            nextStates: [],
+            functionCode: updateStateValue,
+            value: newValue
+        })        
+    }
+    return [temporaryState, true]
+}
+const storeResults = (state, action) => {
+
+    const stateName = action.type
+    const payload = action.payload
+    let temporaryState = state
+
+    console.log('store resulst', payload)
+
+    let problemTable = makeCell({
+        name: ['results from backend'],
+        nextParts: ['problemSetSelected'],
+        jsObject: payload
+    })
+
+    let ithProblemSet = makeCell({
+        name: ['results from backend', 'problemSetSelected'],
+        nextStates: [],
+        functionCode: updateStateValue,
+        value: -1
+    })
+    // let temporaryState = state
+    temporaryState = {
+        ...temporaryState,
+        ...problemTable,
+        ...ithProblemSet
+        
+    }
+    console.log(temporaryState)
+    return [temporaryState, true]
+}
 // reducers and the state for it in the same file
 // merge the states with 1 initialState
 // group by context of problem, not by kind of coding construct
@@ -822,6 +869,15 @@ let Root2 = {
                     nextStates: []
 
                 }),
+
+            ...makeCell({
+                    name: ['elementary school', 'store results'],
+                    // run a function to save the retreived backend data to a results state
+                    functionCode: storeResults,
+                    children: [],
+                    nextStates: []
+                }),
+    
         ...makeCell({
             name: ['problem set 0'],
             children: [],

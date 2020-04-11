@@ -7,15 +7,26 @@ router.get('/', async (req, res, next) => {
     let problemSets = await ourCrud.getAll('problemSets').catch((err) => { res.status(500).json({}) });
 
     // console.log(problemSets)
-    if(problemSets.length == 0) {
+    if(problemSets.length === 0) {
         res.status(500).json({})
         // next()
     } else {
-        console.log(problemSets[0].id)
-        let problems = await ourCrud.getAllByFilter({problemSetId: problemSets[0].id}, 'problemSet')
-                                    .catch((err) => { res.status(500).json({}) })
-        console.log(problems)
-        res.status(200).json(problemSets)
+        let myProblems = problemSets.map(async (problemSetSummary) => {
+            console.log(problemSetSummary.id)
+            let problems = await ourCrud.getAllByFilter({problemSetId: problemSetSummary.id}, 'problemSet')
+                                        .catch((err) => { res.status(500).json({}) })
+            return problems
+    
+        })
+
+
+        let problems = await Promise.all(myProblems).then(problems => problems)
+        console.log('problems retreived', problems)
+        console.log('problem sets', problemSets)
+        res.status(200).json({
+            problemSets: problemSets,
+            problems: problems
+        })
     
     }
 
@@ -34,6 +45,8 @@ router.post('/', async (req, res) => {
     console.log(ourInsertedProblemSetRow)
     let problemId = ourInsertedProblemSetRow.id
 
+    // this is adding them in at different times
+    // maybe should store the original order as they get added so the original order can be obtained for display
     req.body['problem set table'].forEach( async (problem) => {
 
         let problemToInsert = {...problem, problemSetId: problemId}

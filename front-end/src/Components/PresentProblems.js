@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { connect } from 'react-redux'
 import { getCat, autoSolve } from './Redux/Actions'
@@ -6,7 +6,6 @@ import {
     getCell,
     getVariable,
     getChild } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
 import AddTwoValues from './AddTwoValues'
 
 

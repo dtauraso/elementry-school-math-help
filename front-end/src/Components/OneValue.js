@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import Quantity from './Quantity'
 import SubmitAnswer from './SubmitAnswer'
 import styled from 'styled-components'
@@ -6,9 +6,7 @@ import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/Actions'
 import {
     getCell,
-    getVariable,
-    getChild } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
+    getVariable } from '../reducerHelpers'
 
 // convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action
 // https://codesandbox.io/s/wizardly-waterfall-w3vf2

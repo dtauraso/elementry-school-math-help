@@ -6,7 +6,6 @@ import { getCat, submitAnswer, addToAnswer } from './Redux/Actions'
 import {
     getCell,
     getVariable } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
 const Form = styled.form`
 
     width: 40%;

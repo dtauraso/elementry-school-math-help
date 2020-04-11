@@ -38,7 +38,7 @@ export const autoSolve = (pathToState) => dispatch => {
     axios
         .post(`http://localhost:3001/api`, x.jsObject)
         .then(res => {
-            if(res.status == 200) {
+            if(res.status === 200) {
                 console.log('added the data')
 
             }
@@ -90,4 +90,38 @@ export const submitAnswer = (pathToState) => dispatch => {
     //                 // testPayload: store.getState()
     //             }
     //     });
+}
+
+export const getProblemSets = () => dispatch => {
+
+    axios
+        .get(`http://localhost:3001/api`)
+        .then(res => {
+            if(res.status === 200) {
+                console.log('got the data', res.data)
+                dispatch({
+                    type: [['elementary school', 'store results']], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+                    payload: res.data,
+                    meta: {
+                            // basePath: pathToState, // base state(for the object data)
+                            // parentStateName: pathToState,
+                            // testPayload: store.getState()
+                        }
+                });
+        
+            }
+        })
+}
+
+export const setProblemSetSelector = (payload) => dispatch => {
+
+    dispatch({
+        type: [['results from backend', 'problemSetSelected']], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+        payload: payload,
+        meta: {
+                // basePath: pathToState, // base state(for the object data)
+                // parentStateName: pathToState,
+            }
+    });
+
 }

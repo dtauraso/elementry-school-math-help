@@ -1,10 +1,9 @@
 import React from 'react';
 import { Route, Link } from 'react-router-dom'
 import styled from 'styled-components'
-import logo from './logo.svg';
 import './App.css';
-// import { AddTwoValues } from './Components/AddTwoValues'
 import PresentProblems from './Components/PresentProblems'
+import Results from './Components/StudentResults/Results'
 
 
 function App() {
@@ -21,9 +20,9 @@ function App() {
       <Route path="/problemSet"
         render={(props) => <PresentProblems />}
         />
-      {/* <Route path="/results"
-        render={(props) => } */}
-      
+      <Route path="/results"
+        render={(props) => <Results />}
+        />
       {/* <AddTwoValues a={4} b={3}/> */}
     </div>
   );

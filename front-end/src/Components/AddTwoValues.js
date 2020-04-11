@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import OneValue from './OneValue';
 import styled from 'styled-components'
 import { connect } from 'react-redux'
@@ -6,7 +6,6 @@ import { getCat } from './Redux/Actions'
 import {
     getCell,
     getChildren } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
