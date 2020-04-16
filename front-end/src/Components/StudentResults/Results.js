@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react'
+import styled from 'styled-components'
 import ProblemSets from './ProblemSets'
 import ProblemSet from './ProblemSet'
 import Loader from 'react-loader-spinner';
@@ -12,6 +13,13 @@ import {
 
 // https://github.com/BW-Dev-Desk-Queue-1/Front-End/blob/master/dev-desk-queue/src/components/Student/StudentDashboard.js
 
+const ShowProblems = styled.div`
+
+    display: flex;
+    justify-content:  space-between;
+    padding-left: 20px;
+    padding-right: 20px;
+`
 const Results = (props) => {
     const {Root} = props
     useEffect(() => {
@@ -25,10 +33,10 @@ const Results = (props) => {
     if(stuff) {
         // console.log('stuff', stuff.jsObject)
         return (
-            <div>
+            <ShowProblems>
                 <ProblemSets />
                 <ProblemSet />
-            </div>
+            </ShowProblems>
         )
     
     }

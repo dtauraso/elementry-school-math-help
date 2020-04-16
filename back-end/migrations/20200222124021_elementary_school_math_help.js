@@ -65,6 +65,9 @@ exports.up = function(knex) {
             tbl
                 .boolean('gotItRightTheFirstTime')
                 .notNullable()
+            tbl
+                .integer('orderId')
+                .notNullable()
             // they have to have gotten it right on their first attempt for this to say true
             // tbl
             //     .enu('kindOfOperation', [

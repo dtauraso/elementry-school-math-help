@@ -743,6 +743,8 @@ const storeResults = (state, action) => {
         jsObject: payload
     })
 
+    // this is an index state
+    // It's purpose is to store and update a value without relying on a parent state to access the variable
     let ithProblemSet = makeCell({
         name: ['results from backend', 'problemSetSelected'],
         nextStates: [],

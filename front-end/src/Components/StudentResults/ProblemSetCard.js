@@ -10,7 +10,7 @@ import {
 const Problems = styled.p`
 
     display: flex;
-    
+    // flex-direction: flex-end;
 
 `
 const ProblemSetCard = (props) => {
@@ -30,7 +30,7 @@ const ProblemSetCard = (props) => {
     return (
         <div>
             <Problems>
-                {a} + {b} = {actualAnswer} {theirAnswer} {gotItRightTheFirstTime}
+                {a} + {b} = {actualAnswer}    your answer -> {theirAnswer} {gotItRightTheFirstTime? 'true': 'false'}
             </Problems>
         </div>
     )
