@@ -5,7 +5,8 @@ import { getCat, autoSolve } from './Redux/Actions'
 import {
     getCell,
     getVariable,
-    getChild } from '../reducerHelpers'
+    getChild,
+    treeVisualizer } from '../reducerHelpers'
 import AddTwoValues from './AddTwoValues'
 
 
@@ -35,6 +36,8 @@ const PresentProblems = (props) => {
     // get last child of state 'elementary school' via var 'problemSets' as (n - 1)th 'problem set'
     // get last child of state 'state name' via var 'count' as (n - 1)th 'child name'
     let elementarySchoolName = ['elementary school']
+    console.log('print tree')
+    treeVisualizer(Root, elementarySchoolName, 1)
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getVariable(Root, elementarySchoolName, 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)

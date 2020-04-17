@@ -39,7 +39,7 @@ const EndBox = styled(Box/*, props */)`
 const Boxes = styled.div`
 
     // what if this was dependent on the expected total number of @ symbols?
-    width: 50%;
+    width: ${props => props.quantityLength * 27}px;//50%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -84,7 +84,7 @@ const Quantity = (props) => {
     // const [difference, setDifference] = useState(total - quantity)
     // console.log('in quantity', getValue(Root, statePath))
     return (
-            <Boxes>
+            <Boxes quantityLength={quantity.length}>
                 {/* i : [0, total] quantity: [0, < total] */}
                 {quantity.map((item, i) => {
                     // const truthFlag = (value - 1) < i

@@ -26,10 +26,12 @@ const Container = styled.div`
         // align-items: center;
 // }
 `
-
+// calc(10px + 31px)
 const Value = styled.p`
-    margin-left: 10px;
-    margin-right: 10px;
+
+    width: 40px;
+    // margin-left: 10px;
+    // margin-right: 10px;
     // padding-bottom: 20px;
     border-bottom: ${props => props.operationType === '+'? '2px solid black': ''} ;
 

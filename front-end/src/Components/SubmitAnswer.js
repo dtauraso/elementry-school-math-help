@@ -8,7 +8,7 @@ import {
     getVariable } from '../reducerHelpers'
 const Form = styled.form`
 
-    width: 40%;
+    width: 80px;//40%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -16,7 +16,7 @@ const Form = styled.form`
 
 `
 const InputField = styled.input`
-    width: 40%;
+    width: 40px;//40%;
     border: 1px solid black;
 
 `

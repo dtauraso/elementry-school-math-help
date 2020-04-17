@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { getProblemSets } from '../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../../reducerHelpers'
+    treeVisualizer } from '../../reducerHelpers'
 
 
 // https://github.com/BW-Dev-Desk-Queue-1/Front-End/blob/master/dev-desk-queue/src/components/Student/StudentDashboard.js
@@ -28,6 +28,11 @@ const Results = (props) => {
         props.getProblemSets()
         // assume we are getting all the problems for now
     }, [])
+
+    let elementarySchoolName = ['elementary school']
+
+    console.log('print tree')
+    treeVisualizer(Root, elementarySchoolName, 1)
 
     let stuff = getCell(Root, ['results from backend'])
     if(stuff) {

@@ -127,7 +127,18 @@ const setupProblem = (state, action) => {
                         value: 3
                     }),
         
-        
+                    // need this for building the arithmatic display structure
+                // (
+                // prefixForStateNames: ''  this is so we can use the same numeric formula to generate different
+                // sets of state trees without the trees overwriting each other
+                // problemPartNumber: iA,
+                // ithProblem: i,
+                // value: ithProblem.a,
+                // quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b))
+                // isform: false
+                // operationType: '+'
+                // display operator: false
+                // hiding operator color: 'white'
                 ...makeCell({ // a
                     name: [`${iA} ${i}`],
                     variableNames: [`value ${iA}`,
@@ -155,6 +166,8 @@ const setupProblem = (state, action) => {
                             name: [`operationType ${iA}`],
                             value: ''
                         }),
+                        // display operator
+                        // hiding operator color
         
         
         

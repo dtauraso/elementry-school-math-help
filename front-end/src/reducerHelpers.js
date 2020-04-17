@@ -1,6 +1,17 @@
 // There is one glitch here. We cannot autogenerate state graphs with using a single universal rule(adding a new string to the state name and incrememnting it
 // when there is a neighbor in the trie tree to keep all the state name vectors unique)
 // We are currently using a generator dependent on the problem domain(number of problems)
+
+// for the number generating formula:
+    // numbering needs to be in the first name
+    // extra context names need to also be included in the first name
+// state chart selling point is I made the is from the ground up
+
+// if they ask about xstate say I wanted to make something similar to prove I could do it
+
+// can I work with them?
+// can they do the job?
+
 export const setCell = (value) => {
     return value
 }
@@ -317,6 +328,119 @@ export const setArray = (state, parentStateName, targetVar, array) => {
         getVariable(state, parentStateName, targetVar),
         array
     )
+}
+
+const makeSpaces = (n) => {
+    if(n === 0) {
+        return ''
+    }
+    else {
+        return ' ' + makeSpaces(n - 1)
+    }
+}
+const hasSubstates = (cell) => {
+    if(!Object.keys(cell).includes('nextParts')) {
+        return false
+    }
+    else if(Object.keys(cell.nextParts).length == 0) {
+        return false
+    }
+    else {
+        return true
+    }
+}
+const hasAttributeOfCollection = (cell, attributeName) => {
+    if(!Object.keys(cell).includes(attributeName)) {
+        return false
+    }
+    else if(cell[attributeName].length == 0) {
+        return false
+    }
+    else {
+        return true
+    }
+
+}
+const hasAttribute = (cell, attributeName) => {
+    if(!Object.keys(cell).includes(attributeName)) {
+        return false
+    }
+    else {
+        return true
+    }
+}
+const getVariablesAndChildren = (table, cell, levelId) => {
+    
+    if(hasAttributeOfCollection(cell, 'variableNames')) {
+        // console.log(`${makeSpaces(levelId)}${cell.variableNames}`)
+        cell.variableNames.forEach(variableStateName => {
+            treeVisualizer(table,
+                [variableStateName],
+                levelId + 2)
+
+        })
+    }
+
+    if(hasAttributeOfCollection(cell, 'children')) {
+        cell.children.forEach(childStateName => {
+            treeVisualizer(table,
+                childStateName,
+                levelId + 2)
+
+        })
+    }
+}
+export const treeVisualizer = (table, currentState, levelId) => {
+
+    // use getCell
+    let cell = getCell(table, currentState)
+    if(!cell) {
+        return
+    }
+    console.log(`${makeSpaces(levelId)}${cell.name}`)
+    if(hasAttribute(cell, 'jsObject')) {
+        console.log(`${makeSpaces(levelId + 2)}${cell.jsObject.stringify()}`)
+    }
+    else if(hasAttribute(cell, 'value')) {
+        console.log(`${makeSpaces(levelId + 2)}|${cell.value}|`)
+
+    }
+    // console.log(cell)
+    // console.log(`${makeSpaces(levelId)}${hasSubstates(cell)}`)
+    if(!hasSubstates(cell)) {
+        // visit subtrees here
+        // console.log(`${makeSpaces(levelId)}`, cell)
+        getVariablesAndChildren(table, cell, levelId)
+    }
+    else {
+        Object.keys(cell.nextParts).forEach(nextPart => {
+            // visit subtrees here
+            // console.log(`${makeSpaces(levelId)} has substates`, cell)
+            getVariablesAndChildren(table, cell, levelId)
+            // get the next nested granular state within currentState
+            treeVisualizer(table,
+                            [...currentState, nextPart],
+                            levelId * 2)
+        })
+    }
+    
+    // use indents
+    // if the state has a value
+        // print it
+    // if the state has a jsobject
+        // print it
+    // print name
+    // if there are next parts
+
+        // recurse on the next parts
+            // [name, ith next part key] = substate
+        // recurse on the var names
+        // recurse on the children
+    // else
+            // recurse on the var names
+            // recurse on the children
+
+
 }
 export const breathFirstTraversal = (state, action, startStateName, levelId) => {
     // startStateName, endStateName are lists of strings

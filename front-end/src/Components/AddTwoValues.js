@@ -5,14 +5,15 @@ import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
 import {
     getCell,
-    getChildren } from '../reducerHelpers'
+    getChildren,
+    getVariable } from '../reducerHelpers'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
 const Container = styled.div`
 
     // @media(max-width: 400px) {
-        width: 50%;//vw;
+        width: ${props => (props.quantityLength * 27) + 150}px;//75%;//vw;
         background-color: ${props => props.backgroundColor};
         border: 1px solid #BADA55;
         display: flex;
@@ -42,6 +43,23 @@ export const AddTwoValues = (props) => {
     let x = getCell(Root, [`problem ${stateCoordinates.problemId}`])
     // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
+
+    let item = problemParts[0][0].split(' ')[0]
+    let stateName = [`${item} ${stateCoordinates.problemId}`]
+    let state = getCell(Root, stateName)
+    // let isForm = getVariable(Root,
+    //     stateName,
+    //     'isForm').value
+    
+    // if(!isForm) {
+
+    // }
+    let myQuantity = getVariable(Root,
+        stateName,
+        'quantity'
+        ).value
+    let sizeOfQuantity = myQuantity.length
+    console.log('quantity for the add 2 values', myQuantity)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
 
     // console.log('problem parts', problemParts, stateCoordinates)
@@ -57,7 +75,7 @@ export const AddTwoValues = (props) => {
     return (
         // <div></div>
         // needs a form and both values with the solution
-        <Container>
+        <Container quantityLength={myQuantity.length}>
             {/* <h1>testing</h1> */}
             {problemParts.map((problemKey, i) => (
                 <OneValue
