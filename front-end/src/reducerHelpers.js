@@ -403,7 +403,7 @@ export const treeVisualizer = (table, currentState, levelId) => {
     }
     else if(hasAttribute(cell, 'value')) {
         console.log(`${makeSpaces(levelId + 2)}|${cell.value}|`)
-
+        return
     }
     // console.log(cell)
     // console.log(`${makeSpaces(levelId)}${hasSubstates(cell)}`)
