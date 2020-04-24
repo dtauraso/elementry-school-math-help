@@ -2,6 +2,8 @@ import React from 'react'
 
 import { connect } from 'react-redux'
 import { getCat, autoSolve } from './Redux/Actions'
+import { useHistory } from 'react-router-dom'
+
 import {
     getCell,
     getVariable,
@@ -38,6 +40,8 @@ const PresentProblems = (props) => {
     let elementarySchoolName = ['elementary school']
     console.log('print tree')
     treeVisualizer(Root, elementarySchoolName, 1)
+    let problemSetDataSetName = useHistory().location.pathname
+    console.log('history', problemSetDataSetName.slice(1, problemSetDataSetName.length))
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getVariable(Root, elementarySchoolName, 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)
@@ -56,6 +60,7 @@ const PresentProblems = (props) => {
                 key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
                 stateCoordinates={{problemId: problem[0].split(' ')[1]}}
+                // pass in a state name prefix to identify the prefixth data set
                 />
 
         ))}

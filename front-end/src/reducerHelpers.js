@@ -480,8 +480,9 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             if(passes) {
                 return null
             }
-            // console.log("getting state", temporaryState, nextState) 
+            console.log("getting state", temporaryState, nextState) 
             let cell = getCell(temporaryState, nextState)
+            console.log('cell found', cell)
             // ignore the state if it doesn't have a function to run
             if(!Object.keys(cell).includes('function')) {
                 console.log(cell, "doesn't have a function")

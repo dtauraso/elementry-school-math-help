@@ -42,7 +42,8 @@ const SubmitAnswer = (props) => {
     
     // let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
     //                             `submission ${stateCoordinates.problemId}`]
-    let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
+    let dataSetName = ''
+    let y = getVariable(Root, submissionStateName, `${dataSetName}value`)//[`value ${stateCoordinates.problemPart}`])
     // console.log("submission's value", y)
     let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
     let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value

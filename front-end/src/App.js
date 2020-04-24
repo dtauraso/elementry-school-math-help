@@ -10,14 +10,14 @@ function App() {
   return (
     <div className="App">
       <nav className="NavBar">
-        <Link to="/problemSet">
+        <Link to="/plusProblems">
           Problems
         </Link>
         <Link to='/results'>
           Results
         </Link>
       </nav>
-      <Route path="/problemSet"
+      <Route path="/plusProblems"
         render={(props) => <PresentProblems />}
         />
       <Route path="/results"
