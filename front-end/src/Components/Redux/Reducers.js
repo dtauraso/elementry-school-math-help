@@ -109,6 +109,8 @@ const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isInter
     // think of intermediate states as part of the state name chain
     // the root only cares about the first link in the chain
     if(!isIntermediateState) {
+        // are some of my non intermdeiate staes the last one of a 3 name state name?
+        // if so that will generate an extra connection that will not work at root, but will not affect the graph
         Root2 = {
             ...Root2,
             'root': {
@@ -436,7 +438,8 @@ const setupProblem = (state, action) => {
     
                 children: [ [`noValue ${i}`],
                             [`isInteger ${i}`],
-                            [`isNotInteger ${i}`]],
+                            [`isNotInteger ${i}`],
+                            [`submitValue ${i}`]],
     
                 variableNames: [`value ${iAnswer}`,
                                 `quantity ${iAnswer}`,
@@ -1573,6 +1576,24 @@ Root2 = makeLinks(Root2, {
     isVariable: false,
     isIntermediateState: true
 })
+
+
+Root2 = makeLinks(Root2, {
+    parent: ['elementary school'],
+    newStateName: ['problemSets 0'],
+    stateCells: makeCell({
+        name: ['problemSets 0'],
+        value: 1
+    }),
+    isVariable: true,
+    isIntermediateState: false
+})
+
+
+// makeCell({
+//     name: ['problemSets 0'],
+//     value: 1
+// })
 // start state
 Root2 = {
     ...Root2,
@@ -1650,10 +1671,10 @@ Root2 = {
             //     nextParts: ['create problem']
             // }),
 
-            ...makeCell({
-                name: ['problemSets 0'],
-                value: 1
-            }),
+            // ...makeCell({
+            //     name: ['problemSets 0'],
+            //     value: 1
+            // }),
                 ...makeCell({
                     name: ['elementary school', 'utilities', 'create problem'],
                     functionCode: setupProblem,

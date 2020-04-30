@@ -88,7 +88,8 @@ export const AddTwoValues = (props) => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+    console.log('my props in adding 2 values', ownProps)
     return {
         Root: state
     }

@@ -1,8 +1,8 @@
 import React from 'react'
+import { createSelector } from 'reselect';
 
 import { connect } from 'react-redux'
-import { getCat, autoSolve } from './Redux/Actions'
-import { useHistory } from 'react-router-dom'
+import { autoSolve } from './Redux/Actions'
 
 import {
     getCell,
@@ -12,44 +12,40 @@ import {
 import AddTwoValues from './AddTwoValues'
 
 
-// const getProblems = (state) => {
-//   let elementarySchool = getCell(state, ['elementary school'])
-//   let problemSets = getVariable(state, ['elementary school'], 'problemSets')
-//   // console.log('stuff', elementarySchool, problemSets.value - 1)
-//   let problemSet = getChild(state, elementarySchool, `problem set ${problemSets.value - 1}`)
-//   // console.log(problemSet)
-//   let problems = Object.keys(problemSet.children)
-//   return problems
-// }
 
-const PresentProblems = (props) => {
+const getMyProblems = ( { state, location } ) => {
 
-    const {Root} = props
-    
-    const autoSolve1 = () => {
-        props.autoSolve( ['elementary school', 'testing'])
-        
-    }
-    /*
-    problem set, #of problems, 
-    */
-    // need the problem set
-    // console.log(Root)
-    // get last child of state 'elementary school' via var 'problemSets' as (n - 1)th 'problem set'
-    // get last child of state 'state name' via var 'count' as (n - 1)th 'child name'
+    let Root = state
+    console.log('my lcoation inside the selector', location)
     let elementarySchoolName = ['elementary school']
-    // console.log('print tree')
-    let logObject = treeVisualizer(Root, elementarySchoolName, 1)
-    console.log("log of tree", logObject)
-    let problemSetDataSetName = useHistory().location.pathname
-    console.log('history', problemSetDataSetName.slice(1, problemSetDataSetName.length))
+    // let problemSetDataSetName = props.location.pathname//useHistory().location.pathname
+    // console.log('history', problemSetDataSetName.slice(1, problemSetDataSetName.length))
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getVariable(Root, elementarySchoolName, 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)
     let problemSet = getChild(Root, elementarySchool, [`problem set ${problemSets.value - 1}`])
     // console.log('problem set', problemSet)
     let problems = problemSet.children//Object.keys(problemSet.children)
-    // console.log('problems', problems)
+    // console.log('my problems', problems)
+    return problems
+}
+
+// ensures redux will not refresh the component when the data fetched is the same
+const getProblems = createSelector( (state, location) => ( { state, location } ),
+                                    (stuff) => getMyProblems(stuff))
+const PresentProblems = (props) => {
+
+    const { problems } = props
+    
+    const autoSolve1 = () => {
+        props.autoSolve( ['elementary school', 'testing'])
+        
+    }
+    console.log('refreshing present problems')
+    /*
+    problem set, #of problems, 
+    */
+    // need the problem set
     return (
         <div>
 
@@ -72,13 +68,15 @@ const PresentProblems = (props) => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+
     return {
-        Root: state
+        
+        problems: getProblems(state, ownProps.myPath)
     }
 }
 export default connect(
     mapStateToProps,
-    { getCat, autoSolve }
+    { autoSolve }
 
 )(PresentProblems)

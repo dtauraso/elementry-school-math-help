@@ -432,8 +432,11 @@ export const treeVisualizer = (table, currentState) => {
 
     return {
             a_name: cell.name,
-            b_children: children,
-            c_variables: variables,
+            ...(cell.function == undefined? {} : {b_function: cell.function.name}),
+            // missing next states
+            ...(cell.nextStates == undefined? {} : {c_nextStates: cell.nextStates}),
+            d_children: children,
+            e_variables: variables,
             ...(cell.jsObject == undefined? {} : {jsObject: cell.jsObject}),
             substates: substates  
     }
