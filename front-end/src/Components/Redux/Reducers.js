@@ -12,6 +12,9 @@ import {    makeCell,
             getChildren,
             treeVisualizer} from '../../reducerHelpers'
 
+// Only add states when they need to be initially created or enumaerated with a graph generator.
+// No singletone states should be created just cause they don't need to exist untill that reducer runs.
+
 const problems = [
     {a: 4, b: 3},
 
@@ -55,6 +58,25 @@ current state name form (i0. i1, i2)
 new state name form (i0 + j. i1, i2)
 
 */
+const addChild = (Root2, stateNameLastString, newChildNames) => {
+
+    // newChildName is an array of strings
+    // let newChildrenForProblemSet = [
+    //     [`problem ${i}`]
+    // ]
+    
+
+    // add starting trie links to root and add the new problem child to the problem set
+    Root2 = {
+        ...Root2,
+        [stateNameLastString]: {
+            ...Root2[stateNameLastString],
+            children: [...Root2[stateNameLastString].children, ...newChildNames]
+        }
+    }
+    return Root2
+}
+
 const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isIntermediateState}) => {
     // newStateName is an array of strings
     /*
@@ -67,10 +89,10 @@ const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isInter
         
     ])
 
-    let newChildrenForProblemSet = [
-        newStateName
-    ]
-    let lastName = parent[parent.length - 1]
+    // let newChildrenForProblemSet = [
+    //     newStateName
+    // ]
+    // let lastName = parent[parent.length - 1]
     // console.log('parts I need')
     // console.log('newStateName', newStateName)
     // console.log('newNextParts', newNextParts)
@@ -80,7 +102,7 @@ const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isInter
     // console.log('stateCells', stateCells)
 
     // console.log('tree', Root2)
-    let parentState = getCell(Root2, parent)
+    // let parentState = getCell(Root2, parent)
 
     // console.log('parentState', parentState)
 
@@ -92,7 +114,7 @@ const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isInter
             'root': {
                 ...Root2.root,
                 nextParts: isVariable?
-                // variables don't need to be connected to root as the parent exclusvely access them
+                // variables don't need to be connected to root as the parent exclusvely accesses them
                 {
                     ...Root2.root.nextParts
                 }:
@@ -137,8 +159,38 @@ const generateProblemStructure = (state, action) => {
     //     isVariable: false,
     //     isIntermediateState: false})
 }
+const setVariable = (state, parentStateName, variableName, newValue) => {
+
+    // parentStateName is an array of strings
+    let variable = getVariable(state, parentStateName, variableName)
+
+    return {
+        ...state,
+        
+        [variable.name[0]]: {
+            ...variable,
+            value: newValue
+        }
+    }
+}
+const incrementVariableBy = (state, parentStateName, variableName, newValue) => {
+
+    // parentStateName is an array of strings
+    let variable = getVariable(state, parentStateName, variableName)
+
+    return {
+        ...state,
+        
+        [variable.name[0]]: {
+            ...variable,
+            value: variable.value + newValue
+        }
+    }
+}
+
 const setupProblem = (state, action) => {
 
+    // 
     // need to put this into a for loop
     // ['elementary school', 'utilities', 'create problem']
     // ['problemCount']
@@ -146,20 +198,26 @@ const setupProblem = (state, action) => {
     let numberOfProblems2 = getVariable(state, parentOfProblemCount, 'problemCount').value
     console.log('we need to make', numberOfProblems2, 'problems')
     console.log(state)
+    let numberOfProblems3 = getVariable(state, ['problem set 0'], 'numberOfProblems')
+    console.log(numberOfProblems3.name[0])
     console.log('about to make a problem', getVariable(state, ['problem set 0'], 'numberOfProblems').value)
 
     let Root2 = state
 
 
     for(let i = 0; i < numberOfProblems2; i++) {
-        Root2 = {
-            ...Root2,
+
+        
+        Root2 = incrementVariableBy(Root2, ['problem set 0'], 'numberOfProblems', 1)
+        
+        // {
+        //     ...Root2,
             
-            'numberOfProblems 0': {
-                ...Root2.numberOfProblems,
-                value: getVariable(Root2, ['problem set 0'], 'numberOfProblems').value + 1
-            }
-        }
+        //     [numberOfProblems3.name[0]]: {
+        //         ...Root2.numberOfProblems,
+        //         value: getVariable(Root2, ['problem set 0'], 'numberOfProblems').value + 1
+        //     }
+        // }
     
         let numberOfProblems = getVariable(Root2, ['problem set 0'], 'numberOfProblems').value
         let i = numberOfProblems - 1
@@ -170,7 +228,8 @@ const setupProblem = (state, action) => {
         let iB = iA + 1
         let iAnswer = iA + 2
         console.log("new starting values", iA, iB, iAnswer)
-        
+        Root2 = addChild(Root2, 'problem set 0', [[`problem ${i}`]])
+
         Root2 = makeLinks(Root2, {
             parent: ['problem set 0'],
             newStateName: [`problem ${i}`],
@@ -688,7 +747,7 @@ const setupProblem = (state, action) => {
         //treeVisualizer(Root2, elementarySchoolName, 1)
     
         // links for root
-        let newNextParts = makeSet([
+        // let newNextParts = makeSet([
             // `problem ${i}`,
             // `${iA} ${i}`,
             // `${iB} ${i}`,
@@ -699,34 +758,34 @@ const setupProblem = (state, action) => {
             // `submitValue ${i}`,
             // `got it right the first time ${i}`,
             // `else ${i}`
-        ])
+        // ])
         
 
 
         // new child for problem set 0
-        let newChildrenForProblemSet = [
-            [`problem ${i}`]
-        ]
+        // let newChildrenForProblemSet = [
+        //     [`problem ${i}`]
+        // ]
         
     
         // add starting trie links to root and add the new problem child to the problem set
-        Root2 = {
-            ...Root2,
-            'root': {
-                ...Root2.root,
-                nextParts: {
-                    ...Root2.root.nextParts,
-                    ...newNextParts
-                }
+        // Root2 = {
+        //     ...Root2,
+        //     'root': {
+        //         ...Root2.root,
+        //         nextParts: {
+        //             ...Root2.root.nextParts,
+        //             ...newNextParts
+        //         }
         
-            },
-            'problem set 0': {
-                ...Root2['problem set 0'],
-                children: [...Root2['problem set 0'].children, ...newChildrenForProblemSet]
-            }
-        }
+        //     },
+        //     'problem set 0': {
+        //         ...Root2['problem set 0'],
+        //         children: [...Root2['problem set 0'].children, ...newChildrenForProblemSet]
+        //     }
+        // }
         // the states representing the problem
-        let x = {
+        // let x = {
                 // ...makeCell({
                 //     name,
                 //     nextParts,
@@ -981,11 +1040,11 @@ const setupProblem = (state, action) => {
                     // })
         
         
-            }
-        Root2 = {
-            ...Root2,
-            ...x
-        }
+            // }
+        // Root2 = {
+        //     ...Root2,
+        //     ...x
+        // }
     }
     
     return [Root2, true]
@@ -1283,18 +1342,39 @@ const setupForBackend = (state, action) => {
     console.log('we are setting the completed form data for submitting to the backend')
     console.log('state', state)
 
+    // Root2 = makeLinks(Root2, {
+    //     parent: [`${iAnswer} ${i}`],
+    //     newStateName: [`operationType ${iAnswer}`],
+    //     stateCells: makeCell({
+    //         name: [`operationType ${iAnswer}`],
+    //         value: ''
+    //     }),
+    //     isVariable: true,
+    //     isIntermediateState: false
+    // })
     // make a single payload state
-    let problemTable = makeCell({
-        name: ['payload'],
-        jsObject: {'problem set table': []}
-    })
+    // let problemTable = makeCell({
+    //     name: ['payload'],
+    //     jsObject: {'problem set table': []}
+    // })
 
     let temporaryState = state
-    temporaryState = {
-        ...temporaryState,
-        ...problemTable
+    // temporaryState = {
+    //     ...temporaryState,
+    //     ...problemTable
         
-    }
+    // }
+    temporaryState = makeLinks(temporaryState, {
+            parent: ['elementary school', 'store results'],
+            newStateName: ['payload'],
+            stateCells: makeCell({
+                name: ['payload'],
+                jsObject: {'problem set table': []}
+            }),
+            isVariable: true,
+            isIntermediateState: false
+    })
+
     // temporaryState = tableAssignJsObject(temporaryState, problemTable['XXXXXXX'], [])
     // console.log('added the problem set table', temporaryState)
     temporaryState = processProblems(temporaryState, action, collectProblems)
@@ -1354,10 +1434,17 @@ const setupForBackend = (state, action) => {
 }
 const updateStateValue = (state, action) => {
 
+    // wouldn't be possible if stateName is an array of strings
+    // takes in a new value and updates itself
     const stateName = action.type
+    const parentStateName = action.meta.parentStateName
 
     let newValue = action.payload
     let temporaryState = state
+
+    // not connected to the main graph
+    // temporaryState = setVariable(temporaryState, parentStateName, stateName, newValue) => {
+    console.log('updating value', stateName)
     temporaryState = {
         ...temporaryState,
         ...makeCell({
@@ -1377,36 +1464,118 @@ const storeResults = (state, action) => {
 
     console.log('store resulst', payload)
 
-    let problemTable = makeCell({
-        name: ['results from backend'],
-        nextParts: ['problemSetSelected'],
-        jsObject: payload
+//     temporaryState = makeLinks(temporaryState, {
+//         parent: ['elementary school', 'store results'],
+//         newStateName: ['payload'],
+//         stateCells: makeCell({
+//             name: ['payload'],
+//             jsObject: {'problem set table': []}
+//         }),
+//         isVariable: true,
+//         isIntermediateState: false
+// })
+
+
+    temporaryState = makeLinks(temporaryState, {
+        parent: ['elementary school', 'store results'],
+        newStateName: ['results from backend'],
+        stateCells: makeCell({
+            name: ['results from backend'],
+            nextParts: ['problemSetSelected'],
+            jsObject: payload
+        }),
+        isVariable: true,
+        isIntermediateState: true
     })
+
+    // let problemTable = makeCell({
+    //     name: ['results from backend'],
+    //     nextParts: ['problemSetSelected'],
+    //     jsObject: payload
+    // })
 
     // this is an index state
     // It's purpose is to store and update a value without relying on a parent state to access the variable
-    let ithProblemSet = makeCell({
-        name: ['results from backend', 'problemSetSelected'],
-        nextStates: [],
-        functionCode: updateStateValue,
-        value: -1
+    // let ithProblemSet = makeCell({
+    //     name: ['results from backend', 'problemSetSelected'],
+    //     nextStates: [],
+    //     functionCode: updateStateValue,
+    //     value: -1
+    // })
+    temporaryState = makeLinks(temporaryState, {
+        parent: ['elementary school', 'store results'],
+        newStateName: ['results from backend', 'problemSetSelected'],
+        stateCells: makeCell({
+            name: ['results from backend', 'problemSetSelected'],
+            nextStates: [],
+            functionCode: updateStateValue,
+            value: -1
+        }),
+        isVariable: true,
+        isIntermediateState: false
     })
+
     // let temporaryState = state
-    temporaryState = {
-        ...temporaryState,
-        ...problemTable,
-        ...ithProblemSet
+    // temporaryState = {
+    //     ...temporaryState,
+    //     // ...problemTable,
+    //     // ...ithProblemSet
         
-    }
+    // }
     console.log(temporaryState)
     return [temporaryState, true]
 }
 // reducers and the state for it in the same file
 // merge the states with 1 initialState
 // group by context of problem, not by kind of coding construct
+let Root2 = {}
+Root2 = {
+    ...makeCell({
+        name: ['root'],
+        nextParts : [   'elementary school',
+                        'problem set 0',
+                        'problem 0',
+                        'problemParts 0',
+                        // rename to 'a 0 0' ? or 'a 0'?
+                        // Cannot rename them using letters
+                        '0 0',
+                        '1 0',
+                        '2 0',
+                        'noValue 0',
+                        'isInteger 0',
+                        'isNotInteger 0',
+                        'submitValue 0',
+                        'got it right the first time 0',
+                        'else 0'],
+    })
+}
 
+Root2 = makeLinks(Root2, {
+    parent: ['root'],
+    newStateName: ['elementary school'],
+    stateCells: makeCell({
+        name: ['elementary school'],
+        nextParts: ['utilities', 'testing', 'store results'],
+        children: [['problem set 0']],
+        variableNames: ['problemSets 0']
+    }),
+    isVariable: false,
+    isIntermediateState: true
+})
+
+Root2 = makeLinks(Root2, {
+    parent: ['root'],
+    newStateName: ['elementary school', 'utilities'],
+    stateCells: makeCell({
+        name: ['elementary school', 'utilities'],
+        nextParts: ['create problem']
+    }),
+    isVariable: false,
+    isIntermediateState: true
+})
 // start state
-let Root2 = {
+Root2 = {
+    ...Root2,
     // get rid of this level
     // redux: {
         // have a Root category
@@ -1449,36 +1618,37 @@ let Root2 = {
             }
         }
         */
-       ...makeCell({
-            name: ['root'],
-            nextParts : [   'elementary school',
-                            'problem set 0',
-                            'problem 0',
-                            'problemParts 0',
-                            // rename to 'a 0 0' ? or 'a 0'?
-                            '0 0',
-                            '1 0',
-                            '2 0',
-                            'noValue 0',
-                            'isInteger 0',
-                            'isNotInteger 0',
-                            'submitValue 0',
-                            'got it right the first time 0',
-                            'else 0'],
-        }),
-        ...makeCell({
-            name: ['elementary school'],
-            nextParts: ['utilities', 'testing'],
-            children: [['problem set 0']],
-            variableNames: ['problemSets 0']
-        }),
+    //    ...makeCell({
+    //         name: ['root'],
+    //         nextParts : [   'elementary school',
+    //                         'problem set 0',
+    //                         'problem 0',
+    //                         'problemParts 0',
+    //                         // rename to 'a 0 0' ? or 'a 0'?
+    //                         // Cannot rename them using letters
+    //                         '0 0',
+    //                         '1 0',
+    //                         '2 0',
+    //                         'noValue 0',
+    //                         'isInteger 0',
+    //                         'isNotInteger 0',
+    //                         'submitValue 0',
+    //                         'got it right the first time 0',
+    //                         'else 0'],
+    //     }),
+        // ...makeCell({
+        //     name: ['elementary school'],
+        //     nextParts: ['utilities', 'testing', 'store results'],
+        //     children: [['problem set 0']],
+        //     variableNames: ['problemSets 0']
+        // }),
             // the indents are for illustration only(ie, each node entire hierarchical tree is stored at the top level of
             // this js object)
             // dummy intermediate state
-            ...makeCell({
-                name: ['elementary school', 'utilities'],
-                nextParts: ['create problem']
-            }),
+            // ...makeCell({
+            //     name: ['elementary school', 'utilities'],
+            //     nextParts: ['create problem']
+            // }),
 
             ...makeCell({
                 name: ['problemSets 0'],
@@ -1516,6 +1686,8 @@ let Root2 = {
                     name: ['elementary school', 'store results'],
                     // run a function to save the retreived backend data to a results state
                     functionCode: storeResults,
+
+                    // this is the only place where children links get set
                     children: [],
                     nextStates: []
                 }),

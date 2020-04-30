@@ -120,7 +120,7 @@ export const setProblemSetSelector = (payload) => dispatch => {
         payload: payload,
         meta: {
                 // basePath: pathToState, // base state(for the object data)
-                // parentStateName: pathToState,
+                parentStateName: ['elementary school', 'store results']//pathToState,
             }
     });
 

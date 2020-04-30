@@ -330,14 +330,6 @@ export const setArray = (state, parentStateName, targetVar, array) => {
     )
 }
 
-const makeSpaces = (n) => {
-    if(n === 0) {
-        return ''
-    }
-    else {
-        return ' ' + makeSpaces(n - 1)
-    }
-}
 const hasSubstates = (cell) => {
     if(!Object.keys(cell).includes('nextParts')) {
         return false
@@ -369,78 +361,82 @@ const hasAttribute = (cell, attributeName) => {
         return true
     }
 }
-const getVariablesAndChildren = (table, cell, levelId) => {
-    
-    if(hasAttributeOfCollection(cell, 'variableNames')) {
-        // console.log(`${makeSpaces(levelId)}${cell.variableNames}`)
-        cell.variableNames.forEach(variableStateName => {
-            treeVisualizer(table,
-                [variableStateName],
-                levelId + 2)
+export const treeVisualizer = (table, currentState) => {
 
-        })
-    }
-
-    if(hasAttributeOfCollection(cell, 'children')) {
-        cell.children.forEach(childStateName => {
-            treeVisualizer(table,
-                childStateName,
-                levelId + 2)
-
-        })
-    }
-}
-export const treeVisualizer = (table, currentState, levelId) => {
-
-    // use getCell
+    // have to treat each cell as if only 1 function call maps to 1 cell
+    /*
+    cell(full name here)
+    children
+    variables
+    substates: [
+        {
+        cell(full name here)
+        children
+        variables
+        substates: []
+        }
+    ]
+    */
     let cell = getCell(table, currentState)
     if(!cell) {
-        return
+        return {}
     }
-    console.log(`${makeSpaces(levelId)}${cell.name}`)
+   
     if(hasAttribute(cell, 'jsObject')) {
-        console.log(`${makeSpaces(levelId + 2)}${cell.jsObject.stringify()}`)
+        return {jsObject: cell.jsObject}
     }
     else if(hasAttribute(cell, 'value')) {
-        console.log(`${makeSpaces(levelId + 2)}|${cell.value}|`)
-        return
+        return {value: cell.value}
     }
-    // console.log(cell)
-    // console.log(`${makeSpaces(levelId)}${hasSubstates(cell)}`)
-    if(!hasSubstates(cell)) {
-        // visit subtrees here
-        // console.log(`${makeSpaces(levelId)}`, cell)
-        getVariablesAndChildren(table, cell, levelId)
-    }
-    else {
-        Object.keys(cell.nextParts).forEach(nextPart => {
-            // visit subtrees here
-            // console.log(`${makeSpaces(levelId)} has substates`, cell)
-            getVariablesAndChildren(table, cell, levelId)
-            // get the next nested granular state within currentState
-            treeVisualizer(table,
-                            [...currentState, nextPart],
-                            levelId * 2)
+
+    let variables = {}
+    if(hasAttributeOfCollection(cell, 'variableNames')) {
+
+        cell.variableNames.forEach(variableStateName => {
+            variables = {
+                ...variables,
+
+                // should return a tree of states
+                [variableStateName]: {...treeVisualizer(table,
+                                                [variableStateName])}
+            }
         })
     }
-    
-    // use indents
-    // if the state has a value
-        // print it
-    // if the state has a jsobject
-        // print it
-    // print name
-    // if there are next parts
 
-        // recurse on the next parts
-            // [name, ith next part key] = substate
-        // recurse on the var names
-        // recurse on the children
-    // else
-            // recurse on the var names
-            // recurse on the children
+    let children = []
+    if(hasAttributeOfCollection(cell, 'children')) {
 
+        cell.children.forEach(childStateName => {
 
+            // should return a tree of states
+            children = [...children,
+                        treeVisualizer(table,
+                                childStateName)]
+        })
+    }
+
+    let substates = []
+    if(hasSubstates(cell)) {
+
+        // visit subtrees here
+        Object.keys(cell.nextParts).forEach(nextPart => {
+
+            // get the next nested granular state within currentState
+            substates = [
+                ...substates,
+                treeVisualizer(table,
+                        [...currentState, nextPart])
+                ]
+        })
+    }
+
+    return {
+            a_name: cell.name,
+            b_children: children,
+            c_variables: variables,
+            ...(cell.jsObject == undefined? {} : {jsObject: cell.jsObject}),
+            substates: substates  
+    }
 }
 export const breathFirstTraversal = (state, action, startStateName, levelId) => {
     // startStateName, endStateName are lists of strings

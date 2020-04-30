@@ -32,7 +32,7 @@ const Results = (props) => {
     let elementarySchoolName = ['elementary school']
 
     console.log('print tree')
-    treeVisualizer(Root, elementarySchoolName, 1)
+    // treeVisualizer(Root, elementarySchoolName, 1)
 
     let stuff = getCell(Root, ['results from backend'])
     if(stuff) {

@@ -38,8 +38,9 @@ const PresentProblems = (props) => {
     // get last child of state 'elementary school' via var 'problemSets' as (n - 1)th 'problem set'
     // get last child of state 'state name' via var 'count' as (n - 1)th 'child name'
     let elementarySchoolName = ['elementary school']
-    console.log('print tree')
-    treeVisualizer(Root, elementarySchoolName, 1)
+    // console.log('print tree')
+    let logObject = treeVisualizer(Root, elementarySchoolName, 1)
+    console.log("log of tree", logObject)
     let problemSetDataSetName = useHistory().location.pathname
     console.log('history', problemSetDataSetName.slice(1, problemSetDataSetName.length))
     let elementarySchool = getCell(Root, elementarySchoolName)
