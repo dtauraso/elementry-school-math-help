@@ -5,11 +5,12 @@ const ourCrud = require('../../common-db-operations/crud')
 function compareFunction(item_i, item_j){
     return item_i.orderId - item_j.orderId 
 }
+// console.log('here')
 router.get('/', async (req, res, next) => {
     console.log('in our get')
     let problemSets = await ourCrud.getAll('problemSets').catch((err) => { res.status(500).json({}) });
 
-    // console.log(problemSets)
+    console.log(problemSets)
     if(problemSets.length === 0) {
         res.status(500).json({})
         // next()
@@ -47,11 +48,16 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res) => {
     // console.log(req.body)
     let problemSet = req.body['problem sets table']
+    console.log(problemSet)
+    console.log(req.body['problem set table'])
+
+    // I might be running too many promises at once
 
     let ourInsertedProblemSetRow = await ourCrud.make(problemSet, 'problemSets')
                                             .catch((err) => { res.status(500).json({}) })
     console.log(ourInsertedProblemSetRow)
     let problemId = ourInsertedProblemSetRow.id
+
 
     // this is adding them in at different times
     // maybe should store the original order as they get added so the original order can be obtained for display
