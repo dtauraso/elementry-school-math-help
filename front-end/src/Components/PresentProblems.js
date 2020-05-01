@@ -62,7 +62,7 @@ const PresentProblems = (props) => {
             <AddTwoValues
                 key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                stateCoordinates={{problemId: problem[0].split(' ')[1], offsetString: myPath}}
+                stateCoordinates={{problemId: problem[0].split(' ')[2], offsetString: myPath}}
                 // pass in a state name prefix to identify the prefixth data set
                 />
 

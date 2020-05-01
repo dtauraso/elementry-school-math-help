@@ -45,15 +45,18 @@ export const AddTwoValues = (props) => {
     // problem #
     // console.log('our key', stateCoordinates)
 
+    console.log('state to look for|', `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
     // get problem parts
     let x = getCell(Root, [`${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`])
-    // console.log("our state", x)
+    console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
 
 
-
+    console.log({problemParts})
     // get the quantity size
-    let item = problemParts[0][0].split(' ')[0]
+    let item = problemParts[0][0].split(' ')[1]
+    console.log({item})
+
     let stateName = [`${stateCoordinates.offsetString}${item} ${stateCoordinates.problemId}`]
     let state = getCell(Root, stateName)
     // let isForm = getVariable(Root,
@@ -63,6 +66,7 @@ export const AddTwoValues = (props) => {
     // if(!isForm) {
 
     // }
+    // console.log('state', state.name)
     let myQuantity = getVariable(Root,
         stateName,
         `${stateCoordinates.offsetString}quantity`
@@ -90,7 +94,7 @@ export const AddTwoValues = (props) => {
                 <OneValue
                     key={i}
                     stateCoordinates={{...stateCoordinates,
-                                        problemPart: problemKey[0].split(' ')[0],
+                                        problemPart: problemKey[0].split(' ')[1],
                                         offsetString: stateCoordinates.offsetString}}
                     />
             ))}

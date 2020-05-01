@@ -1,10 +1,20 @@
 // There is one glitch here. We cannot autogenerate state graphs with using a single universal rule(adding a new string to the state name and incrememnting it
 // when there is a neighbor in the trie tree to keep all the state name vectors unique)
+// this is called the adding extra dimentions glitch
+
+// A solution to this glitch is to make a string shift
+// (x, y, z) => (offsetStringx, offsetStringy, offsetStringz)
+// to allow for the same structure of points (x, y, z) to exist in a different plane
+
 // We are currently using a generator dependent on the problem domain(number of problems)
 
 // for the number generating formula:
     // numbering needs to be in the first name
     // extra context names need to also be included in the first name
+
+// The other glitch is this. Each name in the root hash table must be unique or
+// a cell will overwrite another cell
+
 // state chart selling point is I made the is from the ground up
 
 // if they ask about xstate say I wanted to make something similar to prove I could do it

@@ -38,7 +38,10 @@ const problems = [
 to replicate the same counting algorithm with a slightly different state structure
 new count var
 1 function to make the state tree v vars
-1 new context name at the front of all the states being generated (instead of `${iA} ${i}` use `display ${iA} ${i} `)
+1 new context name at the front of all the states being generated
+// (instead of `${iA} ${i}` use `display ${iA} ${i}`)
+// the offset string will = 'offset '
+// the variable access form will look like this `${offsetString}variableName`
 
 */
 // adding a new state and some vars
@@ -212,7 +215,7 @@ const setupProblem = (state, action) => {
     // ['elementary school', 'utilities', 'create problem']
     // ['problemCount']
     const parentOfProblemCount = ['elementary school', 'utilities', 'create problem']
-    const offsetString = 'plusProblems'
+    const offsetString = 'plusProblems '
     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
     console.log('we need to make', numberOfProblems2, 'problems')
     console.log(state)
@@ -1570,20 +1573,20 @@ Root2 = {
     ...makeCell({
         name: ['root'],
         nextParts : [   'elementary school',
-                        'plusProblemsproblem set 0',
-                        'plusProblemsproblem 0',
-                        'plusProblemsproblemsParts 0',
+                        'plusProblems problem set 0',
+                        'plusProblems problem 0',
+                        'plusProblems problemsParts 0',
                         // rename to 'a 0 0' ? or 'a 0'?
                         // Cannot rename them using letters
-                        'plusProblems0 0',
-                        'plusProblems1 0',
-                        'plusProblems2 0',
-                        'plusProblemsnoValue 0',
-                        'plusProblemsisInteger 0',
-                        'plusProblemsisNotInteger 0',
-                        'plusProblemssubmitValue 0',
-                        'plusProblemsgot it right the first time 0',
-                        'plusProblemselse 0'],
+                        'plusProblems 0 0',
+                        'plusProblems 1 0',
+                        'plusProblems 2 0',
+                        'plusProblems noValue 0',
+                        'plusProblems isInteger 0',
+                        'plusProblems isNotInteger 0',
+                        'plusProblems submitValue 0',
+                        'plusProblems got it right the first time 0',
+                        'plusProblems else 0'],
     })
 }
 
@@ -1593,8 +1596,8 @@ Root2 = makeLinks(Root2, {
     stateCells: makeCell({
         name: ['elementary school'],
         nextParts: ['utilities', 'testing', 'store results'],
-        children: [['plusProblemsproblem set 0']],
-        variableNames: ['plusProblemsproblemSets 0']
+        children: [['plusProblems problem set 0']],
+        variableNames: ['plusProblems problemSets 0']
     }),
     isVariable: false,
     isIntermediateState: true
@@ -1614,9 +1617,9 @@ Root2 = makeLinks(Root2, {
 
 Root2 = makeLinks(Root2, {
     parent: ['elementary school'],
-    newStateName: ['plusProblemsproblemSets 0'],
+    newStateName: ['plusProblems problemSets 0'],
     stateCells: makeCell({
-        name: ['plusProblemsproblemSets 0'],
+        name: ['plusProblems problemSets 0'],
         value: 1
     }),
     isVariable: true,
@@ -1630,7 +1633,7 @@ Root2 = makeLinks(Root2, {
         name: ['elementary school', 'utilities', 'create problem'],
         functionCode: setupProblem,
         nextStates: [],
-        variableNames: ['plusProblemsproblemCount']
+        variableNames: ['plusProblems problemCount']
     }),
     isVariable: false,
     isIntermediateState: false
@@ -1639,9 +1642,9 @@ Root2 = makeLinks(Root2, {
 
 Root2 = makeLinks(Root2, {
     parent: ['root'],
-    newStateName: ['plusProblemsproblemCount'],
+    newStateName: ['plusProblems problemCount'],
     stateCells: makeCell({
-        name: ['plusProblemsproblemCount'],
+        name: ['plusProblems problemCount'],
         value: problems.length
     }),
     isVariable: true,
@@ -1745,11 +1748,11 @@ Root2 = makeLinks(Root2, {
 
 Root2 = makeLinks(Root2, {
     parent: ['elementary school'],
-    newStateName: ['plusProblemsproblem set 0'],
+    newStateName: ['plusProblems problem set 0'],
     stateCells: makeCell({
-        name: ['plusProblemsproblem set 0'],
+        name: ['plusProblems problem set 0'],
         children: [],
-        variableNames: ['plusProblemsnumberOfProblems 0']
+        variableNames: ['plusProblems numberOfProblems 0']
     }),
     isVariable: true,
     isIntermediateState: false
@@ -1757,10 +1760,10 @@ Root2 = makeLinks(Root2, {
 
 
 Root2 = makeLinks(Root2, {
-    parent: ['plusProblemsproblem set 0'],
-    newStateName: ['plusProblemsnumberOfProblems 0'],
+    parent: ['plusProblems problem set 0'],
+    newStateName: ['plusProblems numberOfProblems 0'],
     stateCells: makeCell({
-        name: ['plusProblemsnumberOfProblems 0'],
+        name: ['plusProblems numberOfProblems 0'],
         value: 0
     }),
     isVariable: true,
