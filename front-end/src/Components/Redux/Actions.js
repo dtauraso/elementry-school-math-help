@@ -28,7 +28,8 @@ export const autoSolve = (pathToState) => dispatch => {
     dispatch({
         type: [pathToState],
         meta: {
-            parentStateName: pathToState
+            parentStateName: pathToState,
+            offsetString: 'plusProblems'
         }
     })
     // let myProblemTable = getCell(state, ['payload'])
@@ -56,6 +57,7 @@ export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
         meta: {
                 basePath: pathToState, // base state(for the object data)
                 parentStateName: pathToState,
+                offsetString: 'plusProblems'
             }
     });
 
@@ -76,6 +78,7 @@ export const submitAnswer = (pathToState) => dispatch => {
             meta: {
                     basePath: pathToState, // base state(for the object data)
                     parentStateName: pathToState,
+                    offsetString: 'plusProblems'
                     // testPayload: store.getState()
                 }
         });
@@ -105,6 +108,7 @@ export const getProblemSets = () => dispatch => {
                     type: [['elementary school', 'store results']], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
                     payload: res.data,
                     meta: {
+                            offsetString: 'plusProblems'
                             // basePath: pathToState, // base state(for the object data)
                             // parentStateName: pathToState,
                             // testPayload: store.getState()
@@ -127,6 +131,7 @@ export const setProblemSetSelector = (payload) => dispatch => {
         type: [['selectedProblemSetFromBackend']], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
         payload: payload,
         meta: {
+                offsetString: 'plusProblems',
                 // basePath: pathToState, // base state(for the object data)
                 parentStateName: ['elementary school', 'store results']//pathToState,
             }

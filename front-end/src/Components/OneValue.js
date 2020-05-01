@@ -46,23 +46,23 @@ const OneValue = (props) => {
         stateCoordinates,
         Root} = props
     // console.log('redux tree', Root)
-    let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    let problemPartName = [`${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
     // console.log(stateCoordinates)
     let x = getCell(Root, problemPartName)
     // console.log('problem part', x)
     let isForm = getVariable(Root,
                             problemPartName,
-                            'isForm').value
+                            `${stateCoordinates.offsetString}isForm`).value
     // console.log('isForm', isForm)
     let operationType = getVariable(Root,
         problemPartName,
-        'operationType').value
+        `${stateCoordinates.offsetString}operationType`).value
     // console.log('operationType', "|", operationType, "|")
     let oneValue = null
     if(!isForm) {
         oneValue = getVariable(Root,
             problemPartName,
-            'value').value
+            `${stateCoordinates.offsetString}value`).value
     }
     // we cannot assume there is a form right now
     // const oneValue = getValue(Root, statePath)
@@ -91,7 +91,8 @@ const OneValue = (props) => {
             {isForm? 
                 <SubmitAnswer
                 // statePath={formPath}
-                stateCoordinates={stateCoordinates}
+                stateCoordinates={{...stateCoordinates,
+                                    offsetString: stateCoordinates.offsetString}}
                 />:
                 <Value operationType={operationType}>
                     {(`${operationType}              ${oneValue}`)}
@@ -102,7 +103,9 @@ const OneValue = (props) => {
                 // statePath={isForm?
                 //     [...statePath, 'submission', 'variables', 'quantity']:
                 //     [...statePath, 'variables', 'quantity']}
-                stateCoordinates={{...stateCoordinates, isForm: isForm}}
+                stateCoordinates={{...stateCoordinates,
+                                    isForm: isForm,
+                                    offsetString: stateCoordinates.offsetString}}
 
                 />
 

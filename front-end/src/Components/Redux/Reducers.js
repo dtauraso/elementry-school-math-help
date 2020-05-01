@@ -212,12 +212,13 @@ const setupProblem = (state, action) => {
     // ['elementary school', 'utilities', 'create problem']
     // ['problemCount']
     const parentOfProblemCount = ['elementary school', 'utilities', 'create problem']
-    let numberOfProblems2 = getVariable(state, parentOfProblemCount, 'problemCount').value
+    const offsetString = 'plusProblems'
+    let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
     console.log('we need to make', numberOfProblems2, 'problems')
     console.log(state)
-    let numberOfProblems3 = getVariable(state, ['problem set 0'], 'numberOfProblems')
+    let numberOfProblems3 = getVariable(state, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`)
     console.log(numberOfProblems3.name[0])
-    console.log('about to make a problem', getVariable(state, ['problem set 0'], 'numberOfProblems').value)
+    console.log('about to make a problem', getVariable(state, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`).value)
 
     let Root2 = state
 
@@ -225,7 +226,7 @@ const setupProblem = (state, action) => {
     for(let i = 0; i < numberOfProblems2; i++) {
 
         
-        Root2 = incrementVariableBy(Root2, ['problem set 0'], 'numberOfProblems', 1)
+        Root2 = incrementVariableBy(Root2, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`, 1)
         
         // {
         //     ...Root2,
@@ -236,7 +237,7 @@ const setupProblem = (state, action) => {
         //     }
         // }
     
-        let numberOfProblems = getVariable(Root2, ['problem set 0'], 'numberOfProblems').value
+        let numberOfProblems = getVariable(Root2, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`).value
         let i = numberOfProblems - 1
         // console.log(numberOfProblems, problems[numberOfProblems])
         const ithProblem = problems[i]
@@ -245,29 +246,29 @@ const setupProblem = (state, action) => {
         let iB = iA + 1
         let iAnswer = iA + 2
         console.log("new starting values", iA, iB, iAnswer)
-        Root2 = addChild(Root2, 'problem set 0', [[`problem ${i}`]])
+        Root2 = addChild(Root2, `${offsetString}problem set 0`, [[`${offsetString}problem ${i}`]])
 
         Root2 = makeLinks(Root2, {
-            parent: ['problem set 0'],
-            newStateName: [`problem ${i}`],
+            parent: [`${offsetString}problem set 0`],
+            newStateName: [`${offsetString}problem ${i}`],
             stateCells: makeCell({
-                name: [`problem ${i}`],  // key of AddTwoValues maps to this
+                name: [`${offsetString}problem ${i}`],  // key of AddTwoValues maps to this
 
                 // 0, 1, 2    3, 4, 5   6, 7, 8
                 // 0
-                children: [ [`${iA} ${i}`],
-                            [`${iB} ${i}`],
-                            [`${iAnswer} ${i}`]],   // can use the OneValue key and the AddTwoValues key
-                variableNames: [`problemParts ${i}`]
+                children: [ [`${offsetString}${iA} ${i}`],
+                            [`${offsetString}${iB} ${i}`],
+                            [`${offsetString}${iAnswer} ${i}`]],   // can use the OneValue key and the AddTwoValues key
+                variableNames: [`${offsetString}problemParts ${i}`]
             }),
             isVariable: false,
             isIntermediateState: false})
 
         Root2 = makeLinks(Root2, {
-            parent: [`problem ${i}`],
-            newStateName: [`problemParts ${i}`],
+            parent: [`${offsetString}problem ${i}`],
+            newStateName: [`${offsetString}problemParts ${i}`],
             stateCells: makeCell({
-                name: [`problemParts ${i}`],
+                name: [`${offsetString}problemParts ${i}`],
                 value: 3
             }),
             isVariable: true,
@@ -276,24 +277,24 @@ const setupProblem = (state, action) => {
 
         // console.log('print tree', Root2)
         Root2 = makeLinks(Root2, {
-            parent: [`problem ${i}`],
-            newStateName: [`${iA} ${i}`],
+            parent: [`${offsetString}problem ${i}`],
+            newStateName: [`${offsetString}${iA} ${i}`],
             stateCells: makeCell({ // a
-                name: [`${iA} ${i}`],
-                variableNames: [`value ${iA}`,
-                                `quantity ${iA}`,
-                                `isForm ${iA}`,
-                                `operationType ${iA}`]
+                name: [`${offsetString}${iA} ${i}`],
+                variableNames: [`${offsetString}value ${iA}`,
+                                `${offsetString}quantity ${iA}`,
+                                `${offsetString}isForm ${iA}`,
+                                `${offsetString}operationType ${iA}`]
             }),
             isVariable: false,
             isIntermediateState: false
         })
         
         Root2 = makeLinks(Root2, {
-            parent: [`${iA} ${i}`],
-            newStateName: [`value ${iA}`],
+            parent: [`${offsetString}${iA} ${i}`],
+            newStateName: [`${offsetString}value ${iA}`],
             stateCells: makeCell({
-                name: [`value ${iA}`],
+                name: [`${offsetString}value ${iA}`],
                 value: ithProblem.a
             }),
             isVariable: true,
@@ -301,10 +302,10 @@ const setupProblem = (state, action) => {
 
         })
         Root2 = makeLinks(Root2, {
-            parent: [`${iA} ${i}`],
-            newStateName: [`quantity ${iA}`],
+            parent: [`${offsetString}${iA} ${i}`],
+            newStateName: [`${offsetString}quantity ${iA}`],
             stateCells: makeCell({
-                name: [`quantity ${iA}`],
+                name: [`${offsetString}quantity ${iA}`],
                 value: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b)
             }),
             isVariable: true,
@@ -313,10 +314,10 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iA} ${i}`],
-            newStateName: [`isForm ${iA}`],
+            parent: [`${offsetString}${iA} ${i}`],
+            newStateName: [`${offsetString}isForm ${iA}`],
             stateCells: makeCell({
-                name: [`isForm ${iA}`],
+                name: [`${offsetString}isForm ${iA}`],
                 value: false
             }),
             isVariable: true,
@@ -326,9 +327,9 @@ const setupProblem = (state, action) => {
 
         Root2 = makeLinks(Root2, {
             parent: [`${iA} ${i}`],
-            newStateName: [`operationType ${iA}`],
+            newStateName: [`${offsetString}operationType ${iA}`],
             stateCells: makeCell({
-                name: [`operationType ${iA}`],
+                name: [`${offsetString}operationType ${iA}`],
                 value: ''
             }),
             isVariable: true,
@@ -337,24 +338,24 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`problem ${i}`],
-            newStateName: [`${iB} ${i}`],
+            parent: [`${offsetString}problem ${i}`],
+            newStateName: [`${offsetString}${iB} ${i}`],
             stateCells: makeCell({
-                name: [`${iB} ${i}`], // b
-                variableNames: [`value ${iB}`,
-                                `quantity ${iB}`,
-                                `isForm ${iB}`,
-                                `operationType ${iB}`]
+                name: [`${offsetString}${iB} ${i}`], // b
+                variableNames: [`${offsetString}value ${iB}`,
+                                `${offsetString}quantity ${iB}`,
+                                `${offsetString}isForm ${iB}`,
+                                `${offsetString}operationType ${iB}`]
             }),
             isVariable: false,
             isIntermediateState: false
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iB} ${i}`],
-            newStateName: [`value ${iB}`],
+            parent: [`${offsetString}${iB} ${i}`],
+            newStateName: [`${offsetString}value ${iB}`],
             stateCells: makeCell({
-                name: [`value ${iB}`],
+                name: [`${offsetString}value ${iB}`],
                 value: ithProblem.b
             }),
             isVariable: true,
@@ -365,10 +366,10 @@ const setupProblem = (state, action) => {
 
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iB} ${i}`],
-            newStateName: [`quantity ${iB}`],
+            parent: [`${offsetString}${iB} ${i}`],
+            newStateName: [`${offsetString}quantity ${iB}`],
             stateCells: makeCell({
-                name: [`quantity ${iB}`],
+                name: [`${offsetString}quantity ${iB}`],
                 value: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
             }),
             isVariable: true,
@@ -377,10 +378,10 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iB} ${i}`],
-            newStateName: [`isForm ${iB}`],
+            parent: [`${offsetString}${iB} ${i}`],
+            newStateName: [`${offsetString}isForm ${iB}`],
             stateCells:  makeCell({
-                name: [`isForm ${iB}`],
+                name: [`${offsetString}isForm ${iB}`],
                 value: false
             }),
             isVariable: true,
@@ -389,10 +390,10 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iB} ${i}`],
-            newStateName: [`operationType ${iB}`],
+            parent: [`${offsetString}${iB} ${i}`],
+            newStateName: [`${offsetString}operationType ${iB}`],
             stateCells: makeCell({
-                name: [`operationType ${iB}`],
+                name: [`${offsetString}operationType ${iB}`],
                 value: '+'
             }),
             isVariable: true,
@@ -405,22 +406,22 @@ const setupProblem = (state, action) => {
         // intermediate state that also has variable names
 
         Root2 = makeLinks(Root2, {
-            parent: [`problem ${i}`],
-            newStateName: [`${iAnswer} ${i}`],
+            parent: [`${offsetString}problem ${i}`],
+            newStateName: [`${offsetString}${iAnswer} ${i}`],
             stateCells: makeCell({
-                name: [`${iAnswer} ${i}`],  // answerForm
-                nextParts: [`submission ${i}`, `progressMeter ${i}`],
-                variableNames: [`isForm ${iAnswer}`, `operationType ${iAnswer}`]
+                name: [`${offsetString}${iAnswer} ${i}`],  // answerForm
+                nextParts: [`${offsetString}submission ${i}`, `${offsetString}progressMeter ${i}`],
+                variableNames: [`${offsetString}isForm ${iAnswer}`, `${offsetString}operationType ${iAnswer}`]
             }),
             isVariable: false,
             isIntermediateState: true
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iAnswer} ${i}`],
-            newStateName: [ `isForm ${iAnswer}`],
+            parent: [`${offsetString}${iAnswer} ${i}`],
+            newStateName: [ `${offsetString}isForm ${iAnswer}`],
             stateCells: makeCell({
-                name: [ `isForm ${iAnswer}`],
+                name: [ `${offsetString}isForm ${iAnswer}`],
                 value: true
             }),
             isVariable: true,
@@ -428,10 +429,10 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iAnswer} ${i}`],
-            newStateName: [`operationType ${iAnswer}`],
+            parent: [`${offsetString}${iAnswer} ${i}`],
+            newStateName: [`${offsetString}operationType ${iAnswer}`],
             stateCells: makeCell({
-                name: [`operationType ${iAnswer}`],
+                name: [`${offsetString}operationType ${iAnswer}`],
                 value: ''
             }),
             isVariable: true,
@@ -441,43 +442,43 @@ const setupProblem = (state, action) => {
 
         
         Root2 = makeLinks(Root2, {
-            parent: [`problem ${i}`],
-            newStateName: [ `${iAnswer} ${i}`, `submission ${i}`],
+            parent: [`${offsetString}problem ${i}`],
+            newStateName: [ `${offsetString}${iAnswer} ${i}`, `submission ${i}`],
             stateCells : makeCell({
-                name: [ `${iAnswer} ${i}`,
-                        `submission ${i}`],
-                nextParts: [`update typed answer ${i}`],
+                name: [ `${offsetString}${iAnswer} ${i}`,
+                        `${offsetString}submission ${i}`],
+                nextParts: [`${offsetString}update typed answer ${i}`],
     
                 functionCode: returnState,
-                nextStates: [[`${iAnswer} ${i}`, `progressMeter ${i}`]],
+                nextStates: [[`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`]],
     
-                children: [ [`noValue ${i}`],
-                            [`isInteger ${i}`],
-                            [`isNotInteger ${i}`],
-                            [`submitValue ${i}`]],
+                children: [ [`${offsetString}noValue ${i}`],
+                            [`${offsetString}isInteger ${i}`],
+                            [`${offsetString}isNotInteger ${i}`],
+                            [`${offsetString}submitValue ${i}`]],
     
-                variableNames: [`value ${iAnswer}`,
-                                `quantity ${iAnswer}`,
-                                `correct ${iAnswer}`,
-                                `firstAnswer ${iAnswer}`,
-                                `actualAnswer ${iAnswer}`,
-                                `submitCount ${iAnswer}`,
-                                `feedbackMessage ${iAnswer}`,
-                                `backgroundColor ${iAnswer}`]
+                variableNames: [`${offsetString}value ${iAnswer}`,
+                                `${offsetString}quantity ${iAnswer}`,
+                                `${offsetString}correct ${iAnswer}`,
+                                `${offsetString}firstAnswer ${iAnswer}`,
+                                `${offsetString}actualAnswer ${iAnswer}`,
+                                `${offsetString}submitCount ${iAnswer}`,
+                                `${offsetString}feedbackMessage ${iAnswer}`,
+                                `${offsetString}backgroundColor ${iAnswer}`]
             }),
             isVariable: false,
             isIntermediateState: false
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`problem ${i}`],
-            newStateName: [ `${iAnswer} ${i}`,
-            `submission ${i}`,
-            `update typed answer ${i}`],
+            parent: [`${offsetString}problem ${i}`],
+            newStateName: [ `${offsetString}${iAnswer} ${i}`,
+            `${offsetString}submission ${i}`,
+            `${offsetString}update typed answer ${i}`],
             stateCells: makeCell({
-                name: [ `${iAnswer} ${i}`,
-                        `submission ${i}`,
-                        `update typed answer ${i}`],
+                name: [ `${offsetString}${iAnswer} ${i}`,
+                        `${offsetString}submission ${i}`,
+                        `${offsetString}update typed answer ${i}`],
                 functionCode: updateTypedAnswer,
                 nextStates: [],
                 chldren: []
@@ -494,20 +495,20 @@ const setupProblem = (state, action) => {
         //     isIntermediateState
         // })
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`value ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}value ${iAnswer}`],
             stateCells: makeCell({
-                name: [`value ${iAnswer}`],
+                name: [`${offsetString}value ${iAnswer}`],
                 value: null
             }),
             isVariable: true,
             isIntermediateState: false
         })
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`quantity ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}quantity ${iAnswer}`],
             stateCells: makeCell({
-                name: [`quantity ${iAnswer}`],
+                name: [`${offsetString}quantity ${iAnswer}`],
                 value: makeQuantity(0, ithProblem.a + ithProblem.b)
             }),
             isVariable: true,
@@ -518,10 +519,10 @@ const setupProblem = (state, action) => {
         //     value: makeQuantity(0, ithProblem.a + ithProblem.b)
         // }),
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`correct ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}correct ${iAnswer}`],
             stateCells: makeCell({
-                name: [`correct ${iAnswer}`],
+                name: [`${offsetString}correct ${iAnswer}`],
                 value: false
             }),
             isVariable: true,
@@ -532,10 +533,10 @@ const setupProblem = (state, action) => {
         //     value: false
         // }),
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`firstAnswer ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}firstAnswer ${iAnswer}`],
             stateCells: makeCell({
-                name: [`firstAnswer ${iAnswer}`],
+                name: [`${offsetString}firstAnswer ${iAnswer}`],
                 value: null
             }),
             isVariable: true,
@@ -546,10 +547,10 @@ const setupProblem = (state, action) => {
         //     value: null
         // }),
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`actualAnswer ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}actualAnswer ${iAnswer}`],
             stateCells: makeCell({
-                name: [`actualAnswer ${iAnswer}`],
+                name: [`${offsetString}actualAnswer ${iAnswer}`],
                 value: ithProblem.a + ithProblem.b
             }),
             isVariable: true,
@@ -560,10 +561,10 @@ const setupProblem = (state, action) => {
         //     value: ithProblem.a + ithProblem.b
         // }),
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`submitCount ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}submitCount ${iAnswer}`],
             stateCells: makeCell({
-                name: [`submitCount ${iAnswer}`],
+                name: [`${offsetString}submitCount ${iAnswer}`],
                 value: 0
             }),
             isVariable: true,
@@ -574,10 +575,10 @@ const setupProblem = (state, action) => {
         //     value: 0
         // }),
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`feedbackMessage ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}feedbackMessage ${iAnswer}`],
             stateCells: makeCell({
-                name: [`feedbackMessage ${iAnswer}`],
+                name: [`${offsetString}feedbackMessage ${iAnswer}`],
                 value: 'O'
             }),
             isVariable: true,
@@ -588,10 +589,10 @@ const setupProblem = (state, action) => {
         //     value: 'O'
         // }),
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`backgroundColor ${iAnswer}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}backgroundColor ${iAnswer}`],
             stateCells: makeCell({
-                name: [`backgroundColor ${iAnswer}`],
+                name: [`${offsetString}backgroundColor ${iAnswer}`],
                 value: 'white'
             }),
             isVariable: true,
@@ -600,10 +601,10 @@ const setupProblem = (state, action) => {
 
 
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`noValue ${i}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}noValue ${i}`],
             stateCells: makeCell({
-                name: [`noValue ${i}`],
+                name: [`${offsetString}noValue ${i}`],
                 functionCode: noValue,
                 nextStates: [],
             }),
@@ -611,12 +612,12 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`isInteger ${i}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}isInteger ${i}`],
             stateCells: makeCell({
-                name: [`isInteger ${i}`],
+                name: [`${offsetString}isInteger ${i}`],
                 functionCode: isInteger,
-                nextStates: [[`submitValue ${i}`]],
+                nextStates: [[`${offsetString}submitValue ${i}`]],
             }),
             isVariable: false,
             isIntermediateState: false
@@ -624,10 +625,10 @@ const setupProblem = (state, action) => {
 
 
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`isNotInteger ${i}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}isNotInteger ${i}`],
             stateCells: makeCell({
-                name: [`isNotInteger ${i}`],
+                name: [`${offsetString}isNotInteger ${i}`],
                 functionCode: returnState,
                 nextStates: [],
             }),
@@ -636,10 +637,10 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [ `${iAnswer} ${i}`, `submission ${i}`],
-            newStateName: [`submitValue ${i}`],
+            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
+            newStateName: [`${offsetString}submitValue ${i}`],
             stateCells: makeCell({
-                name: [`submitValue ${i}`],
+                name: [`${offsetString}submitValue ${i}`],
     
                 // need a context for each form
                 functionCode: submitValue,
@@ -690,17 +691,17 @@ const setupProblem = (state, action) => {
                         // }),
 
         Root2 = makeLinks(Root2, {
-            parent: [`problem ${i}`],
-            newStateName: [`${iAnswer} ${i}`, `progressMeter ${i}`],
+            parent: [`${offsetString}problem ${i}`],
+            newStateName: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
             stateCells: makeCell({
-                name: [`${iAnswer} ${i}`, `progressMeter ${i}`],
+                name: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
                 functionCode: returnState,
                 nextStates: [],
-                children: [ [`got it right the first time ${i}`], // passes if they are right and submission count == 1
-                            [`else ${i}`]],
+                children: [ [`${offsetString}got it right the first time ${i}`], // passes if they are right and submission count == 1
+                            [`${offsetString}else ${i}`]],
                 variableNames:  [
-                                `correctFirstTime ${i}`,
-                                `testingWithoutForm ${i}`
+                                `${offsetString}correctFirstTime ${i}`,
+                                `${offsetString}testingWithoutForm ${i}`
                             ]
             }),
             isVariable: false,
@@ -708,10 +709,10 @@ const setupProblem = (state, action) => {
         })
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iAnswer} ${i}`, `progressMeter ${i}`],
-            newStateName: [`correctFirstTime ${i}`],
+            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+            newStateName: [`${offsetString}correctFirstTime ${i}`],
             stateCells: makeCell({
-                name: [`correctFirstTime ${i}`],
+                name: [`${offsetString}correctFirstTime ${i}`],
                 value: false
             }),
             isVariable: true,
@@ -720,10 +721,10 @@ const setupProblem = (state, action) => {
         
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iAnswer} ${i}`, `progressMeter ${i}`],
-            newStateName: [`testingWithoutForm ${i}`],
+            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+            newStateName: [`${offsetString}testingWithoutForm ${i}`],
             stateCells: makeCell({
-                name: [`testingWithoutForm ${i}`],
+                name: [`${offsetString}testingWithoutForm ${i}`],
                 value: false
             }),
             isVariable: true,
@@ -732,10 +733,10 @@ const setupProblem = (state, action) => {
 
 
         Root2 = makeLinks(Root2, {
-            parent: [`${iAnswer} ${i}`, `progressMeter ${i}`],
-            newStateName: [`got it right the first time ${i}`],
+            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+            newStateName: [`${offsetString}got it right the first time ${i}`],
             stateCells: makeCell({
-                name: [`got it right the first time ${i}`],
+                name: [`${offsetString}got it right the first time ${i}`],
                 functionCode: gotItRightTheFirstTime,
                 nextStates: [],
             }),
@@ -745,10 +746,10 @@ const setupProblem = (state, action) => {
 
         
         Root2 = makeLinks(Root2, {
-            parent: [`${iAnswer} ${i}`, `progressMeter ${i}`],
-            newStateName: [`else ${i}`],
+            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+            newStateName: [`${offsetString}else ${i}`],
             stateCells: makeCell({
-                name: [`else ${i}`],
+                name: [`${offsetString}else ${i}`],
                 functionCode: returnState,
                 nextStates: [],
             }),
@@ -1106,16 +1107,18 @@ const updateTypedAnswer = (state, action) => {
     const { newValue } = action.payload
     const stateName = action.type
     const parentStateName = action.meta.parentStateName.slice(0, 2)
-
+    const offsetString = action.meta.offsetString
     // console.log("got here", parentStateName)
     
-    return [set(state, parentStateName, 'value', newValue), true]
+    return [set(state, parentStateName, `${offsetString}value`, newValue), true]
 
 }
 const noValue = (state, action) => {
     // console.log("is invalid")
     const parentStateName = action.meta.parentStateName
-    let newValue = getVariable(state, parentStateName, 'value').value
+    const offsetString = action.meta.offsetString
+
+    let newValue = getVariable(state, parentStateName, `${offsetString}value`).value
     if(newValue.length === 0) {
 
         // const parentStateName = action.meta.parentStateName
@@ -1123,13 +1126,13 @@ const noValue = (state, action) => {
         let newState = setArray(
             state,
             parentStateName,
-            'quantity',
+            `${offsetString}quantity`,
             makeQuantity(0,
-                    getVariable(state, parentStateName, 'actualAnswer').value))
+                    getVariable(state, parentStateName, `${offsetString}actualAnswer`).value))
 
-        newState = set(newState, parentStateName, 'feedbackMessage', 'O')
+        newState = set(newState, parentStateName, `${offsetString}feedbackMessage`, 'O')
 
-        newState = set(newState, parentStateName, 'backgroundColor', 'white')
+        newState = set(newState, parentStateName, `${offsetString}backgroundColor`, 'white')
         
         return [newState, true]
     
@@ -1138,11 +1141,12 @@ const noValue = (state, action) => {
 }
 const isInteger = (state, action) => {
     const parentStateName = action.meta.parentStateName
+    const offsetString = action.meta.offsetString
 
     // console.log(getVariable(state, parentStateName, 'value').value,
             // parseInt(getVariable(state, parentStateName, 'value').value))
 
-    return [state, !isNaN(parseInt(getVariable(state, parentStateName, 'value').value)) === true]
+    return [state, !isNaN(parseInt(getVariable(state, parentStateName, `${offsetString}value`).value)) === true]
 }
 const determineAnswerMessage = (actualAnswer, value) => {
     
@@ -1170,7 +1174,9 @@ const submitValue = (state, action/*e*/) => {
     // const { newValue } = action.payload
     const stateName = action.type
     const parentStateName = action.meta.parentStateName
-    const newValue = getVariable(state, parentStateName, 'value').value
+    const offsetString = action.meta.offsetString
+
+    const newValue = getVariable(state, parentStateName, `${offsetString}value`).value
 
     // const { basePath } = action.meta.basePath
     // const variablesBasePath = [...action.meta.basePath, 'variables']
@@ -1179,17 +1185,17 @@ const submitValue = (state, action/*e*/) => {
     // console.log(getValue(state, makeVariablesObjectPath(action)))
     // console.log("set value", parentStateName, getVariable(state, parentStateName, 'value'))
     // this line works
-    let newState = set(state, parentStateName, 'value', parseInt(newValue))
+    let newState = set(state, parentStateName, `${offsetString}value`, parseInt(newValue))
     
     // console.log('new tree')
     // console.log(newState, stateName)
     // console.log("correct", getVariable(state, parentStateName, 'correct'))
-    let actualAnswer = getVariable(newState, parentStateName, 'actualAnswer').value
+    let actualAnswer = getVariable(newState, parentStateName, `${offsetString}actualAnswer`).value
     let maxValue = newValue > actualAnswer? newValue: actualAnswer
     newState = setArray(
         newState,
         parentStateName,
-        'quantity',
+        `${offsetString}quantity`,
         makeQuantity(newValue,
             maxValue)
                 )
@@ -1198,19 +1204,19 @@ const submitValue = (state, action/*e*/) => {
 // pass in correctFirstTime
 
 
-    newState = set(newState, parentStateName, 'correct', ['actualAnswer', 'value'], determineAnswer)
+    newState = set(newState, parentStateName, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
 
-    newState = set(newState, parentStateName, 'feedbackMessage', ['actualAnswer', 'value'], determineAnswerMessage)
+    newState = set(newState, parentStateName, `${offsetString}feedbackMessage`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswerMessage)
 
-    newState = set(newState, parentStateName, 'backgroundColor', 'black')
+    newState = set(newState, parentStateName, `${offsetString}backgroundColor`, 'black')
 
     // console.log('new tree 3', newState, stateName)
-    newState = set(newState, parentStateName, 'submitCount', getVariable(newState, parentStateName, 'submitCount').value + 1)
-    const submitCount = getVariable(newState, parentStateName, 'submitCount').value
+    newState = set(newState, parentStateName, `${offsetString}submitCount`, getVariable(newState, parentStateName, `${offsetString}submitCount`).value + 1)
+    const submitCount = getVariable(newState, parentStateName, `${offsetString}submitCount`).value
 
     // so this matches gotItRightTheFirstTime
     if(submitCount === 1) {
-        newState = set(newState, parentStateName, 'firstAnswer', getVariable(newState, parentStateName, 'value').value)
+        newState = set(newState, parentStateName, `${offsetString}firstAnswer`, getVariable(newState, parentStateName, `${offsetString}value`).value)
 
     }
 
@@ -1227,16 +1233,18 @@ const gotItRightTheFirstTime = (state, action) => {
     // the vars are from the basePath
     const parentStateName = action.meta.parentStateName
     const submissionStateName = action.meta.basePath
+    const offsetString = action.meta.offsetString
+
     // console.log('parent', parentStateName)
-    let submitCount = getVariable(state, submissionStateName, 'submitCount').value
-    let correct = getVariable(state, submissionStateName, 'correct').value
+    let submitCount = getVariable(state, submissionStateName, `${offsetString}submitCount`).value
+    let correct = getVariable(state, submissionStateName, `${offsetString}correct`).value
     let newState = state
     if(submitCount === 1 && correct) {
-        newState = set(newState, parentStateName, 'correctFirstTime', true)
+        newState = set(newState, parentStateName, `${offsetString}correctFirstTime`, true)
 
         // need to use the same parent state name for getting and setting
-        const feedbackMessage = getVariable(state, submissionStateName, 'feedbackMessage').value
-        newState = set(newState, submissionStateName, 'feedbackMessage', feedbackMessage + '1')
+        const feedbackMessage = getVariable(state, submissionStateName, `${offsetString}feedbackMessage`).value
+        newState = set(newState, submissionStateName, `${offsetString}feedbackMessage`, feedbackMessage + '1')
 
         return [newState, true]
 
@@ -1249,8 +1257,9 @@ const processProblems = (state, action, cb) => {
 
     // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
     // "problem set 0" tells me how many problems we need to use to look for the forms
+    const offsetString = action.meta.offsetString
 
-    let problems = getChildren(state, ['problem set 0'])
+    let problems = getChildren(state, [`${offsetString}problem set 0`])
     let numberOfProblems = problems.length
     let temporaryState = state
     let i = 0
@@ -1267,33 +1276,34 @@ const processProblems = (state, action, cb) => {
 
 }
 
-const solveProblem = (state, i, j) => {
+const solveProblem = (state, action, i, j) => {
+    const offsetString = action.meta.offsetString
     let temporaryState = state
-    let a = getVariable(state, [`${i} ${j}`], 'value').value
-    let b = getVariable(state, [`${i + 1} ${j}`], 'value').value
-    let submission =           [`${i + 2} ${j}`, `submission ${j}`]
+    let a = getVariable(state, [`${offsetString}${i} ${j}`], `${offsetString}value`).value
+    let b = getVariable(state, [`${offsetString}${i + 1} ${j}`], `${offsetString}value`).value
+    let submission =           [`${offsetString}${i + 2} ${j}`, `${offsetString}submission ${j}`]
     // console.log(a, b, c)
     // randomly get it wrong
     let randomValue = Math.floor(Math.random() * 10) % 2
 
     if(randomValue === 0) {
-        temporaryState = set(temporaryState, submission, 'value', a + b)
-        let progressMeter = [`${i + 2} ${j}`, `progressMeter ${j}`]
-        temporaryState = set(temporaryState, progressMeter, 'correctFirstTime', true)
+        temporaryState = set(temporaryState, submission, `${offsetString}value`, a + b)
+        let progressMeter = [`${offsetString}${i + 2} ${j}`, `${offsetString}progressMeter ${j}`]
+        temporaryState = set(temporaryState, progressMeter, `${offsetString}correctFirstTime`, true)
     
     }
     else {
-        temporaryState = set(temporaryState, submission, 'value', a + 1)
-        let progressMeter = [`${i + 2} ${j}`, `progressMeter ${j}`]
-        temporaryState = set(temporaryState, progressMeter, 'correctFirstTime', false)
+        temporaryState = set(temporaryState, submission, `${offsetString}value`, a + 1)
+        let progressMeter = [`${offsetString}${i + 2} ${j}`, `${offsetString}progressMeter ${j}`]
+        temporaryState = set(temporaryState, progressMeter, `${offsetString}correctFirstTime`, false)
 
     }
     // console.log('result', temporaryState)
-    temporaryState = set(temporaryState, submission, 'correct', ['actualAnswer', 'value'], determineAnswer)
+    temporaryState = set(temporaryState, submission, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
 
-    temporaryState = set(temporaryState, submission, 'submitCount', getVariable(temporaryState, submission, 'submitCount').value + 1)
+    temporaryState = set(temporaryState, submission, `${offsetString}submitCount`, getVariable(temporaryState, submission, `${offsetString}submitCount`).value + 1)
 
-    temporaryState = set(temporaryState, submission, 'firstAnswer', getVariable(temporaryState, submission, 'value').value)
+    temporaryState = set(temporaryState, submission, `${offsetString}firstAnswer`, getVariable(temporaryState, submission, `${offsetString}value`).value)
 
     return temporaryState
 }
@@ -1312,22 +1322,24 @@ const autoSolve = (state, action) => {
     return [temporaryState, true]
 
 }
-const collectProblems = (state, i, j) => {
+const collectProblems = (state, action, i, j) => {
 
     // getCell(state, parentStateName)
     // console.log('in collect problems', state)
     let temporaryState = state
-    let a = getVariable(state, [`${i} ${j}`], 'value').value
-    let b = getVariable(state, [`${i + 1} ${j}`], 'value').value
-    let submission =           [`${i + 2} ${j}`, `submission ${j}`]
-    let progressMeter =        [`${i + 2} ${j}`, `progressMeter ${j}`]
+    const offsetString = action.meta.offsetString
+
+    let a = getVariable(state, [`${offsetString}${i} ${j}`], `${offsetString}value`).value
+    let b = getVariable(state, [`${offsetString}${i + 1} ${j}`], `${offsetString}value`).value
+    let submission =           [`${offsetString}${i + 2} ${j}`, `${offsetString}submission ${j}`]
+    let progressMeter =        [`${offsetString}${i + 2} ${j}`, `${offsetString}progressMeter ${j}`]
 
 
-    let firstAnswer = getVariable(state, submission, 'firstAnswer').value
+    let firstAnswer = getVariable(state, submission, `${offsetString}firstAnswer`).value
 
-    let actualAnswer = getVariable(state, submission, 'actualAnswer').value
+    let actualAnswer = getVariable(state, submission, `${offsetString}actualAnswer`).value
 
-    let gotItRightTheFirstTime = getVariable(state, progressMeter, 'correctFirstTime').value
+    let gotItRightTheFirstTime = getVariable(state, progressMeter, `${offsetString}correctFirstTime`).value
 
     let row = {
         a: a,
@@ -1377,6 +1389,8 @@ const setupForBackend = (state, action) => {
     // })
 
     let temporaryState = state
+    const offsetString = action.meta.offsetString
+    
     // temporaryState = {
     //     ...temporaryState,
     //     ...problemTable
@@ -1422,7 +1436,7 @@ const setupForBackend = (state, action) => {
         temporaryState,
         myCompletedProblems, 
         {   ...myCompletedProblems.jsObject,
-            'problem sets table': {nameOfProblemSet: 'problem set 0',
+            'problem sets table': {nameOfProblemSet: `${offsetString}problem set 0`,
                                 numberCorrect: correctProblems,
                                 totalProblems: myCompletedProblems.jsObject['problem set table'].length
                             }
@@ -1456,7 +1470,6 @@ const updateStateValue = (state, action) => {
     // takes in a new value and updates itself
     const stateName = action.type
     const parentStateName = action.meta.parentStateName
-
     let newValue = action.payload
     let temporaryState = state
 
@@ -1557,20 +1570,20 @@ Root2 = {
     ...makeCell({
         name: ['root'],
         nextParts : [   'elementary school',
-                        'problem set 0',
-                        'problem 0',
-                        'problemParts 0',
+                        'plusProblemsproblem set 0',
+                        'plusProblemsproblem 0',
+                        'plusProblemsproblemsParts 0',
                         // rename to 'a 0 0' ? or 'a 0'?
                         // Cannot rename them using letters
-                        '0 0',
-                        '1 0',
-                        '2 0',
-                        'noValue 0',
-                        'isInteger 0',
-                        'isNotInteger 0',
-                        'submitValue 0',
-                        'got it right the first time 0',
-                        'else 0'],
+                        'plusProblems0 0',
+                        'plusProblems1 0',
+                        'plusProblems2 0',
+                        'plusProblemsnoValue 0',
+                        'plusProblemsisInteger 0',
+                        'plusProblemsisNotInteger 0',
+                        'plusProblemssubmitValue 0',
+                        'plusProblemsgot it right the first time 0',
+                        'plusProblemselse 0'],
     })
 }
 
@@ -1580,8 +1593,8 @@ Root2 = makeLinks(Root2, {
     stateCells: makeCell({
         name: ['elementary school'],
         nextParts: ['utilities', 'testing', 'store results'],
-        children: [['problem set 0']],
-        variableNames: ['problemSets 0']
+        children: [['plusProblemsproblem set 0']],
+        variableNames: ['plusProblemsproblemSets 0']
     }),
     isVariable: false,
     isIntermediateState: true
@@ -1601,9 +1614,9 @@ Root2 = makeLinks(Root2, {
 
 Root2 = makeLinks(Root2, {
     parent: ['elementary school'],
-    newStateName: ['problemSets 0'],
+    newStateName: ['plusProblemsproblemSets 0'],
     stateCells: makeCell({
-        name: ['problemSets 0'],
+        name: ['plusProblemsproblemSets 0'],
         value: 1
     }),
     isVariable: true,
@@ -1617,7 +1630,7 @@ Root2 = makeLinks(Root2, {
         name: ['elementary school', 'utilities', 'create problem'],
         functionCode: setupProblem,
         nextStates: [],
-        variableNames: ['problemCount']
+        variableNames: ['plusProblemsproblemCount']
     }),
     isVariable: false,
     isIntermediateState: false
@@ -1626,9 +1639,9 @@ Root2 = makeLinks(Root2, {
 
 Root2 = makeLinks(Root2, {
     parent: ['root'],
-    newStateName: ['problemCount'],
+    newStateName: ['plusProblemsproblemCount'],
     stateCells: makeCell({
-        name: ['problemCount'],
+        name: ['plusProblemsproblemCount'],
         value: problems.length
     }),
     isVariable: true,
@@ -1732,11 +1745,11 @@ Root2 = makeLinks(Root2, {
 
 Root2 = makeLinks(Root2, {
     parent: ['elementary school'],
-    newStateName: ['problem set 0'],
+    newStateName: ['plusProblemsproblem set 0'],
     stateCells: makeCell({
-        name: ['problem set 0'],
+        name: ['plusProblemsproblem set 0'],
         children: [],
-        variableNames: ['numberOfProblems 0']
+        variableNames: ['plusProblemsnumberOfProblems 0']
     }),
     isVariable: true,
     isIntermediateState: false
@@ -1744,10 +1757,10 @@ Root2 = makeLinks(Root2, {
 
 
 Root2 = makeLinks(Root2, {
-    parent: ['problem set 0'],
-    newStateName: ['numberOfProblems 0'],
+    parent: ['plusProblemsproblem set 0'],
+    newStateName: ['plusProblemsnumberOfProblems 0'],
     stateCells: makeCell({
-        name: ['numberOfProblems 0'],
+        name: ['plusProblemsnumberOfProblems 0'],
         value: 0
     }),
     isVariable: true,

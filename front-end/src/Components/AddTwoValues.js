@@ -46,7 +46,7 @@ export const AddTwoValues = (props) => {
     // console.log('our key', stateCoordinates)
 
     // get problem parts
-    let x = getCell(Root, [`problem ${stateCoordinates.problemId}`])
+    let x = getCell(Root, [`${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`])
     // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
 
@@ -54,7 +54,7 @@ export const AddTwoValues = (props) => {
 
     // get the quantity size
     let item = problemParts[0][0].split(' ')[0]
-    let stateName = [`${item} ${stateCoordinates.problemId}`]
+    let stateName = [`${stateCoordinates.offsetString}${item} ${stateCoordinates.problemId}`]
     let state = getCell(Root, stateName)
     // let isForm = getVariable(Root,
     //     stateName,
@@ -65,7 +65,7 @@ export const AddTwoValues = (props) => {
     // }
     let myQuantity = getVariable(Root,
         stateName,
-        'quantity'
+        `${stateCoordinates.offsetString}quantity`
         ).value
     let sizeOfQuantity = myQuantity.length
     console.log('quantity for the add 2 values', myQuantity)
@@ -89,7 +89,9 @@ export const AddTwoValues = (props) => {
             {problemParts.map((problemKey, i) => (
                 <OneValue
                     key={i}
-                    stateCoordinates={{...stateCoordinates, problemPart: problemKey[0].split(' ')[0]}}
+                    stateCoordinates={{...stateCoordinates,
+                                        problemPart: problemKey[0].split(' ')[0],
+                                        offsetString: stateCoordinates.offsetString}}
                     />
             ))}
             

@@ -33,22 +33,22 @@ const SubmitAnswer = (props) => {
         Root} = props
 
     // should assume the coordinates for the answer form were passed in
-    let answerFormStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    let answerFormStateName = [`${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
     let answer = getCell(Root, answerFormStateName)
     // console.log('answer', answer)
-    let submissionStateName = [...answerFormStateName, `submission ${stateCoordinates.problemId}`]
+    let submissionStateName = [...answerFormStateName, `${stateCoordinates.offsetString}submission ${stateCoordinates.problemId}`]
     let submission = getCell(Root, submissionStateName)
     // console.log("submission context", submission)
     
     // let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
     //                             `submission ${stateCoordinates.problemId}`]
-    let dataSetName = ''
-    let y = getVariable(Root, submissionStateName, `${dataSetName}value`)//[`value ${stateCoordinates.problemPart}`])
+    // let dataSetName = ''
+    let y = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}value`)//[`value ${stateCoordinates.problemPart}`])
     // console.log("submission's value", y)
-    let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
-    let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value
+    let feedbackMessage = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}feedbackMessage`).value
+    let backgroundColor = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}backgroundColor`).value
 
-    let updateTypedAnswerStateName = [...submissionStateName, `update typed answer ${stateCoordinates.problemId}`]
+    let updateTypedAnswerStateName = [...submissionStateName, `${stateCoordinates.offsetString}update typed answer ${stateCoordinates.problemId}`]
     // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     // const answerForm = getValue(Root, statePath)
