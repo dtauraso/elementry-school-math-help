@@ -12,8 +12,8 @@ import {
 const ProblemSet = (props) => {
     const {Root} = props
 
-    let problemSet = getCell(Root, ['results from backend']).jsObject['problems']
-    let id = getCell(Root, ['results from backend', 'problemSetSelected']).value
+    let problemSet = getCell(Root, ['resultsFromBackend']).jsObject['problems']
+    let id = getCell(Root, ['selectedProblemSetFromBackend']).value
     if(id >= 0) {
         console.log('my problems', problemSet[id])
         return (

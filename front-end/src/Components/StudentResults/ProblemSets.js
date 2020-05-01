@@ -11,9 +11,11 @@ const ProblemSets = (props) => {
 
     const {Root} = props
     // console.log(problemSets)
-    let problemSets = getCell(Root, ['results from backend']).jsObject['problemSets']
-    // console.log(problemSets)
+    let x = getCell(Root, ['resultsFromBackend'])
 
+    // console.log(x)
+    let problemSets = getCell(Root, ['resultsFromBackend']).jsObject['problemSets']
+    // console.log('my problem sets', problemSets)
     return (
         <div>
             {problemSets.map((problemSetStat, i) => (

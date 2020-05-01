@@ -431,6 +431,7 @@ export const treeVisualizer = (table, currentState) => {
     }
 
     return {
+            // a, b, and c parts are so this is the order they show up in the inspector
             a_name: cell.name,
             ...(cell.function == undefined? {} : {b_function: cell.function.name}),
             // missing next states
@@ -467,6 +468,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
         // console.log(nextStates)
         let passes = false
         let winningStateName = ''
+        let winningFunctionName = ''
         nextStates.forEach(nextState => {
             // console.log('trying', nextState)
             if(nextState === undefined) {
@@ -506,6 +508,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
 
             passes = true
             winningStateName = nextState
+            winningFunctionName = cell['function'].name
             // action.type = winningStateName
             // console.log('passes', action.type)
             // console.log()
@@ -537,7 +540,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
 
         })
         if(passes) {
-            console.log("we have a winner", winningStateName, temporaryState)
+            console.log("we have a winner", winningStateName, winningFunctionName, temporaryState)
 
             currentStateName = winningStateName
             

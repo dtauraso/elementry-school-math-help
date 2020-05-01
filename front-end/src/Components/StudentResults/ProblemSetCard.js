@@ -24,7 +24,7 @@ const ProblemSetCard = (props) => {
         b,
         theirAnswer,
         actualAnswer,
-        gotItRightTheFirstTime} = getCell(Root, ['results from backend']).jsObject['problems'][problemSet][problem]
+        gotItRightTheFirstTime} = getCell(Root, ['resultsFromBackend']).jsObject['problems'][problemSet][problem]
     // console.log('myProblem', myProblem)
 
     return (

@@ -1,5 +1,5 @@
 import React from 'react'
-import { createSelector } from 'reselect';
+import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 
 import { connect } from 'react-redux'
 import { autoSolve } from './Redux/Actions'
@@ -12,27 +12,32 @@ import {
 import AddTwoValues from './AddTwoValues'
 
 
-
-const getMyProblems = ( { state, location } ) => {
+const getMyProblems = ( state, location ) => {
 
     let Root = state
     console.log('my lcoation inside the selector', location)
     let elementarySchoolName = ['elementary school']
+    let x = treeVisualizer(state, elementarySchoolName)
+    console.log('tree', x)
     // let problemSetDataSetName = props.location.pathname//useHistory().location.pathname
     // console.log('history', problemSetDataSetName.slice(1, problemSetDataSetName.length))
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getVariable(Root, elementarySchoolName, 'problemSets')
     // console.log('stuff', elementarySchool, problemSets.value - 1)
     let problemSet = getChild(Root, elementarySchool, [`problem set ${problemSets.value - 1}`])
-    // console.log('problem set', problemSet)
+    console.log('problem set', problemSet)
     let problems = problemSet.children//Object.keys(problemSet.children)
     // console.log('my problems', problems)
     return problems
 }
 
 // ensures redux will not refresh the component when the data fetched is the same
-const getProblems = createSelector( (state, location) => ( { state, location } ),
-                                    (stuff) => getMyProblems(stuff))
+
+// the n to n-1 parameters must be selector functions returning data to be cached
+const getProblems = createSelector( (state, location) => ( getMyProblems(state, location) ),
+                                    (stuff) => (stuff) )
+  
+
 const PresentProblems = (props) => {
 
     const { problems } = props
@@ -73,6 +78,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         
         problems: getProblems(state, ownProps.myPath)
+
     }
 }
 export default connect(

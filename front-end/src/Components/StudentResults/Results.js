@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import ProblemSets from './ProblemSets'
 import ProblemSet from './ProblemSet'
@@ -22,6 +22,17 @@ const ShowProblems = styled.div`
 `
 const Results = (props) => {
     const {Root} = props
+    console.log('here')
+    // let renderNumber = false
+    // const [renderNumber, setRenderNumber] = useState(false)
+    // if(renderNumber == false) {
+    //     console.log('here in problem sets fine')
+
+    //     renderNumber = true
+    //     // console.log('got here')
+    //     props.getProblemSets()
+    //     console.log('loaded the problems in')
+    // }
     useEffect(() => {
         console.log('here in problem sets')
         // run action to get the problem sets
@@ -34,7 +45,10 @@ const Results = (props) => {
     console.log('print tree')
     // treeVisualizer(Root, elementarySchoolName, 1)
 
-    let stuff = getCell(Root, ['results from backend'])
+    // .jsObject already existed when the state chart was initialized
+    let stuff = getCell(Root, ['resultsFromBackend']).jsObject['problemSets']
+    // let problemSets = getCell(Root, ['resultsFromBackend']).jsObject['problemSets']
+
     if(stuff) {
         // console.log('stuff', stuff.jsObject)
         return (
