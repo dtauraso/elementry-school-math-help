@@ -1273,7 +1273,7 @@ const processProblems = (state, action, cb) => {
             j += 1
         }
 
-        temporaryState = cb(temporaryState, i, j)
+        temporaryState = cb(temporaryState, action, i, j)
     }
     return temporaryState
 
@@ -1281,6 +1281,7 @@ const processProblems = (state, action, cb) => {
 
 const solveProblem = (state, action, i, j) => {
     const offsetString = action.meta.offsetString
+    console.log("insied solveProblem", `|${offsetString}|`)
     let temporaryState = state
     let a = getVariable(state, [`${offsetString}${i} ${j}`], `${offsetString}value`).value
     let b = getVariable(state, [`${offsetString}${i + 1} ${j}`], `${offsetString}value`).value
@@ -1320,7 +1321,7 @@ const autoSolve = (state, action) => {
 
     // "problem set 0" tells me how many problems we need to use to look for the forms
     // const parentStateName = action.meta.parentStateName
-
+    console.log('inside autoSolve', `|${action.meta.offsetString}|`)
     let temporaryState = processProblems(state, action, solveProblem)
     return [temporaryState, true]
 
@@ -1373,7 +1374,7 @@ const collectProblems = (state, action, i, j) => {
 const setupForBackend = (state, action) => {
 
     console.log('we are setting the completed form data for submitting to the backend')
-    console.log('state', state)
+    console.log('state', state, action)
 
     // Root2 = makeLinks(Root2, {
     //     parent: [`${iAnswer} ${i}`],
