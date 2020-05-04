@@ -12,6 +12,8 @@ import {
 const ProblemSet = (props) => {
     const {Root} = props
 
+    // assume the state chart is already made
+    // look for states using the old frontend components with a start offset of 'display '
     let problemSet = getCell(Root, ['resultsFromBackend']).jsObject['problems']
     let id = getCell(Root, ['selectedProblemSetFromBackend']).value
     if(id >= 0) {

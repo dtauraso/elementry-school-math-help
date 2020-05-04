@@ -89,6 +89,15 @@ const OneValue = (props) => {
     return (
         <Container>
             {/* {formOrValue(isForm, operationType)} */}
+            {/* use the flags to control terms in the sequence
+            a group of flags for controlling whether a sequence of components will exist or not
+            
+            should be mututally exclusive flags inside redux
+            isForm
+            isValue
+            isDisplayResult
+            react will read these flags and display the correct sequence of components
+            */}
             {isForm? 
                 <SubmitAnswer
                 // statePath={formPath}
