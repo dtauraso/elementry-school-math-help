@@ -110,6 +110,66 @@ export const makeCell = (stateObject) => {
     
 
 }
+export const makeCell2 = (stateObject) => {
+
+
+    // the variables are stored as a string with no whitespaces for each name to let the user access them
+    // like they would do with variable names
+
+    const { name,
+            substates,
+            functionCode,
+            nextStates,
+            children,
+            variableNames,
+            value,
+            jsObject} = stateObject
+    let newCell = {}
+    if(name) {
+        newCell = {[name]: {name: name}}
+    }
+    if(substates) {
+        newCell = {[name]: {...newCell[name], substates: functionCode}}
+    }
+    if(functionCode) {
+
+        newCell = {[name]: {...newCell[name], 'function': functionCode}}
+    }
+    if(nextStates) {
+        newCell = {[name]: {...newCell[name], nextStates: nextStates}}
+    }
+    if(children) {
+        newCell = {[name]: {...newCell[name], children: children}}
+    }
+    if(variableNames) {
+        newCell = {[name]: {...newCell[name], variableNames: variableNames}}
+    }
+    if(value !== undefined) {
+        newCell = {[name]: {...newCell[name], value: value}}
+    }
+    if(jsObject !== undefined) {
+        newCell = {[name]: {...newCell[name], jsObject: jsObject}}
+    }
+
+    
+    return newCell
+    // name: ['root']
+    // nextParts: {    'elementary school':1,
+    //             'problem set 0':1,
+    //             'problem 0':1}
+    // function: returnState
+
+    // nextStates: []
+    // children: {'a 0': 1, 'b 0': 1, 'answerForm 0': 1},
+
+    // variableNames: ['value 1',
+    //             'quantity 1',
+    //             'isForm 1',
+    //             'operationType 1']
+    
+
+}
+
 export const getCell = (state, path) => {
 
     // console.log('path', path)
@@ -132,6 +192,16 @@ export const getCell = (state, path) => {
     // this will be the root if the path doesn't exist
     // this will be null if the state the path refers to doesn't exist
     return currentCell
+}
+
+export const getCell2 = (table, name) => {
+
+    // console.log('path', path)
+    // for any valid cell the forEach must run at least 1 time
+    if(Object.keys(table).includes(name)) {
+        return table[name]
+    }
+    return {"error": 'no state'}
 }
 
 export const getVariable = (state, parentStateName, variableName) => {
@@ -299,6 +369,21 @@ export const tableAssign = (state, cell, value) => {
     
     
 }
+export const tableAssign2 = (state, cell, value) => {
+
+    if(cell === null) {
+        return state
+    }
+    let cellName = cell.name
+    return {
+        ...state,
+        [cellName]: {
+            ...state[cellName],
+            value: value
+        }
+    }    
+}
+
 export const tableAssignJsObject = (state, cell, value) => {
 
     if(cell === null) {
@@ -314,6 +399,22 @@ export const tableAssignJsObject = (state, cell, value) => {
         }
     }
 }
+export const tableAssignJsObject2 = (state, cell, value) => {
+
+    if(cell === null) {
+        return state
+    }
+    // console.log(cell, Object.keys(cell))
+    let cellName = cell.name
+    return {
+        ...state,
+        [cellName]: {
+            ...state[cellName],
+            jsObject: value
+        }
+    }
+}
+
 export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
 
     // targetVar is a variable name
@@ -330,10 +431,37 @@ export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
         cb(...dependencyVars.map(variable => getVariable(state, parentStateName, variable).value))
     )
 }
+export const set2 = (state, parentStateName, targetVar, dependencyVars, cb) => {
+
+    // targetVar is a variable name
+   if(typeof dependencyVars !== 'object') {
+       return tableAssign2(
+        state,
+        getVariable(state, parentStateName, targetVar),
+        dependencyVars
+       )
+   }
+    return tableAssign2(
+        state,
+        getVariable(state, parentStateName, targetVar),
+        cb(...dependencyVars.map(variable => getVariable(state, parentStateName, variable).value))
+    )
+}
+
 export const setArray = (state, parentStateName, targetVar, array) => {
 
     // array is an object
     return tableAssign(
+        state,
+        getVariable(state, parentStateName, targetVar),
+        array
+    )
+}
+
+export const setArray2 = (state, parentStateName, targetVar, array) => {
+
+    // array is an object
+    return tableAssign2(
         state,
         getVariable(state, parentStateName, targetVar),
         array
@@ -351,6 +479,18 @@ const hasSubstates = (cell) => {
         return true
     }
 }
+const hasSubstates2 = (cell) => {
+    if(!Object.keys(cell).includes('substates')) {
+        return false
+    }
+    else if(Object.keys(cell.substates).length == 0) {
+        return false
+    }
+    else {
+        return true
+    }
+}
+
 const hasAttributeOfCollection = (cell, attributeName) => {
     if(!Object.keys(cell).includes(attributeName)) {
         return false
@@ -436,6 +576,87 @@ export const treeVisualizer = (table, currentState) => {
                 ...substates,
                 treeVisualizer(table,
                         [...currentState, nextPart])
+                ]
+        })
+    }
+
+    return {
+            // a, b, and c parts are so this is the order they show up in the inspector
+            a_name: cell.name,
+            ...(cell.function == undefined? {} : {b_function: cell.function.name}),
+            // missing next states
+            ...(cell.nextStates == undefined? {} : {c_nextStates: cell.nextStates}),
+            d_children: children,
+            e_variables: variables,
+            ...(cell.jsObject == undefined? {} : {jsObject: cell.jsObject}),
+            substates: substates  
+    }
+}
+export const treeVisualizer2 = (table, currentState) => {
+
+    // have to treat each cell as if only 1 function call maps to 1 cell
+    /*
+    cell(full name here)
+    children
+    variables
+    substates: [
+        {
+        cell(full name here)
+        children
+        variables
+        substates: []
+        }
+    ]
+    */
+    let cell = getCell(table, currentState)
+    if(!cell) {
+        return {}
+    }
+   
+    if(hasAttribute(cell, 'jsObject')) {
+        return {jsObject: cell.jsObject}
+    }
+    else if(hasAttribute(cell, 'value')) {
+        return {value: cell.value}
+    }
+
+    let variables = {}
+    if(hasAttributeOfCollection(cell, 'variableNames')) {
+
+        cell.variableNames.forEach(variableStateName => {
+            variables = {
+                ...variables,
+
+                // should return a tree of states
+                [variableStateName]: {...treeVisualizer2(table,
+                                                [variableStateName])}
+            }
+        })
+    }
+
+    let children = []
+    if(hasAttributeOfCollection(cell, 'children')) {
+
+        cell.children.forEach(childStateName => {
+
+            // should return a tree of states
+            children = [...children,
+                        treeVisualizer2(table,
+                                childStateName)]
+        })
+    }
+
+    let substates = []
+    if(hasSubstates2(cell)) {
+
+        // visit subtrees here
+        Object.keys(cell.substates).forEach(substate => {
+
+            // get the next nested granular state within currentState
+            substates = [
+                ...substates,
+                treeVisualizer2(table,
+                        [...currentState, substate])
                 ]
         })
     }
@@ -555,6 +776,142 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             currentStateName = winningStateName
             
             const currentStateObject = getCell(temporaryState, currentStateName)
+            // putting this in would force all states to have it as an attribute even if they have no edges
+            if(!Object.keys(currentStateObject).includes('nextStates')) {
+                console.log('The next states doesn\'t exist')
+                return [temporaryState, true]
+            }
+            if(currentStateObject.nextStates.length === 0) {
+                console.log(`machine is done 1 ${levelId}`)
+                // keepGoing = false
+                return [temporaryState, true]
+            }
+            nextStates = currentStateObject.nextStates
+
+            console.log("next set of edges", nextStates)
+        } else if(!passes && nextStates.length === 0) {
+            console.log('machine is done 2')
+            // return temporaryState
+            return [temporaryState, true]
+
+        } else {
+            console.log(currentStateName,
+                        "failed",
+                        "attempted next states",
+                        nextStates)
+            // return temporaryState
+            return [temporaryState, true]
+
+        }
+    
+    }
+    // machine is finished
+    // return [temporaryState, true]
+}
+
+export const breathFirstTraversal2 = (state, action, startStateName, levelId) => {
+    // startStateName, endStateName are lists of strings
+    // we can use the payload from the user for the entire traversal
+    // from start state to end state
+    // bft
+    // try all the options
+    // for each one
+        // return the state then the stateSuceded flag
+    // return the state once endState is reached
+    // let currentState = getValue(state, stateStateName)
+    // this will cumulatively hold the state copies untill we are done with the machine
+    let temporaryState = state
+    // console.log('breathFirstTraversal', startStateName)
+    // take out cropChildreaname
+    // let [ baseStateName, childStateName ] = cropChildName(startStateName)
+    console.log("level", levelId)
+    let nextStates = startStateName
+    // console.log('next states', nextStates, 'parent', action.type)
+    let currentStateName = startStateName
+    let keepGoing = true
+    // console.log(baseStateName, childStateName)
+    // have a list of end states and make sure the current state is not in the set
+    while(true) {
+        // console.log(nextStates)
+        let passes = false
+        let winningStateName = ''
+        let winningFunctionName = ''
+        nextStates.forEach(nextState => {
+            // console.log('trying', nextState)
+            if(nextState === undefined) {
+                console.log("the js syntax for the next states is wrong")
+                // keepGoing = false
+                return null
+
+            }
+
+            if(passes) {
+                return null
+            }
+            console.log("getting state", temporaryState, nextState) 
+            let cell = getCell2(temporaryState, nextState)
+            console.log('cell found', cell)
+            // ignore the state if it doesn't have a function to run
+            if(!Object.keys(cell).includes('function')) {
+                console.log(cell, "doesn't have a function")
+                return null
+            }
+            // action.type is the parent state untill this line is run(in the first level the parent == current state)
+            // console.log('parent state', action.meta.parentStateName)
+            action.type = nextState
+            // console.log(nextState)
+            // action's current state is .type
+            // action.meta.currentState = nextState // bad idea
+            // console.log("function to run", getValue(temporaryState, nextState), action)
+            const result = cell['function'](temporaryState, action)
+            const success = result[1]
+            // console.log("finished function")
+            // console.log(temporaryState, success)
+            if(!success) {
+                return null
+            }
+            // must keep the success value as we go up and down the call stack
+            temporaryState = result[0]
+
+            passes = true
+            winningStateName = nextState
+            winningFunctionName = cell['function'].name
+            // action.type = winningStateName
+            // console.log('passes', action.type)
+            // console.log()
+            // untested
+            // if the winningStateName has any children
+            let childrenStates = getChildren(temporaryState, winningStateName)
+            // console.log(childrenStates)
+            if(childrenStates === null) {
+                return null
+            }
+            if(childrenStates.length === 0) {
+                return null
+            }
+            console.log("we have children", childrenStates)
+            action.meta.parentStateName = [...action.type]
+            // call the routing agin with next states holding the children
+            
+            const nestedResult = breathFirstTraversal2(temporaryState, action, childrenStates, levelId + 1)
+            const submachineSuccess = nestedResult[1]
+            // console.log('done with submachine', nestedResult)
+            if(!submachineSuccess) {
+
+                // if the submachine is false then this state is also false 
+                passes = false
+                return null
+            }
+            temporaryState = nestedResult[0]
+            // console.log('submachine passes', temporaryState)
+
+        })
+        if(passes) {
+            console.log("we have a winner", winningStateName, winningFunctionName, temporaryState)
+
+            currentStateName = winningStateName
+            
+            const currentStateObject = getCell2(temporaryState, currentStateName)
             // putting this in would force all states to have it as an attribute even if they have no edges
             if(!Object.keys(currentStateObject).includes('nextStates')) {
                 console.log('The next states doesn\'t exist')

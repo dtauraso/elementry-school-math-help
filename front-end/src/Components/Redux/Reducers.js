@@ -10,7 +10,22 @@ import {    makeCell,
             breathFirstTraversal, 
             getCell,
             getChildren,
-            treeVisualizer} from '../../reducerHelpers'
+            treeVisualizer,
+
+            makeCell2,
+            getCell2,
+            tableAssign2,
+            tableAssignJsObject2,
+            set2,
+            setArray2,
+            hasSubstates2,
+            treeVisualizer2,
+            breathFirstTraversal2
+        
+        
+        
+        
+        } from '../../reducerHelpers'
 
 // Only add states when they need to be initially created or enumaerated with a graph generator.
 // No singletone states should be created just cause they don't need to exist untill that reducer runs.
@@ -80,6 +95,9 @@ const addChild = (Root2, stateNameLastString, newChildNames) => {
     return Root2
 }
 
+// supposed to be the base state name (name links directly from root) can have 0 or 1 nextParts
+// start state, no becuase some of them have more than 1 name
+// they can also come after start states
 const makeRegularState = (Root2, newStateObject) => {
 
     return makeLinks(Root2,
@@ -90,6 +108,8 @@ const makeRegularState = (Root2, newStateObject) => {
     )
 }
 
+// meant to come after a regular state and may have > 1 nextParts
+// append to end state
 const makeIntermediateState = (Root2, newStateObject) => {
 
     return makeLinks(Root2,
@@ -163,7 +183,7 @@ const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isInter
             }
         }
     }
-    
+    // if an intermediate state(fork state) then just append to the end
     // console.log('print tree')
     // console.log(Root2)
 
@@ -172,7 +192,89 @@ const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isInter
     ...stateCells
     }
 }
+// root -> stateName1 -> stateName2
+/*
+guarantees links are made in a consistent manner
+f(table, remainingName, stateData)
+if remainingName is empty
+    return ''
 
+if table[car(remainingName)] exists
+    newNextPartName = f(table, rest(remainingName), stateData)
+    if newNextPartName !== ''
+        // linking current to next
+        table[car(remainingName)].nextparts[newNextPartName] = 1
+        
+        // maintain already existing link
+        return car(remainingName)
+    else
+
+        // maintain already existing link
+        return car(remainingName)
+else
+    make new node
+    table[lastName] = new node
+    return new node name
+*/
+const addState = (table, remainingName, stateData) => {
+
+    // remainingName is an array of strings
+    // stateData is an object
+    // table is an object
+    if(remainingName.length === 0) {
+        return ''
+    }
+    else {
+        // remainingName.length >= 1
+
+        if(Object.keys(table).includes(remainingName[0])) {
+            const newNextPartName = addState(   table,
+                                                remainingName.slice(1, remainingName.length),
+                                                stateData)
+            if(newNextPartName !== '') {
+                // linking current to next
+                table[remainingName[0]].nextParts[newNextPartName] = 1
+                return remainingName[0]
+            }
+            else {
+                return remainingName[0]
+            }
+        }
+        else {
+            
+            if(remainingName.length > 1) {
+
+
+                // guarantees case on 215 will be tested and fail leading to this case
+                // make weypoint node
+                table = {...table, 
+                        ...makeCell({
+                            name: [remainingName[0]],
+                            nextParts: [remainingName[1]]
+                        })
+                        }
+
+                const newNextPartName = addState(   table,
+                    remainingName.slice(1, remainingName.length),
+                    stateData)
+
+                if(newNextPartName !== '') {
+                    // linking current to next
+                    table[remainingName[0]].nextParts[newNextPartName] = 1
+                    return remainingName[0]
+                }
+                else {
+                    return remainingName[0]
+                }
+            }
+            else if(remainingName.length == 1) {
+
+                table[remainingName[0]] = stateData
+            }
+            return remainingName[0]
+        }
+    }
+}
 const generateProblemStructure = (state, action) => {
     // action has an offset sequence
     // when making the state structure add the offset to each of them(first string in name)
@@ -526,6 +628,7 @@ const setupProblem = (state, action) => {
         
         // intermediate state that also has variable names
 
+        // has multiple nextParts
         Root2 = makeIntermediateState(Root2, {
             parent: [`${offsetString}problem ${i}`],
             newStateName: [`${offsetString}${iAnswer} ${i}`],
@@ -585,7 +688,7 @@ const setupProblem = (state, action) => {
         //     isIntermediateState: false
         // })
 
-
+        // violates the assumption of a regular state but still works
         Root2 = makeRegularState(Root2, {
             parent: [`${offsetString}problem ${i}`],
             newStateName: [ `${offsetString}${iAnswer} ${i}`, `submission ${i}`],
@@ -983,7 +1086,7 @@ const setupProblem = (state, action) => {
                         //     nextStates: [],
                         // }),
 
-        Root2 = makeLinks(Root2, {
+        Root2 =  makeRegularState(Root2, {
             parent: [`${offsetString}problem ${i}`],
             newStateName: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
             stateCells: makeCell({
@@ -996,59 +1099,105 @@ const setupProblem = (state, action) => {
                                 `${offsetString}correctFirstTime ${i}`,
                                 `${offsetString}testingWithoutForm ${i}`
                             ]
-            }),
-            isVariable: false,
-            isIntermediateState: false
+            })
         })
+        // Root2 = makeLinks(Root2, {
+        //     parent: [`${offsetString}problem ${i}`],
+        //     newStateName: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+        //     stateCells: makeCell({
+        //         name: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+        //         functionCode: returnState,
+        //         nextStates: [],
+        //         children: [ [`${offsetString}got it right the first time ${i}`], // passes if they are right and submission count == 1
+        //                     [`${offsetString}else ${i}`]],
+        //         variableNames:  [
+        //                         `${offsetString}correctFirstTime ${i}`,
+        //                         `${offsetString}testingWithoutForm ${i}`
+        //                     ]
+        //     }),
+        //     isVariable: false,
+        //     isIntermediateState: false
+        // })
 
-        Root2 = makeLinks(Root2, {
+        Root2 = makeVariableState(Root2, {
             parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
             newStateName: [`${offsetString}correctFirstTime ${i}`],
             stateCells: makeCell({
                 name: [`${offsetString}correctFirstTime ${i}`],
                 value: false
-            }),
-            isVariable: true,
-            isIntermediateState: false
+            })
         })
+        // Root2 = makeLinks(Root2, {
+        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+        //     newStateName: [`${offsetString}correctFirstTime ${i}`],
+        //     stateCells: makeCell({
+        //         name: [`${offsetString}correctFirstTime ${i}`],
+        //         value: false
+        //     }),
+        //     isVariable: true,
+        //     isIntermediateState: false
+        // })
         
-
-        Root2 = makeLinks(Root2, {
+        Root2 = makeVariableState(Root2, {
             parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
             newStateName: [`${offsetString}testingWithoutForm ${i}`],
             stateCells: makeCell({
                 name: [`${offsetString}testingWithoutForm ${i}`],
                 value: false
-            }),
-            isVariable: true,
-            isIntermediateState: false
+            })
         })
+        // Root2 = makeLinks(Root2, {
+        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+        //     newStateName: [`${offsetString}testingWithoutForm ${i}`],
+        //     stateCells: makeCell({
+        //         name: [`${offsetString}testingWithoutForm ${i}`],
+        //         value: false
+        //     }),
+        //     isVariable: true,
+        //     isIntermediateState: false
+        // })
 
-
-        Root2 = makeLinks(Root2, {
+        Root2 = makeRegularState(Root2, {
             parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
             newStateName: [`${offsetString}got it right the first time ${i}`],
             stateCells: makeCell({
                 name: [`${offsetString}got it right the first time ${i}`],
                 functionCode: gotItRightTheFirstTime,
                 nextStates: [],
-            }),
-            isVariable: false,
-            isIntermediateState: false
+            })
         })
+        // Root2 = makeLinks(Root2, {
+        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+        //     newStateName: [`${offsetString}got it right the first time ${i}`],
+        //     stateCells: makeCell({
+        //         name: [`${offsetString}got it right the first time ${i}`],
+        //         functionCode: gotItRightTheFirstTime,
+        //         nextStates: [],
+        //     }),
+        //     isVariable: false,
+        //     isIntermediateState: false
+        // })
 
-        
-        Root2 = makeLinks(Root2, {
+        Root2 = makeRegularState(Root2, {
             parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
             newStateName: [`${offsetString}else ${i}`],
             stateCells: makeCell({
                 name: [`${offsetString}else ${i}`],
                 functionCode: returnState,
                 nextStates: [],
-            }),
-            isVariable: false,
-            isIntermediateState: false
-        })
+            })
+        })        
+        // Root2 = makeLinks(Root2, {
+        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
+        //     newStateName: [`${offsetString}else ${i}`],
+        //     stateCells: makeCell({
+        //         name: [`${offsetString}else ${i}`],
+        //         functionCode: returnState,
+        //         nextStates: [],
+        //     }),
+        //     isVariable: false,
+        //     isIntermediateState: false
+        // })
 
         
         // ...,
@@ -1880,6 +2029,21 @@ Root2 = {
                         'plusProblems else 0'],
     })
 }
+
+
+// 'nameOne nameTwo'
+// 'elementarySchool utilities'
+// 'elementarySchool testing'
+// 'elementarySchool storeResults'
+
+
+// 1 state per entry in table
+addState(Root2, makeCell({
+    name: ['a'],
+}))
+let elementarySchoolName = ['elementary school']
+let x = treeVisualizer(Root2, elementarySchoolName)
+console.log('tree', x)
 
 Root2 = makeLinks(Root2, {
     parent: ['root'],
