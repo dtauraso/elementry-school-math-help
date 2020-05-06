@@ -47,7 +47,7 @@ export const AddTwoValues = (props) => {
 
     console.log('state to look for|', `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
     // get problem parts
-    let x = getCell(Root, [`${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`])
+    let x = getCell(Root, `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
     console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
 
@@ -57,7 +57,7 @@ export const AddTwoValues = (props) => {
     let item = problemParts[0][0].split(' ')[1]
     console.log({item})
 
-    let stateName = [`${stateCoordinates.offsetString}${item} ${stateCoordinates.problemId}`]
+    let stateName = `${stateCoordinates.offsetString}${item} ${stateCoordinates.problemId}`
     let state = getCell(Root, stateName)
     // let isForm = getVariable(Root,
     //     stateName,

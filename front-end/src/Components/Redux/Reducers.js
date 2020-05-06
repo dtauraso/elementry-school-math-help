@@ -76,7 +76,7 @@ current state name form (i0. i1, i2)
 new state name form (i0 + j. i1, i2)
 
 */
-const addChild = (Root2, stateNameLastString, newChildNames) => {
+const addChild = (Root2, stateName, newChildNames) => {
 
     // newChildName is an array of strings
     // let newChildrenForProblemSet = [
@@ -87,111 +87,16 @@ const addChild = (Root2, stateNameLastString, newChildNames) => {
     // add starting trie links to root and add the new problem child to the problem set
     Root2 = {
         ...Root2,
-        [stateNameLastString]: {
-            ...Root2[stateNameLastString],
-            children: [...Root2[stateNameLastString].children, ...newChildNames]
+        [stateName]: {
+            ...Root2[stateName],
+            children: [...Root2[stateName].children, ...newChildNames]
         }
     }
     return Root2
 }
 
-// supposed to be the base state name (name links directly from root) can have 0 or 1 nextParts
-// start state, no becuase some of them have more than 1 name
-// they can also come after start states
-const makeRegularState = (Root2, newStateObject) => {
 
-    return makeLinks(Root2,
-        {...newStateObject, 
-        isVariable: false,
-        isIntermediateState: false
-        }
-    )
-}
 
-// meant to come after a regular state and may have > 1 nextParts
-// append to end state
-const makeIntermediateState = (Root2, newStateObject) => {
-
-    return makeLinks(Root2,
-        {...newStateObject, 
-        isVariable: false,
-        isIntermediateState: true
-        }
-    )
-}
-
-const makeVariableState = (Root2, newStateObject) => {
-
-    return makeLinks(Root2,
-        {...newStateObject, 
-        isVariable: true,
-        isIntermediateState: false
-        }
-    )
-}
-
-const makeLinks = (Root2, {newStateName, parent, stateCells, isVariable, isIntermediateState}) => {
-    // newStateName is an array of strings
-    /*
-    new state: 'problem ${i}'
-    parent: `problem set 0`
-
-    */
-    let newNextParts = makeSet([
-        newStateName[0],
-        
-    ])
-
-    // let newChildrenForProblemSet = [
-    //     newStateName
-    // ]
-    // let lastName = parent[parent.length - 1]
-    // console.log('parts I need')
-    // console.log('newStateName', newStateName)
-    // console.log('newNextParts', newNextParts)
-    // console.log('newChildrenForProblemSet', newChildrenForProblemSet)
-    // console.log('lastName', lastName)
-    // console.log('parent', parent)
-    // console.log('stateCells', stateCells)
-
-    // console.log('tree', Root2)
-    // let parentState = getCell(Root2, parent)
-
-    // console.log('parentState', parentState)
-
-    // think of intermediate states as part of the state name chain
-    // the root only cares about the first link in the chain
-    // console.log({isIntermediateState})
-    if(!isIntermediateState) {
-        // console.log('messed up')
-        // are some of my non intermdeiate staes the last one of a 3 name state name?
-        // if so that will generate an extra connection that will not work at root, but will not affect the graph
-        Root2 = {
-            ...Root2,
-            'root': {
-                ...Root2.root,
-                nextParts: isVariable?
-                // variables don't need to be connected to root as the parent exclusvely accesses them
-                {
-                    ...Root2.root.nextParts
-                }:
-                 {
-                    ...Root2.root.nextParts,
-                    ...newNextParts
-                }
-        
-            }
-        }
-    }
-    // if an intermediate state(fork state) then just append to the end
-    // console.log('print tree')
-    // console.log(Root2)
-
-    return {
-    ...Root2,
-    ...stateCells
-    }
-}
 // root -> stateName1 -> stateName2
 /*
 guarantees links are made in a consistent manner
@@ -216,65 +121,6 @@ else
     table[lastName] = new node
     return new node name
 */
-const addState = (table, remainingName, stateData) => {
-
-    // remainingName is an array of strings
-    // stateData is an object
-    // table is an object
-    if(remainingName.length === 0) {
-        return ''
-    }
-    else {
-        // remainingName.length >= 1
-
-        if(Object.keys(table).includes(remainingName[0])) {
-            const newNextPartName = addState(   table,
-                                                remainingName.slice(1, remainingName.length),
-                                                stateData)
-            if(newNextPartName !== '') {
-                // linking current to next
-                table[remainingName[0]].nextParts[newNextPartName] = 1
-                return remainingName[0]
-            }
-            else {
-                return remainingName[0]
-            }
-        }
-        else {
-            
-            if(remainingName.length > 1) {
-
-
-                // guarantees case on 215 will be tested and fail leading to this case
-                // make weypoint node
-                table = {...table, 
-                        ...makeCell({
-                            name: [remainingName[0]],
-                            nextParts: [remainingName[1]]
-                        })
-                        }
-
-                const newNextPartName = addState(   table,
-                    remainingName.slice(1, remainingName.length),
-                    stateData)
-
-                if(newNextPartName !== '') {
-                    // linking current to next
-                    table[remainingName[0]].nextParts[newNextPartName] = 1
-                    return remainingName[0]
-                }
-                else {
-                    return remainingName[0]
-                }
-            }
-            else if(remainingName.length == 1) {
-
-                table[remainingName[0]] = stateData
-            }
-            return remainingName[0]
-        }
-    }
-}
 const generateProblemStructure = (state, action) => {
     // action has an offset sequence
     // when making the state structure add the offset to each of them(first string in name)
@@ -321,7 +167,7 @@ const setVariable = (state, parentStateName, variableName, newValue) => {
     return {
         ...state,
         
-        [variable.name[0]]: {
+        [variable.name]: {
             ...variable,
             value: newValue
         }
@@ -335,7 +181,7 @@ const incrementVariableBy = (state, parentStateName, variableName, newValue) => 
     return {
         ...state,
         
-        [variable.name[0]]: {
+        [variable.name]: {
             ...variable,
             value: variable.value + newValue
         }
@@ -349,14 +195,14 @@ const setupProblem = (state, action) => {
     // need to put this into a for loop
     // ['elementary school', 'utilities', 'create problem']
     // ['problemCount']
-    const parentOfProblemCount = ['elementary school', 'utilities', 'create problem']
+    const parentOfProblemCount = 'elementarySchool utilities createProblem'
     const offsetString = 'plusProblems '
     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
     console.log('we need to make', numberOfProblems2, 'problems')
     console.log(state)
-    let numberOfProblems3 = getVariable(state, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`)
-    console.log(numberOfProblems3.name[0])
-    console.log('about to make a problem', getVariable(state, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`).value)
+    let numberOfProblems3 = getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`)
+    console.log(numberOfProblems3.name)
+    console.log('about to make a problem', getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value)
 
     let Root2 = state
 
@@ -364,7 +210,7 @@ const setupProblem = (state, action) => {
     for(let i = 0; i < numberOfProblems2; i++) {
 
         
-        Root2 = incrementVariableBy(Root2, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`, 1)
+        Root2 = incrementVariableBy(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`, 1)
         
         // {
         //     ...Root2,
@@ -375,7 +221,7 @@ const setupProblem = (state, action) => {
         //     }
         // }
     
-        let numberOfProblems = getVariable(Root2, [`${offsetString}problem set 0`], `${offsetString}numberOfProblems`).value
+        let numberOfProblems = getVariable(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value
         let i = numberOfProblems - 1
         // console.log(numberOfProblems, problems[numberOfProblems])
         const ithProblem = problems[i]
@@ -384,1128 +230,250 @@ const setupProblem = (state, action) => {
         let iB = iA + 1
         let iAnswer = iA + 2
         console.log("new starting values", iA, iB, iAnswer)
-        Root2 = addChild(Root2, `${offsetString}problem set 0`, [[`${offsetString}problem ${i}`]])
+        Root2 = {
+            ...Root2,
+            [`${offsetString}problemSet 0`]: {
+                ...Root2[`${offsetString}problemSet 0`],
+                children: [...Root2[`${offsetString}problemSet 0`].children, `${offsetString}problem ${i}`]
+            },
+                // 1 indent for child/variable name
+                [`${offsetString}problem ${i}`]: {
+                    parent: `${offsetString}problemSet 0`,
+                    name: `${offsetString}problem ${i}`,  // key of AddTwoValues maps to this
 
-        Root2 = makeRegularState(Root2,
-            {
-                parent: [`${offsetString}problem set 0`],
-                newStateName: [`${offsetString}problem ${i}`],
-                stateCells: makeCell({
-                    name: [`${offsetString}problem ${i}`],  // key of AddTwoValues maps to this
-    
                     // 0, 1, 2    3, 4, 5   6, 7, 8
                     // 0
-                    children: [ [`${offsetString}${iA} ${i}`],
-                                [`${offsetString}${iB} ${i}`],
-                                [`${offsetString}${iAnswer} ${i}`]],   // can use the OneValue key and the AddTwoValues key
+
+                    children: [
+                        `${offsetString}${iA} ${i}`,
+                        `${offsetString}${iB} ${i}`,
+                        `${offsetString}${iAnswer} ${i}`// can use the OneValue key and the AddTwoValues key
+                    ],
                     variableNames: [`${offsetString}problemParts ${i}`]
-                })
-            })
-        Root2 = makeVariableState(Root2, 
-            {
-                parent: [`${offsetString}problem ${i}`],
-                newStateName: [`${offsetString}problemParts ${i}`],
-                stateCells: makeCell({
-                    name: [`${offsetString}problemParts ${i}`],
-                    value: 3
-                })})
-                    
+                },
+                    [`${offsetString}problemParts ${i}`]: {
+                        parent: `${offsetString}problem ${i}`,
+                        name: `${offsetString}problemParts ${i}`,
+                        value: 3
+                    },
+                    [`${offsetString}${iA} ${i}`]: {
+                        parent: `${offsetString}problem ${i}`,
+                        name: `${offsetString}${iA} ${i}`,
+                        variableNames: [`${offsetString}value ${iA}`,
+                                        `${offsetString}quantity ${iA}`,
+                                        `${offsetString}isForm ${iA}`,
+                                        `${offsetString}operationType ${iA}`]
+                    },
+                        [`${offsetString}value ${iA}`]: {
+                            parent: `${offsetString}${iA} ${i}`,
+                            name: `${offsetString}value ${iA}`,
+                            value: ithProblem.a
+                        },
+                        [`${offsetString}quantity ${iA}`]: {
+                            parent: `${offsetString}${iA} ${i}`,
+                            name: `${offsetString}quantity ${iA}`,
+                            value: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b)
+                        },
+                        [`${offsetString}isForm ${iA}`]: {
+                            parent: `${offsetString}${iA} ${i}`,
+                            name: `${offsetString}isForm ${iA}`,
+                            value: false
+                        },
+                        [`${offsetString}operationType ${iA}`]: {
+                            parent: `${offsetString}${iA} ${i}`,
+                            name: `${offsetString}operationType ${iA}`,
+                            value: ''
+                        },
+                    [`${offsetString}${iB} ${i}`]: {
+                        parent: `${offsetString}problem ${i}`,
+                        name: `${offsetString}${iB} ${i}`,
+                        variableNames: [`${offsetString}value ${iB}`,
+                                        `${offsetString}quantity ${iB}`,
+                                        `${offsetString}isForm ${iB}`,
+                                        `${offsetString}operationType ${iB}`]
+                    },
+                        [`${offsetString}value ${iB}`]: {
+                            parent: `${offsetString}${iB} ${i}`,
+                            name: `${offsetString}value ${iB}`,
+                            value: ithProblem.b
+                        },
+                        [`${offsetString}quantity ${iB}`]: {
+                            parent: `${offsetString}${iB} ${i}`,
+                            name: `${offsetString}quantity ${iB}`,
+                            value: keQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
+                        },
+                        [`${offsetString}isForm ${iB}`]: {
+                            parent: `${offsetString}${iB} ${i}`,
+                            name: `${offsetString}isForm ${iB}`,
+                            value: false
+                        },
+                        [`${offsetString}operationType ${iB}`]: {
+                            parent: `${offsetString}${iB} ${i}`,
+                            name: `${offsetString}operationType ${iB}`,
+                            value: '+'
+                        },
+                    [`${offsetString}${iAnswer} ${i}`]: {
+                        parent: `${offsetString}problem ${i}`,
+                        name: `${offsetString}${iAnswer} ${i}`,
+                        sutstates: [`${offsetString}submission ${i}`, `${offsetString}progressMeter ${i}`],
+                        variableNames: [`${offsetString}isForm ${iAnswer}`, `${offsetString}operationType ${iAnswer}`]
+                    },
+                        [`${offsetString}isForm ${iAnswer}`]: {
+                            parent: `${offsetString}${iAnswer} ${i}`,
+                            name: `${offsetString}isForm ${iAnswer}`,
+                            value: true
+                        },
+                        [`${offsetString}operationType ${iAnswer}`]: {
+                            parent: `${offsetString}${iAnswer} ${i}`,
+                            name: `${offsetString}operationType ${iAnswer}`,
+                            value: ''
+                        },
+                            // 2 indents from `${offsetString}${iAnswer} ${i}` as it's a substate
+                            // has the same parent as the superstate
+                            // we start our submitting the answer with this cell
+                            // this index(i) corresponds to the total number of problems
 
-        // console.log('print tree', Root2)
-        Root2 = makeRegularState(Root2, {
-            parent: [`${offsetString}problem ${i}`],
-            newStateName: [`${offsetString}${iA} ${i}`],
-            stateCells: makeCell({ // a
-                name: [`${offsetString}${iA} ${i}`],
-                variableNames: [`${offsetString}value ${iA}`,
-                                `${offsetString}quantity ${iA}`,
-                                `${offsetString}isForm ${iA}`,
-                                `${offsetString}operationType ${iA}`]
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}problem ${i}`],
-        //     newStateName: [`${offsetString}${iA} ${i}`],
-        //     stateCells: makeCell({ // a
-        //         name: [`${offsetString}${iA} ${i}`],
-        //         variableNames: [`${offsetString}value ${iA}`,
-        //                         `${offsetString}quantity ${iA}`,
-        //                         `${offsetString}isForm ${iA}`,
-        //                         `${offsetString}operationType ${iA}`]
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-        
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iA} ${i}`],
-            newStateName: [`${offsetString}value ${iA}`],
-            stateCells: makeCell({
-                name: [`${offsetString}value ${iA}`],
-                value: ithProblem.a
-            })
+                            [`${offsetString}${iAnswer} ${i} submission ${i}`]: {
+                                parent: `${offsetString}problem ${i}`,
+                                name: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                substates: [`${offsetString}updateTypedAnswer ${i}`],
+                                functionCode: returnState,
+                                nextStates: [`${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`],
+                                children: [
+                                    `${offsetString}noValue ${i}`,
+                                    `${offsetString}isInteger ${i}`,
+                                    `${offsetString}isNotInteger ${i}`,
+                                    `${offsetString}submitValue ${i}`
+                                ],
+                                variableNames: [
+                                    `${offsetString}value ${iAnswer}`,
+                                    `${offsetString}quantity ${iAnswer}`,
+                                    `${offsetString}correct ${iAnswer}`,
+                                    `${offsetString}firstAnswer ${iAnswer}`,
+                                    `${offsetString}actualAnswer ${iAnswer}`,
+                                    `${offsetString}submitCount ${iAnswer}`,
+                                    `${offsetString}feedbackMessage ${iAnswer}`,
+                                    `${offsetString}backgroundColor ${iAnswer}`
+                                ]
 
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iA} ${i}`],
-        //     newStateName: [`${offsetString}value ${iA}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}value ${iA}`],
-        //         value: ithProblem.a
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iA} ${i}`],
-            newStateName: [`${offsetString}quantity ${iA}`],
-            stateCells: makeCell({
-                name: [`${offsetString}quantity ${iA}`],
-                value: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b)
-            })  
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iA} ${i}`],
-        //     newStateName: [`${offsetString}quantity ${iA}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}quantity ${iA}`],
-        //         value: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b)
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-
-        // })
-        Root2 = makeVariableState(Root2, {
-        
-            parent: [`${offsetString}${iA} ${i}`],
-            newStateName: [`${offsetString}isForm ${iA}`],
-            stateCells: makeCell({
-                name: [`${offsetString}isForm ${iA}`],
-                value: false
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iA} ${i}`],
-        //     newStateName: [`${offsetString}isForm ${iA}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}isForm ${iA}`],
-        //         value: false
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${iA} ${i}`],
-            newStateName: [`${offsetString}operationType ${iA}`],
-            stateCells: makeCell({
-                name: [`${offsetString}operationType ${iA}`],
-                value: ''
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${iA} ${i}`],
-        //     newStateName: [`${offsetString}operationType ${iA}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}operationType ${iA}`],
-        //         value: ''
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [`${offsetString}problem ${i}`],
-            newStateName: [`${offsetString}${iB} ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}${iB} ${i}`], // b
-                variableNames: [`${offsetString}value ${iB}`,
-                                `${offsetString}quantity ${iB}`,
-                                `${offsetString}isForm ${iB}`,
-                                `${offsetString}operationType ${iB}`]
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}problem ${i}`],
-        //     newStateName: [`${offsetString}${iB} ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}${iB} ${i}`], // b
-        //         variableNames: [`${offsetString}value ${iB}`,
-        //                         `${offsetString}quantity ${iB}`,
-        //                         `${offsetString}isForm ${iB}`,
-        //                         `${offsetString}operationType ${iB}`]
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iB} ${i}`],
-            newStateName: [`${offsetString}value ${iB}`],
-            stateCells: makeCell({
-                name: [`${offsetString}value ${iB}`],
-                value: ithProblem.b
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iB} ${i}`],
-        //     newStateName: [`${offsetString}value ${iB}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}value ${iB}`],
-        //         value: ithProblem.b
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-
-
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iB} ${i}`],
-            newStateName: [`${offsetString}quantity ${iB}`],
-            stateCells: makeCell({
-                name: [`${offsetString}quantity ${iB}`],
-                value: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iB} ${i}`],
-        //     newStateName: [`${offsetString}quantity ${iB}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}quantity ${iB}`],
-        //         value: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iB} ${i}`],
-            newStateName: [`${offsetString}isForm ${iB}`],
-            stateCells:  makeCell({
-                name: [`${offsetString}isForm ${iB}`],
-                value: false
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iB} ${i}`],
-        //     newStateName: [`${offsetString}isForm ${iB}`],
-        //     stateCells:  makeCell({
-        //         name: [`${offsetString}isForm ${iB}`],
-        //         value: false
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iB} ${i}`],
-            newStateName: [`${offsetString}operationType ${iB}`],
-            stateCells: makeCell({
-                name: [`${offsetString}operationType ${iB}`],
-                value: '+'
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iB} ${i}`],
-        //     newStateName: [`${offsetString}operationType ${iB}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}operationType ${iB}`],
-        //         value: '+'
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        
-
-        // works but [`${iAnswer} ${i}`] link from root's nextParts is actually made when [ `${iAnswer} ${i}`, `submission ${i}`] is added
-        
-        // intermediate state that also has variable names
-
-        // has multiple nextParts
-        Root2 = makeIntermediateState(Root2, {
-            parent: [`${offsetString}problem ${i}`],
-            newStateName: [`${offsetString}${iAnswer} ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}${iAnswer} ${i}`],  // answerForm
-                nextParts: [`${offsetString}submission ${i}`, `${offsetString}progressMeter ${i}`],
-                variableNames: [`${offsetString}isForm ${iAnswer}`, `${offsetString}operationType ${iAnswer}`]
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}problem ${i}`],
-        //     newStateName: [`${offsetString}${iAnswer} ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}${iAnswer} ${i}`],  // answerForm
-        //         nextParts: [`${offsetString}submission ${i}`, `${offsetString}progressMeter ${i}`],
-        //         variableNames: [`${offsetString}isForm ${iAnswer}`, `${offsetString}operationType ${iAnswer}`]
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: true
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iAnswer} ${i}`],
-            newStateName: [ `${offsetString}isForm ${iAnswer}`],
-            stateCells: makeCell({
-                name: [ `${offsetString}isForm ${iAnswer}`],
-                value: true
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iAnswer} ${i}`],
-        //     newStateName: [ `${offsetString}isForm ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [ `${offsetString}isForm ${iAnswer}`],
-        //         value: true
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iAnswer} ${i}`],
-            newStateName: [`${offsetString}operationType ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}operationType ${iAnswer}`],
-                value: ''
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iAnswer} ${i}`],
-        //     newStateName: [`${offsetString}operationType ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}operationType ${iAnswer}`],
-        //         value: ''
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-
-        // violates the assumption of a regular state but still works
-        Root2 = makeRegularState(Root2, {
-            parent: [`${offsetString}problem ${i}`],
-            newStateName: [ `${offsetString}${iAnswer} ${i}`, `submission ${i}`],
-            stateCells : makeCell({
-                name: [ `${offsetString}${iAnswer} ${i}`,
-                        `${offsetString}submission ${i}`],
-                nextParts: [`${offsetString}update typed answer ${i}`],
-    
-                functionCode: returnState,
-                nextStates: [[`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`]],
-    
-                children: [ [`${offsetString}noValue ${i}`],
-                            [`${offsetString}isInteger ${i}`],
-                            [`${offsetString}isNotInteger ${i}`],
-                            [`${offsetString}submitValue ${i}`]],
-    
-                variableNames: [`${offsetString}value ${iAnswer}`,
-                                `${offsetString}quantity ${iAnswer}`,
-                                `${offsetString}correct ${iAnswer}`,
-                                `${offsetString}firstAnswer ${iAnswer}`,
-                                `${offsetString}actualAnswer ${iAnswer}`,
-                                `${offsetString}submitCount ${iAnswer}`,
-                                `${offsetString}feedbackMessage ${iAnswer}`,
-                                `${offsetString}backgroundColor ${iAnswer}`]
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}problem ${i}`],
-        //     newStateName: [ `${offsetString}${iAnswer} ${i}`, `submission ${i}`],
-        //     stateCells : makeCell({
-        //         name: [ `${offsetString}${iAnswer} ${i}`,
-        //                 `${offsetString}submission ${i}`],
-        //         nextParts: [`${offsetString}update typed answer ${i}`],
-    
-        //         functionCode: returnState,
-        //         nextStates: [[`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`]],
-    
-        //         children: [ [`${offsetString}noValue ${i}`],
-        //                     [`${offsetString}isInteger ${i}`],
-        //                     [`${offsetString}isNotInteger ${i}`],
-        //                     [`${offsetString}submitValue ${i}`]],
-    
-        //         variableNames: [`${offsetString}value ${iAnswer}`,
-        //                         `${offsetString}quantity ${iAnswer}`,
-        //                         `${offsetString}correct ${iAnswer}`,
-        //                         `${offsetString}firstAnswer ${iAnswer}`,
-        //                         `${offsetString}actualAnswer ${iAnswer}`,
-        //                         `${offsetString}submitCount ${iAnswer}`,
-        //                         `${offsetString}feedbackMessage ${iAnswer}`,
-        //                         `${offsetString}backgroundColor ${iAnswer}`]
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [`${offsetString}problem ${i}`],
-            newStateName: [ `${offsetString}${iAnswer} ${i}`,
-            `${offsetString}submission ${i}`,
-            `${offsetString}update typed answer ${i}`],
-            stateCells: makeCell({
-                name: [ `${offsetString}${iAnswer} ${i}`,
-                        `${offsetString}submission ${i}`,
-                        `${offsetString}update typed answer ${i}`],
-                functionCode: updateTypedAnswer,
-                nextStates: [],
-                chldren: []
-    
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}problem ${i}`],
-        //     newStateName: [ `${offsetString}${iAnswer} ${i}`,
-        //     `${offsetString}submission ${i}`,
-        //     `${offsetString}update typed answer ${i}`],
-        //     stateCells: makeCell({
-        //         name: [ `${offsetString}${iAnswer} ${i}`,
-        //                 `${offsetString}submission ${i}`,
-        //                 `${offsetString}update typed answer ${i}`],
-        //         functionCode: updateTypedAnswer,
-        //         nextStates: [],
-        //         chldren: []
-    
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-        // Root2 = makeLinks(Root2, {
-        //     newStateName
-        //     parent
-        //     stateCells
-        //     isVariable
-        //     isIntermediateState
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}value ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}value ${iAnswer}`],
-                value: null
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}value ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}value ${iAnswer}`],
-        //         value: null
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}quantity ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}quantity ${iAnswer}`],
-                value: makeQuantity(0, ithProblem.a + ithProblem.b)
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}quantity ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}quantity ${iAnswer}`],
-        //         value: makeQuantity(0, ithProblem.a + ithProblem.b)
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        // ...makeCell({
-        //     name: [`quantity ${iAnswer}`],
-        //     value: makeQuantity(0, ithProblem.a + ithProblem.b)
-        // }),
-
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}correct ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}correct ${iAnswer}`],
-                value: false
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}correct ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}correct ${iAnswer}`],
-        //         value: false
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        // ...makeCell({
-        //     name: [`correct ${iAnswer}`],
-        //     value: false
-        // }),
-
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}firstAnswer ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}firstAnswer ${iAnswer}`],
-                value: null
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}firstAnswer ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}firstAnswer ${iAnswer}`],
-        //         value: null
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        // ...makeCell({
-        //     name: [`firstAnswer ${iAnswer}`],
-        //     value: null
-        // }),
-
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}actualAnswer ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}actualAnswer ${iAnswer}`],
-                value: ithProblem.a + ithProblem.b
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}actualAnswer ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}actualAnswer ${iAnswer}`],
-        //         value: ithProblem.a + ithProblem.b
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        // ...makeCell({
-        //     name: [`actualAnswer ${iAnswer}`],
-        //     value: ithProblem.a + ithProblem.b
-        // }),
-
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}submitCount ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}submitCount ${iAnswer}`],
-                value: 0
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}submitCount ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}submitCount ${iAnswer}`],
-        //         value: 0
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        // ...makeCell({
-        //     name: [`submitCount ${iAnswer}`],
-        //     value: 0
-        // }),
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}feedbackMessage ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}feedbackMessage ${iAnswer}`],
-                value: 'O'
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}feedbackMessage ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}feedbackMessage ${iAnswer}`],
-        //         value: 'O'
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        // ...makeCell({
-        //     name: [`feedbackMessage ${iAnswer}`],
-        //     value: 'O'
-        // }),
-        Root2 = makeVariableState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}backgroundColor ${iAnswer}`],
-            stateCells: makeCell({
-                name: [`${offsetString}backgroundColor ${iAnswer}`],
-                value: 'white'
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}backgroundColor ${iAnswer}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}backgroundColor ${iAnswer}`],
-        //         value: 'white'
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}noValue ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}noValue ${i}`],
-                functionCode: noValue,
-                nextStates: [],
-            })  
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}noValue ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}noValue ${i}`],
-        //         functionCode: noValue,
-        //         nextStates: [],
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}isInteger ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}isInteger ${i}`],
-                functionCode: isInteger,
-                nextStates: [[`${offsetString}submitValue ${i}`]],
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}isInteger ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}isInteger ${i}`],
-        //         functionCode: isInteger,
-        //         nextStates: [[`${offsetString}submitValue ${i}`]],
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}isNotInteger ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}isNotInteger ${i}`],
-                functionCode: returnState,
-                nextStates: [],
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}isNotInteger ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}isNotInteger ${i}`],
-        //         functionCode: returnState,
-        //         nextStates: [],
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-            newStateName: [`${offsetString}submitValue ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}submitValue ${i}`],
-    
-                // need a context for each form
-                functionCode: submitValue,
-                nextStates: [],
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [ `${offsetString}${iAnswer} ${i}`, `${offsetString}submission ${i}`],
-        //     newStateName: [`${offsetString}submitValue ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}submitValue ${i}`],
-    
-        //         // need a context for each form
-        //         functionCode: submitValue,
-        //         nextStates: [],
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-        
-        // makeCell({
-        //     name: [`isNotInteger ${i}`],
-        //     functionCode: returnState,
-        //     nextStates: [],
-        // })
-        // ...makeCell({
-        //     name: [`isInteger ${i}`],
-        //     functionCode: isInteger,
-        //     nextStates: [[`submitValue ${i}`]],
-        // }),
-
-        // ...makeCell({
-        //     name: [`backgroundColor ${iAnswer}`],
-        //     value: 'white'
-        // }),
-        // ...makeCell({
-        //     name: [`value ${iAnswer}`],
-        //     value: null
-        // }),
-        // ...makeCell({
-        //     name: [ `${iAnswer} ${i}`,
-        //             `submission ${i}`,
-        //             `update typed answer ${i}`],
-        //     functionCode: updateTypedAnswer,
-        //     nextStates: [],
-        //     chldren: []
-
-        // }),
-
-        // console.log('he')
-        
-
-                                // submit states
-                        // for now keep them as next states
-                        // ...makeCell({
-                        //     name: [`noValue ${i}`],
-                        //     functionCode: noValue,
-                        //     nextStates: [],
-                        // }),
-
-        Root2 =  makeRegularState(Root2, {
-            parent: [`${offsetString}problem ${i}`],
-            newStateName: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-                functionCode: returnState,
-                nextStates: [],
-                children: [ [`${offsetString}got it right the first time ${i}`], // passes if they are right and submission count == 1
-                            [`${offsetString}else ${i}`]],
-                variableNames:  [
-                                `${offsetString}correctFirstTime ${i}`,
-                                `${offsetString}testingWithoutForm ${i}`
-                            ]
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}problem ${i}`],
-        //     newStateName: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-        //         functionCode: returnState,
-        //         nextStates: [],
-        //         children: [ [`${offsetString}got it right the first time ${i}`], // passes if they are right and submission count == 1
-        //                     [`${offsetString}else ${i}`]],
-        //         variableNames:  [
-        //                         `${offsetString}correctFirstTime ${i}`,
-        //                         `${offsetString}testingWithoutForm ${i}`
-        //                     ]
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-            newStateName: [`${offsetString}correctFirstTime ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}correctFirstTime ${i}`],
-                value: false
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-        //     newStateName: [`${offsetString}correctFirstTime ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}correctFirstTime ${i}`],
-        //         value: false
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-        
-        Root2 = makeVariableState(Root2, {
-            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-            newStateName: [`${offsetString}testingWithoutForm ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}testingWithoutForm ${i}`],
-                value: false
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-        //     newStateName: [`${offsetString}testingWithoutForm ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}testingWithoutForm ${i}`],
-        //         value: false
-        //     }),
-        //     isVariable: true,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-            newStateName: [`${offsetString}got it right the first time ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}got it right the first time ${i}`],
-                functionCode: gotItRightTheFirstTime,
-                nextStates: [],
-            })
-        })
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-        //     newStateName: [`${offsetString}got it right the first time ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}got it right the first time ${i}`],
-        //         functionCode: gotItRightTheFirstTime,
-        //         nextStates: [],
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        Root2 = makeRegularState(Root2, {
-            parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-            newStateName: [`${offsetString}else ${i}`],
-            stateCells: makeCell({
-                name: [`${offsetString}else ${i}`],
-                functionCode: returnState,
-                nextStates: [],
-            })
-        })        
-        // Root2 = makeLinks(Root2, {
-        //     parent: [`${offsetString}${iAnswer} ${i}`, `${offsetString}progressMeter ${i}`],
-        //     newStateName: [`${offsetString}else ${i}`],
-        //     stateCells: makeCell({
-        //         name: [`${offsetString}else ${i}`],
-        //         functionCode: returnState,
-        //         nextStates: [],
-        //     }),
-        //     isVariable: false,
-        //     isIntermediateState: false
-        // })
-
-        
-        // ...,
-        // ...,
-        // let elementarySchoolName = ['elementary school']
-        // console.log('print tree')
-        // console.log(Root2)
-        //treeVisualizer(Root2, elementarySchoolName, 1)
-    
-        // links for root
-        // let newNextParts = makeSet([
-            // `problem ${i}`,
-            // `${iA} ${i}`,
-            // `${iB} ${i}`,
-            // `${iAnswer} ${i}`,
-            // `noValue ${i}`,
-            // `isInteger ${i}`,
-            // `isNotInteger ${i}`,
-            // `submitValue ${i}`,
-            // `got it right the first time ${i}`,
-            // `else ${i}`
-        // ])
-        
+                            },
+                                    // 4 total indents as it the substate of `${offsetString}${iAnswer} ${i} submission ${i}`
+                                    [`${offsetString}${iAnswer} ${i} ${offsetString}submission ${i} ${offsetString}updateTypedAnswer ${i}`]: {
+                                        parent: `${offsetString}problem ${i}`,
+                                        name: `${offsetString}${iAnswer} ${i} ${offsetString}submission ${i} ${offsetString}updateTypedAnswer ${i}`,
+                                        functionCode: updateTypedAnswer
+                                    },
+                                [`${offsetString}value ${iAnswer}`]: {
+                                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}value ${iAnswer}`,
+                                    value: null
+                                },
+                                [`${offsetString}quantity ${iAnswer}`]: {
+                                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}quantity ${iAnswer}`,
+                                    value: makeQuantity(0, ithProblem.a + ithProblem.b)
+                                },
+                                [`${offsetString}correct ${iAnswer}`]: {
+                                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}correct ${iAnswer}`,
+                                    value: false
+                                },
+                                [`${offsetString}firstAnswer ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}firstAnswer ${iAnswer}`,
+                                    value: null
+                                },
+                                [`${offsetString}actualAnswer ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}actualAnswer ${iAnswer}`,
+                                    value: ithProblem.a + ithProblem.b
+                                },
+                                [`${offsetString}submitCount ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}submitCount ${iAnswer}`,
+                                    value: 0
+                                },
+                                [`${offsetString}feedbackMessage ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}feedbackMessage ${iAnswer}`,
+                                    value: 'O'
+                                },
+                                [`${offsetString}backgroundColor ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}backgroundColor ${iAnswer}`,
+                                    value: 'white'
+                                },
+                                [`${offsetString}noValue ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}noValue ${iAnswer}`,
+                                    functionCode: noValue
+                                },
+                                [`${offsetString}isInteger ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}isInteger ${iAnswer}`,
+                                    functionCode: isInteger,
+                                    nextStates: [`${offsetString}submitValue ${i}`]
+                                },
+                                [`${offsetString}isNotInteger ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}isNotInteger ${iAnswer}`,
+                                    functionCode: returnState,
+                                },
+                                [`${offsetString}submitValue ${iAnswer}`]: {
+                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                                    name: `${offsetString}submitValue ${iAnswer}`,
+                                    functionCode: submitValue,
+                                },
+                            [`${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`]: {
+                                parent: `${offsetString}problem ${i}`,
+                                name: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                functionCode: returnState,
+                                children: [ `${offsetString}gotItRightTheFirstTime ${i}`, // passes if they are right and submission count == 1
+                                            `${offsetString}else ${i}`
+                                    ],
+                                variableNames: [
+                                    `${offsetString}correctFirstTime ${i}`,
+                                    `${offsetString}testingWithoutForm ${i}`
+                                ]
+                            },
+                                [`${offsetString}correctFirstTime ${i}`]: {
+                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    name: `${offsetString}correctFirstTime ${i}`,
+                                    value: false
+                                },
+                                [`${offsetString}testingWithoutForm ${i}`]: {
+                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    name: `${offsetString}testingWithoutForm ${i}`,
+                                    value: false
+                                },
+                                [`${offsetString}gotItRightTheFirstTime ${i}`]: {
+                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    name: `${offsetString}gotItRightTheFirstTime ${i}`,
+                                    functionCode: gotItRightTheFirstTime
+                                },
+                                [`${offsetString}else ${i}`]: {
+                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    name: `${offsetString}else ${i}`,
+                                    functionCode: returnState
+                                }
 
 
-        // new child for problem set 0
-        // let newChildrenForProblemSet = [
-        //     [`problem ${i}`]
-        // ]
-        
-    
-        // add starting trie links to root and add the new problem child to the problem set
-        // Root2 = {
-        //     ...Root2,
-        //     'root': {
-        //         ...Root2.root,
-        //         nextParts: {
-        //             ...Root2.root.nextParts,
-        //             ...newNextParts
-        //         }
-        
-        //     },
-        //     'problem set 0': {
-        //         ...Root2['problem set 0'],
-        //         children: [...Root2['problem set 0'].children, ...newChildrenForProblemSet]
-        //     }
-        // }
-        // the states representing the problem
-        // let x = {
-                // ...makeCell({
-                //     name,
-                //     nextParts,
-                //     functionCode,
-                //     nextStates,
-                //     children,
-                //     variableNames
-                //     value
-                // })
-        
-                // after add 1
-                // ...makeCell({
-                //     name: [`problem ${i}`],  // key of AddTwoValues maps to this
-        
-                //     // 0, 1, 2    3, 4, 5   6, 7, 8
-                //     children: [ [`${iA} ${i}`],
-                //                 [`${iB} ${i}`],
-                //                 [`${iAnswer} ${i}`]],   // can use the OneValue key and the AddTwoValues key
-                //     variableNames: [`problemParts ${i}`]
-                // }),
-        
-                    // ...makeCell({
-                    //     name: [`problemParts ${i}`],
-                    //     value: 3
-                    // }),
-        
-                    // need this for building the arithmatic display structure
-                // (
-                // prefixForStateNames: ''  this is so we can use the same numeric formula to generate different
-                // sets of state trees without the trees overwriting each other
-                // problemPartNumber: iA,
-                // ithProblem: i,
-                // value: ithProblem.a,
-                // quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b))
-                // isform: false
-                // operationType: '+'
-                // display operator: false
-                // hiding operator color: 'white'
-                // ...makeCell({ // a
-                //     name: [`${iA} ${i}`],
-                //     variableNames: [`value ${iA}`,
-                //                     `quantity ${iA}`,
-                //                     `isForm ${iA}`,
-                //                     `operationType ${iA}`]
-                // }),
-        
-                        // ...makeCell({
-                        //     name: [`value ${iA}`],
-                        //     value: ithProblem.a
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`quantity ${iA}`],
-                        //     value: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b)
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`isForm ${iA}`],
-                        //     value: false
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`operationType ${iA}`],
-                        //     value: ''
-                        // }),
+
+
+        }
+        // prefixForStateNames: ''  this is so we can use the same numeric formula to generate different
+        // sets of state trees without the trees overwriting each other
+        // problemPartNumber: iA,
+        // ithProblem: i,
+        // value: ithProblem.a,
+        // quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b))
+        // isform: false
+        // operationType: '+'
+        // display operator: false
+        // hiding operator color: 'white'
+                
                         // display operator
                         // hiding operator color
-        
-        
-        
-                // ...makeCell({
-                //     name: [`${iB} ${i}`], // b
-                //     variableNames: [`value ${iB}`,
-                //                     `quantity ${iB}`,
-                //                     `isForm ${iB}`,
-                //                     `operationType ${iB}`]
-                // }),
-        
-                        // ...makeCell({
-                        //     name: [`value ${iB}`],
-                        //     value: ithProblem.b
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`quantity ${iB}`],
-                        //     value: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`isForm ${iB}`],
-                        //     value: false
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`operationType ${iB}`],
-                        //     value: '+'
-                        // }),
-        
-                // // cannot be added in as a new state
-                // // intermediate state that also has variable names
-                // ...makeCell({
-                //     name: [`${iAnswer} ${i}`],  // answerForm
-                //     nextParts: [`submission ${i}`, `progressMeter ${i}`],
-                //     variableNames: [`isForm ${iAnswer}`, `operationType ${iAnswer}`]
-                // }),
-        
-                        // ...makeCell({
-                        //     name: [ `isForm ${iAnswer}`],
-                        //     value: true
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`operationType ${iAnswer}`],
-                        //     value: ''
-                        // }),
-        
-                // we start our submitting the answer with this cell
-                // this index corresponds to the total number of problems
-        
-                //     ...makeCell({
-                //     name: [ `${iAnswer} ${i}`,
-                //             `submission ${i}`],
-                //     nextParts: [`update typed answer ${i}`],
-        
-                //     functionCode: returnState,
-                //     nextStates: [[`${iAnswer} ${i}`, `progressMeter ${i}`]],
-        
-                //     children: [ [`noValue ${i}`],
-                //                 [`isInteger ${i}`],
-                //                 [`isNotInteger ${i}`]],
-
-                //     variableNames: [`value ${iAnswer}`,
-                //                     `quantity ${iAnswer}`,
-                //                     `correct ${iAnswer}`,
-                //                     `firstAnswer ${iAnswer}`,
-                //                     `actualAnswer ${iAnswer}`,
-                //                     `submitCount ${iAnswer}`,
-                //                     `feedbackMessage ${iAnswer}`,
-                //                     `backgroundColor ${iAnswer}`]
-                // }),
-                            // ...makeCell({
-                            //     name: [ `${iAnswer} ${i}`,
-                            //             `submission ${i}`,
-                            //             `update typed answer ${i}`],
-                            //     functionCode: updateTypedAnswer,
-                            //     nextStates: [],
-                            //     chldren: []
-        
-                            // }),
-                        // just indenting the code
-                        // ...makeCell({
-                        //     name: [`value ${iAnswer}`],
-                        //     value: null
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`quantity ${iAnswer}`],
-                        //     value: makeQuantity(0, ithProblem.a + ithProblem.b)
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`correct ${iAnswer}`],
-                        //     value: false
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`firstAnswer ${iAnswer}`],
-                        //     value: null
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`actualAnswer ${iAnswer}`],
-                        //     value: ithProblem.a + ithProblem.b
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`submitCount ${iAnswer}`],
-                        //     value: 0
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`feedbackMessage ${iAnswer}`],
-                        //     value: 'O'
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`backgroundColor ${iAnswer}`],
-                        //     value: 'white'
-                        // }),
-        
-                        // submit states
-                        // for now keep them as next states
-                        // ...makeCell({
-                        //     name: [`noValue ${i}`],
-                        //     functionCode: noValue,
-                        //     nextStates: [],
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`isInteger ${i}`],
-                        //     functionCode: isInteger,
-                        //     nextStates: [[`submitValue ${i}`]],
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`isNotInteger ${i}`],
-                        //     functionCode: returnState,
-                        //     nextStates: [],
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`submitValue ${i}`],
-        
-                        //     // need a context for each form
-                        //     functionCode: submitValue,
-                        //     nextStates: [],
-                        // }),
-        
-                    // can enter a submachine again
-                    // ...makeCell({
-                    //     name: [`${iAnswer} ${i}`, `progressMeter ${i}`],
-                    //     functionCode: returnState,
-                    //     nextStates: [],
-                    //     children: [ [`got it right the first time ${i}`], // passes if they are right and submission count == 1
-                    //                 [`else ${i}`]],
-                    //     variableNames:  [
-                    //                     `correctFirstTime ${i}`,
-                    //                     `testingWithoutForm ${i}`
-                    //                 ]
-                    // }),
-        
-                        // ...makeCell({
-                        //     name: [`correctFirstTime ${i}`],
-                        //     value: false
-                        // }),
-        
-                        // ...makeCell({
-                        //     name: [`testingWithoutForm ${i}`],
-                        //     value: false
-                        // }),
-        
-                    // ...makeCell({
-                    //     name: [`got it right the first time ${i}`],
-                    //     functionCode: gotItRightTheFirstTime,
-                    //     nextStates: [],
-                    // }),
-        
-                    // ...makeCell({
-                    //     name: [`else ${i}`],
-                    //     functionCode: returnState,
-                    //     nextStates: [],
-                    // })
-        
-        
-            // }
-        // Root2 = {
-        //     ...Root2,
-        //     ...x
-        // }
     }
     
     return [Root2, true]
@@ -1701,7 +669,7 @@ const processProblems = (state, action, cb) => {
     // "problem set 0" tells me how many problems we need to use to look for the forms
     const offsetString = action.meta.offsetString
 
-    let problems = getChildren(state, [`${offsetString}problem set 0`])
+    let problems = getChildren(state, `${offsetString}problemSet 0`)
     let numberOfProblems = problems.length
     let temporaryState = state
     let i = 0
@@ -1722,22 +690,22 @@ const solveProblem = (state, action, i, j) => {
     const offsetString = action.meta.offsetString
     console.log("insied solveProblem", `|${offsetString}|`)
     let temporaryState = state
-    let a = getVariable(state, [`${offsetString}${i} ${j}`], `${offsetString}value`).value
-    let b = getVariable(state, [`${offsetString}${i + 1} ${j}`], `${offsetString}value`).value
-    let submission =           [`${offsetString}${i + 2} ${j}`, `${offsetString}submission ${j}`]
+    let a = getVariable(state, `${offsetString}${i} ${j}`, `${offsetString}value`).value
+    let b = getVariable(state, `${offsetString}${i + 1} ${j}`, `${offsetString}value`).value
+    let submission =           `${offsetString}${i + 2} ${j} ${offsetString}submission ${j}`
     // console.log(a, b, c)
     // randomly get it wrong
     let randomValue = Math.floor(Math.random() * 10) % 2
 
     if(randomValue === 0) {
         temporaryState = set(temporaryState, submission, `${offsetString}value`, a + b)
-        let progressMeter = [`${offsetString}${i + 2} ${j}`, `${offsetString}progressMeter ${j}`]
+        let progressMeter = `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
         temporaryState = set(temporaryState, progressMeter, `${offsetString}correctFirstTime`, true)
     
     }
     else {
         temporaryState = set(temporaryState, submission, `${offsetString}value`, a + 1)
-        let progressMeter = [`${offsetString}${i + 2} ${j}`, `${offsetString}progressMeter ${j}`]
+        let progressMeter = `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
         temporaryState = set(temporaryState, progressMeter, `${offsetString}correctFirstTime`, false)
 
     }
@@ -1772,10 +740,10 @@ const collectProblems = (state, action, i, j) => {
     let temporaryState = state
     const offsetString = action.meta.offsetString
 
-    let a = getVariable(state, [`${offsetString}${i} ${j}`], `${offsetString}value`).value
-    let b = getVariable(state, [`${offsetString}${i + 1} ${j}`], `${offsetString}value`).value
-    let submission =           [`${offsetString}${i + 2} ${j}`, `${offsetString}submission ${j}`]
-    let progressMeter =        [`${offsetString}${i + 2} ${j}`, `${offsetString}progressMeter ${j}`]
+    let a = getVariable(state, `${offsetString}${i} ${j}`, `${offsetString}value`).value
+    let b = getVariable(state, `${offsetString}${i + 1} ${j}`, `${offsetString}value`).value
+    let submission =           `${offsetString}${i + 2} ${j} ${offsetString}submission ${j}`
+    let progressMeter =        `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
 
 
     let firstAnswer = getVariable(state, submission, `${offsetString}firstAnswer`).value
@@ -1793,7 +761,7 @@ const collectProblems = (state, action, i, j) => {
     }
 
 
-    let myProblemTable = getCell(state, ['payload'])
+    let myProblemTable = getCell(state, 'payload')
     // console.log('my promblem table', myProblemTable)
     temporaryState = tableAssignJsObject(
         state,
@@ -1856,7 +824,7 @@ const setupForBackend = (state, action) => {
 
     // console.log("done with first part", temporaryState)
     // let x = getCell(temporaryState, ['payload'])
-    let myCompletedProblems = getCell(temporaryState, ['payload'])
+    let myCompletedProblems = getCell(temporaryState, 'payload')
     // console.log('completed problems', myCompletedProblems)
     const correctProblems = myCompletedProblems.jsObject['problem set table'].filter(problem => problem.gotItRightTheFirstTime).length
     // console.log('correctProblems', correctProblems)
@@ -1928,7 +896,7 @@ const updateStateValue = (state, action) => {
     //         value: newValue
     //     })        
     // }
-    temporaryState = setVariable(temporaryState, parentStateName, stateName[0], newValue)
+    temporaryState = setVariable(temporaryState, parentStateName, stateName, newValue)
 
     return [temporaryState, true]
 }
@@ -1951,7 +919,7 @@ const storeResults = (state, action) => {
 //         isVariable: true,
 //         isIntermediateState: false
 // })
-    let parentStateName = ['elementary school', 'store results']
+    let parentStateName = 'elementarySchool storeResults'
     temporaryState = setJSObject(temporaryState, parentStateName, 'resultsFromBackend', payload)
     // console.log('saved payload')
     // let tree = treeVisualizer(temporaryState, ['elementary school'])
@@ -2008,27 +976,90 @@ const storeResults = (state, action) => {
 // reducers and the state for it in the same file
 // merge the states with 1 initialState
 // group by context of problem, not by kind of coding construct
-let Root2 = {}
-Root2 = {
-    ...makeCell({
-        name: ['root'],
-        nextParts : [   'elementary school',
-                        'plusProblems problem set 0',
-                        'plusProblems problem 0',
-                        'plusProblems problemsParts 0',
-                        // rename to 'a 0 0' ? or 'a 0'?
-                        // Cannot rename them using letters
-                        'plusProblems 0 0',
-                        'plusProblems 1 0',
-                        'plusProblems 2 0',
-                        'plusProblems noValue 0',
-                        'plusProblems isInteger 0',
-                        'plusProblems isNotInteger 0',
-                        'plusProblems submitValue 0',
-                        'plusProblems got it right the first time 0',
-                        'plusProblems else 0'],
-    })
+// let Root2 = {}
+let Root2 = {
+
+    // the indents are to illustrate the nesting the editor should pickup on but doesn't
+    'root': {
+        name: 'root',
+        children: ['elementarySchool']
+    },
+    'elementarySchool': {
+        parent: 'root',
+        name: 'elementarySchool',
+        substates: ['utilities', 'testing', 'storeResults'],
+        children: ['plusProblems problemSet 0'],
+        variableNames: ['plusProblems problemSets 0']
+    },
+            // 2 indents as it's a substate
+            'elementarySchool utilities': {
+                parent: 'root',
+                name: 'elementarySchool utilities',
+                substates: ['create problem']
+            },
+            'plusProblems problemSets 0': {
+                parent: 'elementarySchool',
+                value: 1
+            },
+                    'elementarySchool utilities createProblem': {
+                        parent: 'root',
+                        name: 'elementarySchool utilities createProblem',
+                        functionCode: setupProblem,
+                        variableNames: ['plusProblems problemCount']
+                    },
+                    'plusProblems problemCount': {
+                        parent: 'root',
+                        name: 'plusProblems problemCount',
+                        value: problems.length
+                    },
+            'elementarySchool testing': {
+                parent: 'root',
+                name: 'elementarySchool testing',
+                functionCode: returnState,
+                children: ['autoSolve']
+            },
+                // 1 indent as it's just a child/variable
+                'autoSolve': {
+                    parent: 'elementarySchool testing',
+                    name: 'autoSolve',
+                    functionCode: autoSolve,
+                    nextStates: ['setup for backend']
+                },
+
+            'elementarySchool storeResults': {
+                parent: 'root',
+                name: 'elementarySchool storeResults',
+                functionCode: storeResults,
+                variableNames: ['resultsFromBackend', 'selectedProblemSetFromBackend', 'payload']
+            },
+                'resultsFromBackend': {
+                    parent: 'elementarySchool storeResults',
+                    name: 'resultsFromBackend',
+                    jsObject: -1
+                },
+                'selectedProblemSetFromBackend': {
+                    parent: 'elementarySchool storeResults',
+                    name: 'selectedProblemSetFromBackend',
+                    functionCode: updateStateValue,
+                    value: -1
+                },
+                'payload': {
+                    parent: 'elementarySchool storeResults',
+                    name: 'payload',
+                    jsObject: {'problem set table': []}
+                },
+
+        'plusProblems problemSet 0': {
+            parent: 'elementarySchool',
+            name: 'plusProblems problemSet 0',
+            variableNames: ['plusProblems numberOfProblems 0']
+        },
+            'plusProblems numberOfProblems 0': {
+                parent: 'plusProblems problemSet 0',
+                value: 0
+            }
 }
+
 
 
 // 'nameOne nameTwo'
@@ -2038,250 +1069,16 @@ Root2 = {
 
 
 // 1 state per entry in table
-addState(Root2, makeCell({
-    name: ['a'],
-}))
-let elementarySchoolName = ['elementary school']
-let x = treeVisualizer(Root2, elementarySchoolName)
-console.log('tree', x)
+// addState(Root2, makeCell({
+//     name: ['a'],
+// }))
+// let elementarySchoolName = ['elementary school']
+// let x = treeVisualizer(Root2, elementarySchoolName)
+// console.log('tree', x)
 
-Root2 = makeLinks(Root2, {
-    parent: ['root'],
-    newStateName: ['elementary school'],
-    stateCells: makeCell({
-        name: ['elementary school'],
-        nextParts: ['utilities', 'testing', 'store results'],
-        children: [['plusProblems problem set 0']],
-        variableNames: ['plusProblems problemSets 0']
-    }),
-    isVariable: false,
-    isIntermediateState: true
-})
-
-Root2 = makeLinks(Root2, {
-    parent: ['root'],
-    newStateName: ['elementary school', 'utilities'],
-    stateCells: makeCell({
-        name: ['elementary school', 'utilities'],
-        nextParts: ['create problem']
-    }),
-    isVariable: false,
-    isIntermediateState: true
-})
-
-
-Root2 = makeLinks(Root2, {
-    parent: ['elementary school'],
-    newStateName: ['plusProblems problemSets 0'],
-    stateCells: makeCell({
-        name: ['plusProblems problemSets 0'],
-        value: 1
-    }),
-    isVariable: true,
-    isIntermediateState: false
-})
-// it appears for this to work the substates share the same parent as the root substate
-Root2 = makeLinks(Root2, {
-    parent: ['root'],
-    newStateName: ['elementary school', 'utilities', 'create problem'],
-    stateCells: makeCell({
-        name: ['elementary school', 'utilities', 'create problem'],
-        functionCode: setupProblem,
-        nextStates: [],
-        variableNames: ['plusProblems problemCount']
-    }),
-    isVariable: false,
-    isIntermediateState: false
-})
-
-
-Root2 = makeLinks(Root2, {
-    parent: ['root'],
-    newStateName: ['plusProblems problemCount'],
-    stateCells: makeCell({
-        name: ['plusProblems problemCount'],
-        value: problems.length
-    }),
-    isVariable: true,
-    isIntermediateState: false
-})
-
-
-
-Root2 = makeLinks(Root2, {
-    parent: ['root'],
-    newStateName: ['elementary school', 'testing'],
-    stateCells: makeCell({
-        name: ['elementary school', 'testing'],
-        functionCode: returnState,
-        children: [['autoSolve']],
-        nextStates: []
-    }),
-    isVariable: false,
-    isIntermediateState: false
-})
-
-Root2 = makeLinks(Root2, {
-    parent: ['elementary school', 'testing'],
-    newStateName: ['autoSolve'],
-    stateCells: makeCell({
-        name: ['autoSolve'],
-        functionCode: autoSolve,
-        nextStates: [['setup for backend']]
-    })
-    ,
-    isVariable: false,
-    isIntermediateState: false
-})
-
-Root2 = makeLinks(Root2, {
-    parent: ['elementary school', 'testing'],
-    newStateName: ['setup for backend'],
-    stateCells: makeCell({
-        name: ['setup for backend'],
-        functionCode: setupForBackend,
-        nextStates: []
-    
-    }),
-    isVariable: false,
-    isIntermediateState: false
-})
-
-
-Root2 = makeLinks(Root2, {
-    parent: ['root'],
-    newStateName: ['elementary school', 'store results'],
-    stateCells: makeCell({
-        name: ['elementary school', 'store results'],
-        // run a function to save the retreived backend data to a results state
-        functionCode: storeResults,
-        variableNames: ['resultsFromBackend', 'selectedProblemSetFromBackend'],
-        // this is the only place where children links get set
-        children: [],
-        nextStates: []
-    }),
-    isVariable: false,
-    isIntermediateState: false
-})
-
-
-Root2 = makeLinks(Root2, {
-    parent: ['elementary school', 'store results'],
-    newStateName: ['resultsFromBackend'],
-    stateCells: makeCell({
-        name: ['resultsFromBackend'],
-        // nextParts: ['problemSetSelected'],
-        jsObject: -1
-    }),
-    isVariable: true,
-    isIntermediateState: true
-})
-
-Root2 = makeLinks(Root2, {
-    parent: ['elementary school', 'store results'],
-    newStateName: ['selectedProblemSetFromBackend'],
-    stateCells: makeCell({
-        name: ['selectedProblemSetFromBackend'],
-        nextStates: [],
-        functionCode: updateStateValue,
-        value: -1
-    }),
-    isVariable: true,
-    isIntermediateState: false
-})
-
-Root2 = makeLinks(Root2, {
-    parent: ['elementary school', 'store results'],
-    newStateName: ['payload'],
-    stateCells: makeCell({
-        name: ['payload'],
-        jsObject: {'problem set table': []}
-    }),
-    isVariable: true,
-    isIntermediateState: false
-})
-
-Root2 = makeLinks(Root2, {
-    parent: ['elementary school'],
-    newStateName: ['plusProblems problem set 0'],
-    stateCells: makeCell({
-        name: ['plusProblems problem set 0'],
-        children: [],
-        variableNames: ['plusProblems numberOfProblems 0']
-    }),
-    isVariable: true,
-    isIntermediateState: false
-})
-
-
-Root2 = makeLinks(Root2, {
-    parent: ['plusProblems problem set 0'],
-    newStateName: ['plusProblems numberOfProblems 0'],
-    stateCells: makeCell({
-        name: ['plusProblems numberOfProblems 0'],
-        value: 0
-    }),
-    isVariable: true,
-    isIntermediateState: false
-})
-// ...makeCell({
-//     name: ['numberOfProblems 0'],
-//     value: 0
-// }),
-
-// ...makeCell({
-//     name: ['problem set 0'],
-//     children: [],
-//     variableNames: ['numberOfProblems 0']
-// }),
-
-
-
-// makeCell({
-//     name: ['elementary school', 'store results'],
-//     // run a function to save the retreived backend data to a results state
-//     functionCode: storeResults,
-
-//     // this is the only place where children links get set
-//     children: [],
-//     nextStates: []
-// }),
-// makeCell({
-//     name: ['setup for backend'],
-//     functionCode: setupForBackend,
-//     nextStates: []
-
-// }),
-// makeCell({
-//     name: ['autoSolve'],
-//     functionCode: autoSolve,
-//     nextStates: [['setup for backend']]
-// })
-// ...makeCell({
-//     name: ['elementary school', 'testing'],
-//     functionCode: returnState,
-//     children: [['autoSolve']],
-//     nextStates: []
-// }),
-// makeCell({
-//     name: ['problemCount'],
-//     value: problems.length
-// }),
-
-// makeCell({
-//     name: ['elementary school', 'utilities', 'create problem'],
-//     functionCode: setupProblem,
-//     nextStates: [],
-//     variableNames: ['problemCount']
-// }),
-
-// makeCell({
-//     name: ['problemSets 0'],
-//     value: 1
-// })
 // start state
-Root2 = {
-    ...Root2,
+// Root2 = {
+//     ...Root2,
     // get rid of this level
     // redux: {
         // have a Root category
@@ -2449,7 +1246,7 @@ Root2 = {
 
     
     
-}
+// }
 
 // let stateMachine = setupProblem(Root2)
 // console.log(stateMachine)
@@ -2457,16 +1254,16 @@ Root2 = {
 // let machine2 = setupProblem(stateMachine[0])
 // machine2 = setupProblem(machine2[0])
 let action = {
-    type: [['elementary school', 'utilities', 'create problem']],
+    type: 'elementarySchool utilities createProblem',
     meta: {
-            basePath: ['elementary school', 'utilities', 'create problem'], // base state(for the object data)
-            parentStateName: ['elementary school', 'utilities', 'create problem'],
+            basePath: 'elementarySchool utilities createProblem', // base state(for the object data)
+            parentStateName: 'elementarySchool utilities createProblem',
         }
 }
-const [temporaryState, success] = breathFirstTraversal(
+const [temporaryState, success] = breathFirstTraversal2(
     Root2,
     action,
-    action.type,
+    [action.type],
     0)
 // if(success) {
 //     console.log('all reducers are done', temporaryState)

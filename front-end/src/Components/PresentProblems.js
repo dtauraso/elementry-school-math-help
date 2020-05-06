@@ -17,7 +17,7 @@ const getMyProblems = ( state, location ) => {
     let Root = state
     console.log('my lcoation inside the selector', location)
     const offsetString = location
-    let elementarySchoolName = ['elementary school']
+    let elementarySchoolName = 'elementarySchool'
     let x = treeVisualizer(state, elementarySchoolName)
     console.log('tree', x)
     // let problemSetDataSetName = props.location.pathname//useHistory().location.pathname
@@ -25,7 +25,7 @@ const getMyProblems = ( state, location ) => {
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getVariable(Root, elementarySchoolName, `${offsetString}problemSets`)
     // console.log('stuff', elementarySchool, problemSets.value - 1)
-    let problemSet = getChild(Root, elementarySchool, [`${offsetString}problem set ${problemSets.value - 1}`])
+    let problemSet = getChild(Root, elementarySchool, `${offsetString}problemSet ${problemSets.value - 1}`)
     console.log('problem set', problemSet)
     let problems = problemSet.children//Object.keys(problemSet.children)
     // console.log('my problems', problems)
@@ -44,7 +44,7 @@ const PresentProblems = (props) => {
     const { problems, myPath } = props
     
     const autoSolve1 = () => {
-        props.autoSolve( ['elementary school', 'testing'])
+        props.autoSolve( 'elementarySchool testing')
         
     }
     console.log('refreshing present problems')

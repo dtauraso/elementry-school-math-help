@@ -59,13 +59,13 @@ const Quantity = (props) => {
         // get it from problem, problem part(2 0, submission 0) quntity call
     // else
         // get it from problem, problem part(1 0) quntity call
-    let problemPartName = [`${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    let problemPartName = `${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`
     let x = getCell(Root, problemPartName)
     let quantity = []
     // console.log('problem for quantity', x)
     if(stateCoordinates.isForm) {
         quantity = getVariable(Root,
-            [...problemPartName, `${stateCoordinates.offsetString}submission ${stateCoordinates.problemId}`],
+            `${problemPartName}${stateCoordinates.offsetString}submission ${stateCoordinates.problemId}`,
             `${stateCoordinates.offsetString}quantity`
             ).value
     } else {

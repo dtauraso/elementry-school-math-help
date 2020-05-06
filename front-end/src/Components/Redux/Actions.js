@@ -105,7 +105,7 @@ export const getProblemSets = () => dispatch => {
             if(res.status === 200) {
                 console.log('got the data', res.data)
                 dispatch({
-                    type: [['elementary school', 'store results']], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+                    type: ['elementarySchool storeResults'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
                     payload: res.data,
                     meta: {
                             offsetString: 'plusProblems '
@@ -128,12 +128,12 @@ export const getProblemSets = () => dispatch => {
 export const setProblemSetSelector = (payload) => dispatch => {
 
     dispatch({
-        type: [['selectedProblemSetFromBackend']], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+        type: ['selectedProblemSetFromBackend'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
         payload: payload,
         meta: {
                 offsetString: 'plusProblems ',
                 // basePath: pathToState, // base state(for the object data)
-                parentStateName: ['elementary school', 'store results']//pathToState,
+                parentStateName: 'elementarySchool storeResults'//pathToState,
             }
     });
 
