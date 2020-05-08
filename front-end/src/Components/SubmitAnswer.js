@@ -31,12 +31,14 @@ const SubmitAnswer = (props) => {
         // statePath,
         stateCoordinates,
         Root} = props
-
+    // console.log("submit answer", stateCoordinates)
     // should assume the coordinates for the answer form were passed in
     let answerFormStateName = `${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`
     let answer = getCell(Root, answerFormStateName)
     // console.log('answer', answer)
-    let submissionStateName = `${answerFormStateName}${stateCoordinates.offsetString}submission ${stateCoordinates.problemId}`
+    // console.log('submission name', "|" + `${answerFormStateName} submission ${stateCoordinates.problemId}` + "|")
+    let submissionStateName = `${answerFormStateName} submission ${stateCoordinates.problemId}`
+    // the submission doesn't exist
     let submission = getCell(Root, submissionStateName)
     // console.log("submission context", submission)
     
@@ -48,7 +50,7 @@ const SubmitAnswer = (props) => {
     let feedbackMessage = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}feedbackMessage`).value
     let backgroundColor = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}backgroundColor`).value
 
-    let updateTypedAnswerStateName = `${submissionStateName}${stateCoordinates.offsetString}updateTypedAnswer ${stateCoordinates.problemId}`
+    let updateTypedAnswerStateName = `${submissionStateName} updateTypedAnswer ${stateCoordinates.problemId}`
     // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     // const answerForm = getValue(Root, statePath)

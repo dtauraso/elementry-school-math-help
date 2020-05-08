@@ -46,7 +46,7 @@ const OneValue = (props) => {
         stateCoordinates,
         Root} = props
     // console.log('redux tree', Root)
-    console.log('one value state name|', `${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`)
+    // console.log('one value state name|', `${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`)
     let problemPartName = `${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`
     // console.log(stateCoordinates)
     let x = getCell(Root, problemPartName)

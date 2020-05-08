@@ -2,7 +2,8 @@
 import { Root } from './Reducers'
 import {
     getCell,
-    breathFirstTraversal } from '../../reducerHelpers'
+    breathFirstTraversal,
+    treeVisualizer2 } from '../../reducerHelpers'
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
@@ -37,6 +38,11 @@ const universalReducer = (state = initialState, action) => {
         const [temporaryState, success] = breathFirstTraversal(state, action, type, 0)
         if(success) {
             console.log('all reducers are done', temporaryState)
+            let elementarySchoolName = 'elementarySchool'
+            let x = treeVisualizer2(state, elementarySchoolName)
+            console.log('tree', x)
+        
+
             return temporaryState
         } else {
             return state

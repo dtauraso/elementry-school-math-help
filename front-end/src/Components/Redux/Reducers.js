@@ -20,7 +20,8 @@ import {    makeCell,
             setArray2,
             hasSubstates2,
             treeVisualizer2,
-            breathFirstTraversal2
+            breathFirstTraversal2,
+            printTreeInteractive
         
         
         
@@ -83,7 +84,7 @@ const addChild = (Root2, stateName, newChildNames) => {
     //     [`problem ${i}`]
     // ]
     
-
+    // console.log('here')
     // add starting trie links to root and add the new problem child to the problem set
     Root2 = {
         ...Root2,
@@ -188,7 +189,14 @@ const incrementVariableBy = (state, parentStateName, variableName, newValue) => 
     }
 }
 
-
+const appendState = (table, state) => {
+    return {
+        ...table,
+        [state.name]: {
+            ...state
+        }
+    }
+}
 const setupProblem = (state, action) => {
 
     // 
@@ -198,11 +206,11 @@ const setupProblem = (state, action) => {
     const parentOfProblemCount = 'elementarySchool utilities createProblem'
     const offsetString = 'plusProblems '
     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
-    console.log('we need to make', numberOfProblems2, 'problems')
+    // console.log('we need to make', numberOfProblems2, 'problems')
     console.log(state)
     let numberOfProblems3 = getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`)
-    console.log(numberOfProblems3.name)
-    console.log('about to make a problem', getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value)
+    // console.log(numberOfProblems3.name)
+    // console.log('about to make a problem', getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value)
 
     let Root2 = state
 
@@ -225,17 +233,24 @@ const setupProblem = (state, action) => {
         let i = numberOfProblems - 1
         // console.log(numberOfProblems, problems[numberOfProblems])
         const ithProblem = problems[i]
-        console.log(i, 'th problem', ithProblem)
+        // console.log(i, 'th problem', ithProblem)
         let iA = 3 * i
         let iB = iA + 1
         let iAnswer = iA + 2
-        console.log("new starting values", iA, iB, iAnswer)
+        // console.log("new starting values", iA, iB, iAnswer)
+        // program froze here
+        Root2 = addChild(Root2, `${offsetString}problemSet 0`, [`${offsetString}problem ${i}`])
+        // Root2 = appendState(Root2, {
+        //     [`${offsetString}problemSet 0`]: {
+        //         ...Root2[`${offsetString}problemSet 0`],
+        //         children: [...Root2[`${offsetString}problemSet 0`].children, `${offsetString}problem ${i}`]
+        //     }
+        // })
+       
+
         Root2 = {
-            ...Root2,
-            [`${offsetString}problemSet 0`]: {
-                ...Root2[`${offsetString}problemSet 0`],
-                children: [...Root2[`${offsetString}problemSet 0`].children, `${offsetString}problem ${i}`]
-            },
+                ...Root2,
+                // the printout is showing no data for this
                 // 1 indent for child/variable name
                 [`${offsetString}problem ${i}`]: {
                     parent: `${offsetString}problemSet 0`,
@@ -251,6 +266,9 @@ const setupProblem = (state, action) => {
                     ],
                     variableNames: [`${offsetString}problemParts ${i}`]
                 },
+                // plusProblems isForm 0 doesn't exist
+                // the items do exist, but their links are wrong
+                // vanishes when we view it in presentProblems
                     [`${offsetString}problemParts ${i}`]: {
                         parent: `${offsetString}problem ${i}`,
                         name: `${offsetString}problemParts ${i}`,
@@ -300,7 +318,7 @@ const setupProblem = (state, action) => {
                         [`${offsetString}quantity ${iB}`]: {
                             parent: `${offsetString}${iB} ${i}`,
                             name: `${offsetString}quantity ${iB}`,
-                            value: keQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
+                            value: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
                         },
                         [`${offsetString}isForm ${iB}`]: {
                             parent: `${offsetString}${iB} ${i}`,
@@ -315,7 +333,7 @@ const setupProblem = (state, action) => {
                     [`${offsetString}${iAnswer} ${i}`]: {
                         parent: `${offsetString}problem ${i}`,
                         name: `${offsetString}${iAnswer} ${i}`,
-                        sutstates: [`${offsetString}submission ${i}`, `${offsetString}progressMeter ${i}`],
+                        substates: [`submission ${i}`, `progressMeter ${i}`],
                         variableNames: [`${offsetString}isForm ${iAnswer}`, `${offsetString}operationType ${iAnswer}`]
                     },
                         [`${offsetString}isForm ${iAnswer}`]: {
@@ -336,14 +354,14 @@ const setupProblem = (state, action) => {
                             [`${offsetString}${iAnswer} ${i} submission ${i}`]: {
                                 parent: `${offsetString}problem ${i}`,
                                 name: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                substates: [`${offsetString}updateTypedAnswer ${i}`],
+                                substates: [`updateTypedAnswer ${i}`],
                                 functionCode: returnState,
-                                nextStates: [`${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`],
+                                nextStates: [`${offsetString}${iAnswer} ${i} progressMeter ${i}`],
                                 children: [
-                                    `${offsetString}noValue ${i}`,
-                                    `${offsetString}isInteger ${i}`,
-                                    `${offsetString}isNotInteger ${i}`,
-                                    `${offsetString}submitValue ${i}`
+                                    `${offsetString}noValue ${iAnswer}`,
+                                    `${offsetString}isInteger ${iAnswer}`,
+                                    `${offsetString}isNotInteger ${iAnswer}`,
+                                    `${offsetString}submitValue ${iAnswer}`
                                 ],
                                 variableNames: [
                                     `${offsetString}value ${iAnswer}`,
@@ -358,15 +376,15 @@ const setupProblem = (state, action) => {
 
                             },
                                     // 4 total indents as it the substate of `${offsetString}${iAnswer} ${i} submission ${i}`
-                                    [`${offsetString}${iAnswer} ${i} ${offsetString}submission ${i} ${offsetString}updateTypedAnswer ${i}`]: {
+                                    [`${offsetString}${iAnswer} ${i} submission ${i} updateTypedAnswer ${i}`]: {
                                         parent: `${offsetString}problem ${i}`,
-                                        name: `${offsetString}${iAnswer} ${i} ${offsetString}submission ${i} ${offsetString}updateTypedAnswer ${i}`,
+                                        name: `${offsetString}${iAnswer} ${i} submission ${i} updateTypedAnswer ${i}`,
                                         functionCode: updateTypedAnswer
                                     },
                                 [`${offsetString}value ${iAnswer}`]: {
                                     parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
                                     name: `${offsetString}value ${iAnswer}`,
-                                    value: null
+                                    value: ''
                                 },
                                 [`${offsetString}quantity ${iAnswer}`]: {
                                     parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
@@ -412,7 +430,7 @@ const setupProblem = (state, action) => {
                                     parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
                                     name: `${offsetString}isInteger ${iAnswer}`,
                                     functionCode: isInteger,
-                                    nextStates: [`${offsetString}submitValue ${i}`]
+                                    nextStates: [`${offsetString}submitValue ${iAnswer}`]
                                 },
                                 [`${offsetString}isNotInteger ${iAnswer}`]: {
                                     parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
@@ -424,9 +442,9 @@ const setupProblem = (state, action) => {
                                     name: `${offsetString}submitValue ${iAnswer}`,
                                     functionCode: submitValue,
                                 },
-                            [`${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`]: {
+                            [`${offsetString}${iAnswer} ${i} progressMeter ${i}`]: {
                                 parent: `${offsetString}problem ${i}`,
-                                name: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                name: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
                                 functionCode: returnState,
                                 children: [ `${offsetString}gotItRightTheFirstTime ${i}`, // passes if they are right and submission count == 1
                                             `${offsetString}else ${i}`
@@ -437,22 +455,22 @@ const setupProblem = (state, action) => {
                                 ]
                             },
                                 [`${offsetString}correctFirstTime ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
                                     name: `${offsetString}correctFirstTime ${i}`,
                                     value: false
                                 },
                                 [`${offsetString}testingWithoutForm ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
                                     name: `${offsetString}testingWithoutForm ${i}`,
                                     value: false
                                 },
                                 [`${offsetString}gotItRightTheFirstTime ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
                                     name: `${offsetString}gotItRightTheFirstTime ${i}`,
                                     functionCode: gotItRightTheFirstTime
                                 },
                                 [`${offsetString}else ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} ${offsetString}progressMeter ${i}`,
+                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
                                     name: `${offsetString}else ${i}`,
                                     functionCode: returnState
                                 }
@@ -461,6 +479,12 @@ const setupProblem = (state, action) => {
 
 
         }
+        // let elementarySchoolName = 'elementarySchool'
+        // let x = treeVisualizer2(Root2, elementarySchoolName)
+        // console.log('tree', x)
+        // console.log(Root2)
+        // console.log('made stuff')
+
         // prefixForStateNames: ''  this is so we can use the same numeric formula to generate different
         // sets of state trees without the trees overwriting each other
         // problemPartNumber: iA,
@@ -516,33 +540,48 @@ const returnState = (state, action) => {
 const updateTypedAnswer = (state, action) => {
     const { newValue } = action.payload
     const stateName = action.type
-    const parentStateName = action.meta.parentStateName.slice(0, 2)
+    console.log(action.meta.parentStateName)
+    let parentList = action.meta.parentStateName.split(' ')
+    const parentStateName = parentList.slice(0, parentList.length - 2).join(' ')
     const offsetString = action.meta.offsetString
-    // console.log("got here", parentStateName)
-    
-    return [set(state, parentStateName, `${offsetString}value`, newValue), true]
+    console.log("got here", parentStateName)
+    // parent state name plusProblems 2 0 submission 0
+    // plusProblems 2 0 submission 0 
+    // the one passed into here plusProblems 2 0 submission 0 updateTypedAnswer 0
+    console.log('new value', newValue, 'parent name', parentStateName)
+
+    // set is probably wrong
+    state = set2(state, parentStateName, `${offsetString}value`, newValue)
+    console.log("after set", state)
+    let newValue2 = getVariable(state, parentStateName, `${offsetString}value`)
+    // it's like the value is set for certain sanerios
+    console.log(newValue2)
+    return [state, true]
 
 }
 const noValue = (state, action) => {
-    // console.log("is invalid")
+    console.log("is invalid")
     const parentStateName = action.meta.parentStateName
     const offsetString = action.meta.offsetString
+    // this value should have been set by updateTypedAnswer
+    let newValue2 = getVariable(state, parentStateName, `${offsetString}value`)
+    console.log('value', newValue2)
 
     let newValue = getVariable(state, parentStateName, `${offsetString}value`).value
     if(newValue.length === 0) {
 
         // const parentStateName = action.meta.parentStateName
 
-        let newState = setArray(
+        let newState = setArray2(
             state,
             parentStateName,
             `${offsetString}quantity`,
             makeQuantity(0,
                     getVariable(state, parentStateName, `${offsetString}actualAnswer`).value))
 
-        newState = set(newState, parentStateName, `${offsetString}feedbackMessage`, 'O')
+        newState = set2(newState, parentStateName, `${offsetString}feedbackMessage`, 'O')
 
-        newState = set(newState, parentStateName, `${offsetString}backgroundColor`, 'white')
+        newState = set2(newState, parentStateName, `${offsetString}backgroundColor`, 'white')
         
         return [newState, true]
     
@@ -585,7 +624,8 @@ const submitValue = (state, action/*e*/) => {
     const stateName = action.type
     const parentStateName = action.meta.parentStateName
     const offsetString = action.meta.offsetString
-
+    console.log('submitting our value function')
+    console.log(parentStateName, stateName)
     const newValue = getVariable(state, parentStateName, `${offsetString}value`).value
 
     // const { basePath } = action.meta.basePath
@@ -595,40 +635,46 @@ const submitValue = (state, action/*e*/) => {
     // console.log(getValue(state, makeVariablesObjectPath(action)))
     // console.log("set value", parentStateName, getVariable(state, parentStateName, 'value'))
     // this line works
-    let newState = set(state, parentStateName, `${offsetString}value`, parseInt(newValue))
-    
+    let newState = set2(state, parentStateName, `${offsetString}value`, parseInt(newValue))
+    console.log('after the value is set')
+    printTreeInteractive(state)
     // console.log('new tree')
     // console.log(newState, stateName)
     // console.log("correct", getVariable(state, parentStateName, 'correct'))
     let actualAnswer = getVariable(newState, parentStateName, `${offsetString}actualAnswer`).value
     let maxValue = newValue > actualAnswer? newValue: actualAnswer
-    newState = setArray(
+    // wrong
+    newState = setArray2(
         newState,
         parentStateName,
         `${offsetString}quantity`,
         makeQuantity(newValue,
             maxValue)
                 )
+    console.log('after the quantity is set', maxValue)
+    printTreeInteractive(state)
     // we have no way of knowing if the value they entered is wrong or too small
     // console.log('new tree 2', newState, stateName)
 // pass in correctFirstTime
 
 
-    newState = set(newState, parentStateName, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
+    newState = set2(newState, parentStateName, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
 
-    newState = set(newState, parentStateName, `${offsetString}feedbackMessage`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswerMessage)
+    newState = set2(newState, parentStateName, `${offsetString}feedbackMessage`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswerMessage)
 
-    newState = set(newState, parentStateName, `${offsetString}backgroundColor`, 'black')
+    newState = set2(newState, parentStateName, `${offsetString}backgroundColor`, 'black')
 
     // console.log('new tree 3', newState, stateName)
-    newState = set(newState, parentStateName, `${offsetString}submitCount`, getVariable(newState, parentStateName, `${offsetString}submitCount`).value + 1)
+    newState = set2(newState, parentStateName, `${offsetString}submitCount`, getVariable(newState, parentStateName, `${offsetString}submitCount`).value + 1)
     const submitCount = getVariable(newState, parentStateName, `${offsetString}submitCount`).value
 
     // so this matches gotItRightTheFirstTime
     if(submitCount === 1) {
-        newState = set(newState, parentStateName, `${offsetString}firstAnswer`, getVariable(newState, parentStateName, `${offsetString}value`).value)
+        newState = set2(newState, parentStateName, `${offsetString}firstAnswer`, getVariable(newState, parentStateName, `${offsetString}value`).value)
 
     }
+    console.log('after everything')
+    printTreeInteractive(state)
 
     // console.log('new tree 4', newState, stateName)
 
@@ -650,11 +696,11 @@ const gotItRightTheFirstTime = (state, action) => {
     let correct = getVariable(state, submissionStateName, `${offsetString}correct`).value
     let newState = state
     if(submitCount === 1 && correct) {
-        newState = set(newState, parentStateName, `${offsetString}correctFirstTime`, true)
+        newState = set2(newState, parentStateName, `${offsetString}correctFirstTime`, true)
 
         // need to use the same parent state name for getting and setting
         const feedbackMessage = getVariable(state, submissionStateName, `${offsetString}feedbackMessage`).value
-        newState = set(newState, submissionStateName, `${offsetString}feedbackMessage`, feedbackMessage + '1')
+        newState = set2(newState, submissionStateName, `${offsetString}feedbackMessage`, feedbackMessage + '1')
 
         return [newState, true]
 
@@ -698,23 +744,23 @@ const solveProblem = (state, action, i, j) => {
     let randomValue = Math.floor(Math.random() * 10) % 2
 
     if(randomValue === 0) {
-        temporaryState = set(temporaryState, submission, `${offsetString}value`, a + b)
+        temporaryState = set2(temporaryState, submission, `${offsetString}value`, a + b)
         let progressMeter = `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
-        temporaryState = set(temporaryState, progressMeter, `${offsetString}correctFirstTime`, true)
+        temporaryState = set2(temporaryState, progressMeter, `${offsetString}correctFirstTime`, true)
     
     }
     else {
-        temporaryState = set(temporaryState, submission, `${offsetString}value`, a + 1)
+        temporaryState = set2(temporaryState, submission, `${offsetString}value`, a + 1)
         let progressMeter = `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
-        temporaryState = set(temporaryState, progressMeter, `${offsetString}correctFirstTime`, false)
+        temporaryState = set2(temporaryState, progressMeter, `${offsetString}correctFirstTime`, false)
 
     }
     // console.log('result', temporaryState)
-    temporaryState = set(temporaryState, submission, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
+    temporaryState = set2(temporaryState, submission, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
 
-    temporaryState = set(temporaryState, submission, `${offsetString}submitCount`, getVariable(temporaryState, submission, `${offsetString}submitCount`).value + 1)
+    temporaryState = set2(temporaryState, submission, `${offsetString}submitCount`, getVariable(temporaryState, submission, `${offsetString}submitCount`).value + 1)
 
-    temporaryState = set(temporaryState, submission, `${offsetString}firstAnswer`, getVariable(temporaryState, submission, `${offsetString}value`).value)
+    temporaryState = set2(temporaryState, submission, `${offsetString}firstAnswer`, getVariable(temporaryState, submission, `${offsetString}value`).value)
 
     return temporaryState
 }
@@ -999,6 +1045,7 @@ let Root2 = {
             },
             'plusProblems problemSets 0': {
                 parent: 'elementarySchool',
+                name: 'plusProblems problemSets 0',
                 value: 1
             },
                     'elementarySchool utilities createProblem': {
@@ -1051,11 +1098,13 @@ let Root2 = {
 
         'plusProblems problemSet 0': {
             parent: 'elementarySchool',
+            children: [],
             name: 'plusProblems problemSet 0',
             variableNames: ['plusProblems numberOfProblems 0']
         },
             'plusProblems numberOfProblems 0': {
                 parent: 'plusProblems problemSet 0',
+                name: 'plusProblems numberOfProblems 0',
                 value: 0
             }
 }
@@ -1069,184 +1118,12 @@ let Root2 = {
 
 
 // 1 state per entry in table
-// addState(Root2, makeCell({
-//     name: ['a'],
-// }))
-// let elementarySchoolName = ['elementary school']
-// let x = treeVisualizer(Root2, elementarySchoolName)
+
+    
+    
+// let elementarySchoolName = 'elementarySchool'
+// let x = treeVisualizer2(Root2, elementarySchoolName)
 // console.log('tree', x)
-
-// start state
-// Root2 = {
-//     ...Root2,
-    // get rid of this level
-    // redux: {
-        // have a Root category
-        // have a BreakApp category
-        // store the different Reducers functions outside this function
-        // break up the reducers but keep the store the same
-        // Cat: {
-        //     children: [['FETCH_CAT_START']],
-        //     variables: [['error'], ['catPic']]
-        // },
-        // error: '',
-        // catPic: null,
-        
-        // -> FETCH_CAT_SUCCESS or FETCH_CAT_FAILURE
-        // 'FETCH_CAT_START' : {
-            
-        //     'next': [['FETCH_CAT_SUCCESS'], ['FETCH_CAT_FAILURE']],
-        //     'functions': fetchCatStart
-        // },
-
-        // 'FETCH_CAT_SUCCESS' : {
-        //     // {'next': {'0': {'validate':'0', 'invalid':'0'}},
-        //     'functions': fetchCatSuccess
-        // },
-
-        // 'FETCH_CAT_FAILURE' : {
-        //     // {'next': {'0': {}},
-        //     // 'children': {'0': {'char':'0'}},
-        //     'functions': fetchCatFailure
-        // },
-        /*
-        stateName0 : {
-            'roots next parts': 1
-            'state table': 1
-            'next states from': {
-                anotherstateName0: 1,
-            'state data': {
-
-            }
-            }
-        }
-        */
-    //    ...makeCell({
-    //         name: ['root'],
-    //         nextParts : [   'elementary school',
-    //                         'problem set 0',
-    //                         'problem 0',
-    //                         'problemParts 0',
-    //                         // rename to 'a 0 0' ? or 'a 0'?
-    //                         // Cannot rename them using letters
-    //                         '0 0',
-    //                         '1 0',
-    //                         '2 0',
-    //                         'noValue 0',
-    //                         'isInteger 0',
-    //                         'isNotInteger 0',
-    //                         'submitValue 0',
-    //                         'got it right the first time 0',
-    //                         'else 0'],
-    //     }),
-        // ...makeCell({
-        //     name: ['elementary school'],
-        //     nextParts: ['utilities', 'testing', 'store results'],
-        //     children: [['problem set 0']],
-        //     variableNames: ['problemSets 0']
-        // }),
-            // the indents are for illustration only(ie, each node entire hierarchical tree is stored at the top level of
-            // this js object)
-            // dummy intermediate state
-            // ...makeCell({
-            //     name: ['elementary school', 'utilities'],
-            //     nextParts: ['create problem']
-            // }),
-
-            // ...makeCell({
-            //     name: ['problemSets 0'],
-            //     value: 1
-            // }),
-                // ...makeCell({
-                //     name: ['elementary school', 'utilities', 'create problem'],
-                //     functionCode: setupProblem,
-                //     nextStates: [],
-                //     variableNames: ['problemCount']
-                // }),
-                    // ...makeCell({
-                    //     name: ['problemCount'],
-                    //     value: problems.length
-                    // }),
-            // ...makeCell({
-            //     name: ['elementary school', 'testing'],
-            //     functionCode: returnState,
-            //     children: [['autoSolve']],
-            //     nextStates: []
-            // }),
-                // ...makeCell({
-                //     name: ['autoSolve'],
-                //     functionCode: autoSolve,
-                //     nextStates: [['setup for backend']]
-                // }),
-                // ...makeCell({
-                //     name: ['setup for backend'],
-                //     functionCode: setupForBackend,
-                //     nextStates: []
-
-                // }),
-
-            // ...makeCell({
-            //         name: ['elementary school', 'store results'],
-            //         // run a function to save the retreived backend data to a results state
-            //         functionCode: storeResults,
-
-            //         // this is the only place where children links get set
-            //         children: [],
-            //         nextStates: []
-            //     }),
-    
-        // ...makeCell({
-        //     name: ['problem set 0'],
-        //     children: [],
-        //     variableNames: ['numberOfProblems 0']
-        // }),
-
-
-        // ...makeCell({
-        //     name: ['numberOfProblems 0'],
-        //     value: 0
-        // }),
-
-        
-
-        /*
-        
-        state table
-        name_i            next parts(name_(i + 1)) | state data
-        'root'            ['part of state name'] |
-        'part of state name'     ['0'] | function | variable names | 
-    
-        know what the actuall state names are and make lookng them up O(1)
-        updating the table in redux will be really easy
-
-        the state names are divided up into a list of string where each string is the part of a name
-
-
-        show as a level order traversal
-        make the state names keys searchable
-
-        // it should be easy to get the variable name state from the user's variable name
-        // getVariable(getValue(tree, stateName), 'value') => object from key 'value 0'
-        /*
-        name: ['root']
-        nextParts: {    'elementary school':1,
-                        'problem set 0':1,
-                        'problem 0':1}
-        function: returnState
-
-        nextStates: []
-        children: {'a 0': 1, 'b 0': 1, 'answerForm 0': 1},
-
-        variableNames: ['value 1',
-                        'quantity 1',
-                        'isForm 1',
-                        'operationType 1']
-
-        */
-
-    
-    
-// }
 
 // let stateMachine = setupProblem(Root2)
 // console.log(stateMachine)
@@ -1265,11 +1142,16 @@ const [temporaryState, success] = breathFirstTraversal2(
     action,
     [action.type],
     0)
+// console.log('done with machine')
+// let elementarySchoolName = 'elementarySchool'
+// let x = treeVisualizer2(temporaryState, elementarySchoolName)
+// console.log('tree', x)
+// the data is setup at this point
 // if(success) {
 //     console.log('all reducers are done', temporaryState)
 //     return temporaryState
 // } else {
 //     return state
 // }
-
+// problemParts exists here but not in presentProblems
 export var Root = temporaryState

@@ -45,17 +45,18 @@ export const AddTwoValues = (props) => {
     // problem #
     // console.log('our key', stateCoordinates)
 
-    console.log('state to look for|', `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
+    // console.log('state to look for|', `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
     // get problem parts
     let x = getCell(Root, `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
-    console.log("our state", x)
+    // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
 
 
-    console.log({problemParts})
+    // console.log({problemParts})
     // get the quantity size
-    let item = problemParts[0][0].split(' ')[1]
-    console.log({item})
+    // the item # is the first number after the offset string
+    let item = problemParts[0].split(' ')[1]
+    // console.log({item})
 
     let stateName = `${stateCoordinates.offsetString}${item} ${stateCoordinates.problemId}`
     let state = getCell(Root, stateName)
@@ -72,7 +73,7 @@ export const AddTwoValues = (props) => {
         `${stateCoordinates.offsetString}quantity`
         ).value
     let sizeOfQuantity = myQuantity.length
-    console.log('quantity for the add 2 values', myQuantity)
+    // console.log('quantity for the add 2 values', myQuantity)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
 
     // console.log('problem parts', problemParts, stateCoordinates)
@@ -94,7 +95,7 @@ export const AddTwoValues = (props) => {
                 <OneValue
                     key={i}
                     stateCoordinates={{...stateCoordinates,
-                                        problemPart: problemKey[0].split(' ')[1],
+                                        problemPart: problemKey.split(' ')[1],
                                         offsetString: stateCoordinates.offsetString}}
                     />
             ))}
@@ -104,7 +105,7 @@ export const AddTwoValues = (props) => {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    console.log('my props in adding 2 values', ownProps)
+    // console.log('my props in adding 2 values', ownProps)
     // find the base state name for the selector
     // have the input selector return [...problemParts, myQuantity.length]
     // decuple the cache from the algorithm

@@ -8,7 +8,8 @@ import {
     getCell,
     getVariable,
     getChild,
-    treeVisualizer } from '../reducerHelpers'
+    treeVisualizer,
+    treeVisualizer2 } from '../reducerHelpers'
 import AddTwoValues from './AddTwoValues'
 
 
@@ -18,15 +19,17 @@ const getMyProblems = ( state, location ) => {
     console.log('my lcoation inside the selector', location)
     const offsetString = location
     let elementarySchoolName = 'elementarySchool'
-    let x = treeVisualizer(state, elementarySchoolName)
-    console.log('tree', x)
+    // let x = treeVisualizer2(state, elementarySchoolName)
+    // console.log('tree', x)
+    // console.log(state)
     // let problemSetDataSetName = props.location.pathname//useHistory().location.pathname
     // console.log('history', problemSetDataSetName.slice(1, problemSetDataSetName.length))
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getVariable(Root, elementarySchoolName, `${offsetString}problemSets`)
     // console.log('stuff', elementarySchool, problemSets.value - 1)
+    // messed up here
     let problemSet = getChild(Root, elementarySchool, `${offsetString}problemSet ${problemSets.value - 1}`)
-    console.log('problem set', problemSet)
+    // console.log('problem set', problemSet)
     let problems = problemSet.children//Object.keys(problemSet.children)
     // console.log('my problems', problems)
     return problems
@@ -51,6 +54,8 @@ const PresentProblems = (props) => {
     /*
     problem set, #of problems, 
     */
+//    console.log({problems})
+
     // need the problem set
     return (
         <div>
@@ -58,11 +63,10 @@ const PresentProblems = (props) => {
         {/* how the coordinates are calculated here is wrong 
         use the problem name to get the coordinates*/}
         {problems.map((problem, i) => (
-            
             <AddTwoValues
                 key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                stateCoordinates={{problemId: problem[0].split(' ')[2], offsetString: myPath}}
+                stateCoordinates={{problemId: problem.split(' ')[2], offsetString: myPath}}
                 // pass in a state name prefix to identify the prefixth data set
                 />
 

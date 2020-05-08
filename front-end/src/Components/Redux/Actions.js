@@ -72,10 +72,12 @@ export const submitAnswer = (pathToState) => dispatch => {
     // runs a graph of connected nodes
     // use the action meta property
     console.log(store.getState())
+    console.log('we are going to submit answer')
     dispatch({
             type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
             // payload: lotsOfThings,
             meta: {
+                // how did the parentStateName become an aray of strings?
                     basePath: pathToState, // base state(for the object data)
                     parentStateName: pathToState,
                     offsetString: 'plusProblems '

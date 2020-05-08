@@ -170,28 +170,13 @@ export const makeCell2 = (stateObject) => {
 
 }
 
-export const getCell = (state, path) => {
+export const getCell = (table, name) => {
 
-    // console.log('path', path)
-    // for any valid cell the forEach must run at least 1 time
-    let currentCell = state.root
-    path.forEach(namePart => {
-        // console.log("|", namePart, "|")
-        if(!Object.keys(currentCell).includes('nextParts')) {
-            // console.log(currentCell, 'doens\t have a next parts')
-            currentCell = null
-        }
-        if(!currentCell.nextParts[namePart]) {
-            // console.log(`the path ends here ${namePart}`)
-            currentCell = null
-        }
-        currentCell = state[namePart]
-        
-    })
-    // console.log(currentCell)
-    // this will be the root if the path doesn't exist
-    // this will be null if the state the path refers to doesn't exist
-    return currentCell
+    // console.log('path', name)
+    if(Object.keys(table).includes(name)) {
+        return table[name]
+    }
+    return {"error": 'no state'}
 }
 
 export const getCell2 = (table, name) => {
@@ -224,6 +209,7 @@ export const getVariable = (state, parentStateName, variableName) => {
 
     let variableNameIsInCellVariableNamesCount = 0
     let found = false
+    // console.log(cell.variableNames, variableName)
     cell.variableNames.forEach(cellVariableName => {
         if(cellVariableName.search(variableName) === -1) {
             return null
@@ -245,6 +231,8 @@ export const getVariable = (state, parentStateName, variableName) => {
         console.log(variableName, 'doesn\'t exist')
         return null
     }
+    // console.log('found it', variable)
+
     return variable
 }
 
@@ -318,7 +306,7 @@ export const getChild = (state, cell, childName) => {
     }
     let child = null
     
-    if(findListInNestedList(cell.children, childName)) {
+    if(cell.children.includes(childName)) {
         child = getCell(state, childName)
     }
     
@@ -329,7 +317,8 @@ export const getChild = (state, cell, childName) => {
 export const getChildren = (state, stateName) => {
 
     let cell = getCell(state, stateName)
-    // console.log('cell', cell)
+    // console.log('cell with children', cell)
+    // console.log(Object.keys(cell))
     if(!cell) {
         return []
     }
@@ -371,6 +360,7 @@ export const tableAssign = (state, cell, value) => {
 }
 export const tableAssign2 = (state, cell, value) => {
 
+    console.log('setting the cell', cell)
     if(cell === null) {
         return state
     }
@@ -433,6 +423,7 @@ export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
 }
 export const set2 = (state, parentStateName, targetVar, dependencyVars, cb) => {
 
+    console.log({parentStateName, targetVar})
     // targetVar is a variable name
    if(typeof dependencyVars !== 'object') {
        return tableAssign2(
@@ -608,11 +599,12 @@ export const treeVisualizer2 = (table, currentState) => {
         }
     ]
     */
+//    console.log('current state name', currentState)
+
     let cell = getCell(table, currentState)
     if(!cell) {
         return {}
     }
-   
     if(hasAttribute(cell, 'jsObject')) {
         return {jsObject: cell.jsObject}
     }
@@ -629,7 +621,7 @@ export const treeVisualizer2 = (table, currentState) => {
 
                 // should return a tree of states
                 [variableStateName]: {...treeVisualizer2(table,
-                                                [variableStateName])}
+                                                variableStateName)}
             }
         })
     }
@@ -650,13 +642,14 @@ export const treeVisualizer2 = (table, currentState) => {
     if(hasSubstates2(cell)) {
 
         // visit subtrees here
-        Object.keys(cell.substates).forEach(substate => {
-
+        // console.log('current state', currentState, 'substates', cell.substates)
+        cell.substates.forEach(substate => {
+            // console.log('substate name', currentState + ' ' + substate)
             // get the next nested granular state within currentState
             substates = [
                 ...substates,
                 treeVisualizer2(table,
-                        [...currentState, substate])
+                        currentState + ' ' + substate)
                 ]
         })
     }
@@ -664,7 +657,7 @@ export const treeVisualizer2 = (table, currentState) => {
     return {
             // a, b, and c parts are so this is the order they show up in the inspector
             a_name: cell.name,
-            ...(cell.function == undefined? {} : {b_function: cell.function.name}),
+            ...(cell.functionCode == undefined? {} : {b_function: cell.functionCode.name}),
             // missing next states
             ...(cell.nextStates == undefined? {} : {c_nextStates: cell.nextStates}),
             d_children: children,
@@ -672,6 +665,12 @@ export const treeVisualizer2 = (table, currentState) => {
             ...(cell.jsObject == undefined? {} : {jsObject: cell.jsObject}),
             substates: substates  
     }
+}
+export const printTreeInteractive = (state) => {
+    let elementarySchoolName = 'elementarySchool'
+    let x = treeVisualizer2(state, elementarySchoolName)
+    console.log('tree', x)
+
 }
 export const breathFirstTraversal = (state, action, startStateName, levelId) => {
     // startStateName, endStateName are lists of strings
@@ -712,11 +711,11 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             if(passes) {
                 return null
             }
-            console.log("getting state", temporaryState, nextState) 
+            // console.log("getting state", temporaryState, nextState) 
             let cell = getCell(temporaryState, nextState)
-            console.log('cell found', cell)
+            console.log('cell found', cell.name)
             // ignore the state if it doesn't have a function to run
-            if(!Object.keys(cell).includes('function')) {
+            if(!Object.keys(cell).includes('functionCode')) {
                 console.log(cell, "doesn't have a function")
                 return null
             }
@@ -727,7 +726,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             // action's current state is .type
             // action.meta.currentState = nextState // bad idea
             // console.log("function to run", getValue(temporaryState, nextState), action)
-            const result = cell['function'](temporaryState, action)
+            const result = cell['functionCode'](temporaryState, action)
             const success = result[1]
             // console.log("finished function")
             // console.log(temporaryState, success)
@@ -739,14 +738,14 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
 
             passes = true
             winningStateName = nextState
-            winningFunctionName = cell['function'].name
+            winningFunctionName = cell['functionCode'].name
             // action.type = winningStateName
             // console.log('passes', action.type)
             // console.log()
             // untested
             // if the winningStateName has any children
             let childrenStates = getChildren(temporaryState, winningStateName)
-            // console.log(childrenStates)
+            // console.log('children states', childrenStates)
             if(childrenStates === null) {
                 return null
             }
@@ -754,7 +753,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
                 return null
             }
             console.log("we have children", childrenStates)
-            action.meta.parentStateName = [...action.type]
+            action.meta.parentStateName = action.type
             // call the routing agin with next states holding the children
             
             const nestedResult = breathFirstTraversal(temporaryState, action, childrenStates, levelId + 1)
@@ -848,11 +847,12 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             if(passes) {
                 return null
             }
-            console.log("getting state", temporaryState, nextState) 
+            // console.log("getting state", temporaryState, nextState) 
             let cell = getCell2(temporaryState, nextState)
-            console.log('cell found', cell)
+            console.log('cell found', cell.name)
+            // console.log(Object.keys(cell))
             // ignore the state if it doesn't have a function to run
-            if(!Object.keys(cell).includes('function')) {
+            if(!Object.keys(cell).includes('functionCode')) {
                 console.log(cell, "doesn't have a function")
                 return null
             }
@@ -863,7 +863,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             // action's current state is .type
             // action.meta.currentState = nextState // bad idea
             // console.log("function to run", getValue(temporaryState, nextState), action)
-            const result = cell['function'](temporaryState, action)
+            const result = cell['functionCode'](temporaryState, action)
             const success = result[1]
             // console.log("finished function")
             // console.log(temporaryState, success)
@@ -875,7 +875,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
 
             passes = true
             winningStateName = nextState
-            winningFunctionName = cell['function'].name
+            winningFunctionName = cell['functionCode'].name
             // action.type = winningStateName
             // console.log('passes', action.type)
             // console.log()
@@ -889,7 +889,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             if(childrenStates.length === 0) {
                 return null
             }
-            console.log("we have children", childrenStates)
+            // console.log("we have children", childrenStates)
             action.meta.parentStateName = [...action.type]
             // call the routing agin with next states holding the children
             
