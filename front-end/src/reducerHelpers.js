@@ -360,7 +360,7 @@ export const tableAssign = (state, cell, value) => {
 }
 export const tableAssign2 = (state, cell, value) => {
 
-    console.log('setting the cell', cell)
+    // console.log('setting the cell', cell)
     if(cell === null) {
         return state
     }
@@ -423,7 +423,7 @@ export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
 }
 export const set2 = (state, parentStateName, targetVar, dependencyVars, cb) => {
 
-    console.log({parentStateName, targetVar})
+    // console.log({parentStateName, targetVar})
     // targetVar is a variable name
    if(typeof dependencyVars !== 'object') {
        return tableAssign2(

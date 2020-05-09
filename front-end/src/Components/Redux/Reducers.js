@@ -250,6 +250,9 @@ const setupProblem = (state, action) => {
 
         Root2 = {
                 ...Root2,
+                // the last problem is never correct
+                // answer was correct but marked wrong
+                // answer is an empty string
                 // the printout is showing no data for this
                 // 1 indent for child/variable name
                 [`${offsetString}problem ${i}`]: {
@@ -710,7 +713,7 @@ const gotItRightTheFirstTime = (state, action) => {
 }
 const processProblems = (state, action, cb) => {
 
-
+    // This function generates the (i, j) coordinates for finding the correct state
     // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
     // "problem set 0" tells me how many problems we need to use to look for the forms
     const offsetString = action.meta.offsetString
@@ -733,28 +736,38 @@ const processProblems = (state, action, cb) => {
 }
 
 const solveProblem = (state, action, i, j) => {
+
+    // the last one is always ""
+    // the last one's correctFirstTime is always not getting set
+    // now it seems to be working
+    // don't know if it was solved
     const offsetString = action.meta.offsetString
     console.log("insied solveProblem", `|${offsetString}|`)
     let temporaryState = state
     let a = getVariable(state, `${offsetString}${i} ${j}`, `${offsetString}value`).value
     let b = getVariable(state, `${offsetString}${i + 1} ${j}`, `${offsetString}value`).value
-    let submission =           `${offsetString}${i + 2} ${j} ${offsetString}submission ${j}`
-    // console.log(a, b, c)
+    let submission =           `${offsetString}${i + 2} ${j} submission ${j}`
+    // console.log(a, b, submission)
     // randomly get it wrong
     let randomValue = Math.floor(Math.random() * 10) % 2
-
+    // plusProblems correctFirstTime 4
     if(randomValue === 0) {
+        // console.log("answer is right the first time")
         temporaryState = set2(temporaryState, submission, `${offsetString}value`, a + b)
-        let progressMeter = `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
+        let progressMeter = `${offsetString}${i + 2} ${j} progressMeter ${j}`
         temporaryState = set2(temporaryState, progressMeter, `${offsetString}correctFirstTime`, true)
     
     }
     else {
-        temporaryState = set2(temporaryState, submission, `${offsetString}value`, a + 1)
-        let progressMeter = `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
+        // if b == 1 then this is always messed up
+        temporaryState = set2(temporaryState, submission, `${offsetString}value`, -1)
+        let progressMeter = `${offsetString}${i + 2} ${j} progressMeter ${j}`
         temporaryState = set2(temporaryState, progressMeter, `${offsetString}correctFirstTime`, false)
 
     }
+    // let result = getVariable(temporaryState, submission, `${offsetString}value`)
+    // console.log('get result', result)
+    // solved it correctly up to here
     // console.log('result', temporaryState)
     temporaryState = set2(temporaryState, submission, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
 
@@ -762,6 +775,8 @@ const solveProblem = (state, action, i, j) => {
 
     temporaryState = set2(temporaryState, submission, `${offsetString}firstAnswer`, getVariable(temporaryState, submission, `${offsetString}value`).value)
 
+    // console.log("solved a problem", j)
+    // printTreeInteractive(temporaryState)
     return temporaryState
 }
 
@@ -776,6 +791,9 @@ const autoSolve = (state, action) => {
     // const parentStateName = action.meta.parentStateName
     console.log('inside autoSolve', `|${action.meta.offsetString}|`)
     let temporaryState = processProblems(state, action, solveProblem)
+    console.log('after autosolve')
+    printTreeInteractive(temporaryState)
+
     return [temporaryState, true]
 
 }
@@ -788,8 +806,8 @@ const collectProblems = (state, action, i, j) => {
 
     let a = getVariable(state, `${offsetString}${i} ${j}`, `${offsetString}value`).value
     let b = getVariable(state, `${offsetString}${i + 1} ${j}`, `${offsetString}value`).value
-    let submission =           `${offsetString}${i + 2} ${j} ${offsetString}submission ${j}`
-    let progressMeter =        `${offsetString}${i + 2} ${j} ${offsetString}progressMeter ${j}`
+    let submission =           `${offsetString}${i + 2} ${j} submission ${j}`
+    let progressMeter =        `${offsetString}${i + 2} ${j} progressMeter ${j}`
 
 
     let firstAnswer = getVariable(state, submission, `${offsetString}firstAnswer`).value
@@ -797,7 +815,7 @@ const collectProblems = (state, action, i, j) => {
     let actualAnswer = getVariable(state, submission, `${offsetString}actualAnswer`).value
 
     let gotItRightTheFirstTime = getVariable(state, progressMeter, `${offsetString}correctFirstTime`).value
-
+    console.log('values', a, b, firstAnswer)
     let row = {
         a: a,
         b: b,
@@ -809,7 +827,7 @@ const collectProblems = (state, action, i, j) => {
 
     let myProblemTable = getCell(state, 'payload')
     // console.log('my promblem table', myProblemTable)
-    temporaryState = tableAssignJsObject(
+    temporaryState = tableAssignJsObject2(
         state,
         myProblemTable, 
         {   ...myProblemTable.jsObject,
@@ -871,7 +889,7 @@ const setupForBackend = (state, action) => {
     // console.log("done with first part", temporaryState)
     // let x = getCell(temporaryState, ['payload'])
     let myCompletedProblems = getCell(temporaryState, 'payload')
-    // console.log('completed problems', myCompletedProblems)
+    console.log('completed problems', myCompletedProblems)
     const correctProblems = myCompletedProblems.jsObject['problem set table'].filter(problem => problem.gotItRightTheFirstTime).length
     // console.log('correctProblems', correctProblems)
     // calculate % of correct problems
@@ -889,7 +907,7 @@ const setupForBackend = (state, action) => {
     //     ...problemSetTable
         
     // }
-    temporaryState = tableAssignJsObject(
+    temporaryState = tableAssignJsObject2(
         temporaryState,
         myCompletedProblems, 
         {   ...myCompletedProblems.jsObject,
@@ -1070,8 +1088,15 @@ let Root2 = {
                     parent: 'elementarySchool testing',
                     name: 'autoSolve',
                     functionCode: autoSolve,
-                    nextStates: ['setup for backend']
+                    nextStates: ['setupForBackend']
                 },
+                'setupForBackend': {
+                    parent: 'elementarySchool testing',
+                    name: 'setupForBackend',
+                    functionCode: setupForBackend,
+
+                },
+
 
             'elementarySchool storeResults': {
                 parent: 'root',
