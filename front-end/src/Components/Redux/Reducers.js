@@ -160,6 +160,21 @@ const setJSObject = (state, parentStateName, variableName, newValue) => {
     }
 }
 
+const setJSObject2 = (state, parentStateName, variableName, newValue) => {
+
+    // parentStateName is an array of strings
+    let variable = getVariable(state, parentStateName, variableName)
+
+    return {
+        ...state,
+        
+        [variable.name]: {
+            ...variable,
+            jsObject: newValue
+        }
+    }
+}
+
 const setVariable = (state, parentStateName, variableName, newValue) => {
 
     // parentStateName is an array of strings
@@ -984,7 +999,7 @@ const storeResults = (state, action) => {
 //         isIntermediateState: false
 // })
     let parentStateName = 'elementarySchool storeResults'
-    temporaryState = setJSObject(temporaryState, parentStateName, 'resultsFromBackend', payload)
+    temporaryState = setJSObject2(temporaryState, parentStateName, 'resultsFromBackend', payload)
     // console.log('saved payload')
     // let tree = treeVisualizer(temporaryState, ['elementary school'])
     // console.log('tree', tree)

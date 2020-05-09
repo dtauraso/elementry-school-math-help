@@ -20,7 +20,7 @@ const ProblemSetCard = (props) => {
     let {   id,
             nameOfProblemSet,
             numberCorrect,
-            totalProblems} = getCell(Root, ['resultsFromBackend']).jsObject['problemSets'][problemSetStat]
+            totalProblems} = getCell(Root, 'resultsFromBackend').jsObject['problemSets'][problemSetStat]
     // console.log(myProblemSetStat)
 
     const selectProblemSetStat = (id) => {

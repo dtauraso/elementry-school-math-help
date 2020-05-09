@@ -40,13 +40,13 @@ const Results = (props) => {
         // assume we are getting all the problems for now
     }, [])
 
-    let elementarySchoolName = ['elementary school']
+    let elementarySchoolName = 'elementarySchool'
 
     console.log('print tree')
     // treeVisualizer(Root, elementarySchoolName, 1)
 
     // .jsObject already existed when the state chart was initialized
-    let stuff = getCell(Root, ['resultsFromBackend']).jsObject['problemSets']
+    let stuff = getCell(Root, 'resultsFromBackend').jsObject['problemSets']
     // let problemSets = getCell(Root, ['resultsFromBackend']).jsObject['problemSets']
 
     if(stuff) {
