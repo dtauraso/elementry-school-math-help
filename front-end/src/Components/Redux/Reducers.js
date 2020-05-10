@@ -207,7 +207,9 @@ const makeProblemPart1And2 = (  problemPartNumber,
                                     operationType,
                                     isCorrect,
                                     isActualAnswer,
-                                    isResult}) => {
+                                    isResult
+                                }
+                            ) => {
 
     // i is the ith problem
     return {
@@ -274,6 +276,322 @@ const makeProblemPart1And2 = (  problemPartNumber,
 
 
 }
+const makeAnswerForm = (    iAnswer,
+                            i,
+                            offsetString,
+                            {   isForm,
+                                operationType,
+                                submission: {
+                                    value,
+                                    quantity,
+                                    correct,
+                                    firstAnswer,
+                                    actualAnswer,
+                                    submitCount,
+                                    feedbackMessage,
+                                    backgroundColor
+                                },
+                                progressMeter: {
+                                    correctFirstTime,
+                                    testingWithoutForm
+                                }}
+                        ) => {
+
+    return {
+
+    
+    [`${offsetString}${iAnswer} ${i}`]: {
+        parent: `${offsetString}problem ${i}`,
+        name: `${offsetString}${iAnswer} ${i}`,
+        substates: [`submission ${i}`, `progressMeter ${i}`],
+        variableNames: [`${offsetString}isForm ${iAnswer}`, `${offsetString}operationType ${iAnswer}`]
+    },
+        [`${offsetString}isForm ${iAnswer}`]: {
+            parent: `${offsetString}${iAnswer} ${i}`,
+            name: `${offsetString}isForm ${iAnswer}`,
+            value: isForm
+        },
+        [`${offsetString}operationType ${iAnswer}`]: {
+            parent: `${offsetString}${iAnswer} ${i}`,
+            name: `${offsetString}operationType ${iAnswer}`,
+            value: operationType
+        },
+            // 2 indents from `${offsetString}${iAnswer} ${i}` as it's a substate
+            // has the same parent as the superstate
+            // we start our submitting the answer with this cell
+            // this index(i) corresponds to the total number of problems
+
+            [`${offsetString}${iAnswer} ${i} submission ${i}`]: {
+                parent: `${offsetString}problem ${i}`,
+                name: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                substates: [`updateTypedAnswer ${i}`],
+                functionCode: returnState,
+                nextStates: [`${offsetString}${iAnswer} ${i} progressMeter ${i}`],
+                children: [
+                    `${offsetString}noValue ${iAnswer}`,
+                    `${offsetString}isInteger ${iAnswer}`,
+                    `${offsetString}isNotInteger ${iAnswer}`,
+                    `${offsetString}submitValue ${iAnswer}`
+                ],
+                variableNames: [
+                    `${offsetString}value ${iAnswer}`,
+                    `${offsetString}quantity ${iAnswer}`,
+                    `${offsetString}correct ${iAnswer}`,
+                    `${offsetString}firstAnswer ${iAnswer}`,
+                    `${offsetString}actualAnswer ${iAnswer}`,
+                    `${offsetString}submitCount ${iAnswer}`,
+                    `${offsetString}feedbackMessage ${iAnswer}`,
+                    `${offsetString}backgroundColor ${iAnswer}`
+                ]
+
+            },
+                    // 4 total indents as it the substate of `${offsetString}${iAnswer} ${i} submission ${i}`
+                    [`${offsetString}${iAnswer} ${i} submission ${i} updateTypedAnswer ${i}`]: {
+                        parent: `${offsetString}problem ${i}`,
+                        name: `${offsetString}${iAnswer} ${i} submission ${i} updateTypedAnswer ${i}`,
+                        functionCode: updateTypedAnswer
+                    },
+                [`${offsetString}value ${iAnswer}`]: {
+                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}value ${iAnswer}`,
+                    value: value
+                },
+                [`${offsetString}quantity ${iAnswer}`]: {
+                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}quantity ${iAnswer}`,
+                    value: quantity
+                },
+                [`${offsetString}correct ${iAnswer}`]: {
+                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}correct ${iAnswer}`,
+                    value: correct
+                },
+                [`${offsetString}firstAnswer ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}firstAnswer ${iAnswer}`,
+                    value: firstAnswer
+                },
+                [`${offsetString}actualAnswer ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}actualAnswer ${iAnswer}`,
+                    value: actualAnswer
+                },
+                [`${offsetString}submitCount ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}submitCount ${iAnswer}`,
+                    value: submitCount
+                },
+                [`${offsetString}feedbackMessage ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}feedbackMessage ${iAnswer}`,
+                    value: feedbackMessage
+                },
+                [`${offsetString}backgroundColor ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}backgroundColor ${iAnswer}`,
+                    value: backgroundColor
+                },
+                [`${offsetString}noValue ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}noValue ${iAnswer}`,
+                    functionCode: noValue
+                },
+                [`${offsetString}isInteger ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}isInteger ${iAnswer}`,
+                    functionCode: isInteger,
+                    nextStates: [`${offsetString}submitValue ${iAnswer}`]
+                },
+                [`${offsetString}isNotInteger ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}isNotInteger ${iAnswer}`,
+                    functionCode: returnState,
+                },
+                [`${offsetString}submitValue ${iAnswer}`]: {
+                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
+                    name: `${offsetString}submitValue ${iAnswer}`,
+                    functionCode: submitValue,
+                },
+            [`${offsetString}${iAnswer} ${i} progressMeter ${i}`]: {
+                parent: `${offsetString}problem ${i}`,
+                name: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
+                functionCode: returnState,
+                children: [ `${offsetString}gotItRightTheFirstTime ${i}`, // passes if they are right and submission count == 1
+                            `${offsetString}else ${i}`
+                    ],
+                variableNames: [
+                    `${offsetString}correctFirstTime ${i}`,
+                    `${offsetString}testingWithoutForm ${i}`
+                ]
+            },
+                [`${offsetString}correctFirstTime ${i}`]: {
+                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
+                    name: `${offsetString}correctFirstTime ${i}`,
+                    value: correctFirstTime
+                },
+                [`${offsetString}testingWithoutForm ${i}`]: {
+                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
+                    name: `${offsetString}testingWithoutForm ${i}`,
+                    value: testingWithoutForm
+                },
+                [`${offsetString}gotItRightTheFirstTime ${i}`]: {
+                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
+                    name: `${offsetString}gotItRightTheFirstTime ${i}`,
+                    functionCode: gotItRightTheFirstTime
+                },
+                [`${offsetString}else ${i}`]: {
+                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
+                    name: `${offsetString}else ${i}`,
+                    functionCode: returnState
+                }
+    }
+
+}
+const makeDigit = (
+                    {
+                    value,
+                    quantity,
+                    isForm,
+                    // make an operationTypeForPadding
+                    // make an isOperationTypeForPadding
+
+                    operationType,
+
+                    // flags for displaying the result
+                    isCorrect,
+                    isActualAnswer,
+                    isResult
+                    }
+                ) => {
+
+    return {
+        
+            value: value,
+            quantity: quantity,
+            isForm: isForm,
+            // make an operationTypeForPadding
+            // make an isOperationTypeForPadding
+
+            operationType: operationType,
+
+            // flags for displaying the result
+            isCorrect: isCorrect,
+            isActualAnswer: isActualAnswer,
+            isResult: isResult
+        
+    }
+}
+const makeProblemParts = (ithProblem) => {
+
+    return {
+        problemPart1: {
+            // reusable
+            ...makeDigit({
+                value: ithProblem.a,
+                quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b),
+                isForm: false,
+                // make an operationTypeForPadding
+                // make an isOperationTypeForPadding
+    
+                operationType: '',
+    
+                // flags for displaying the result
+                isCorrect: false,
+                isActualAnswer: false,
+                isResult: false
+            })
+        },
+        problemPart2: {
+            ...makeDigit({ 
+                value: ithProblem.b,
+                quantity: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b),
+                isForm: false,
+                operationType: '+',
+    
+                // flags for displaying the results
+                isCorrect: false,
+                isActualAnswer: false,
+                isResult: false
+            })
+        },
+
+        problemPart3: {
+                // anserForm
+                isForm: true,
+                operationType: '',
+                submission: {   value: '',
+                                quantity: makeQuantity(0, ithProblem.a + ithProblem.b),
+                                correct: false,
+                                firstAnswer: null,
+                                actualAnswer: ithProblem.a + ithProblem.b,
+                                submitCount: 0,
+                                feedbackMessage: 'O',
+                                backgroundColor: 'white'
+                },
+                progressMeter: {    correctFirstTime: false,
+                                    testingWithoutForm: false
+                }
+        }
+    }
+}
+
+const putInProblemBaseTree = (offsetString, iA, iB, iAnswer, i) => {
+
+    return {
+        // 1 indent for child/variable name
+        [`${offsetString}problem ${i}`]: {
+            parent: `${offsetString}problemSet 0`,
+            name: `${offsetString}problem ${i}`,  // key of AddTwoValues maps to this
+
+            // 0, 1, 2    3, 4, 5   6, 7, 8
+            // 0
+
+            children: [
+                `${offsetString}${iA} ${i}`,
+                `${offsetString}${iB} ${i}`,
+                `${offsetString}${iAnswer} ${i}`// can use the OneValue key and the AddTwoValues key
+            ],
+            variableNames: [`${offsetString}problemParts ${i}`]
+        },
+        // plusProblems isForm 0 doesn't exist
+        // the items do exist, but their links are wrong
+        // vanishes when we view it in presentProblems
+            [`${offsetString}problemParts ${i}`]: {
+                parent: `${offsetString}problem ${i}`,
+                name: `${offsetString}problemParts ${i}`,
+                value: 3
+            }
+    }
+}
+
+const setupLogicForProblemBaseTree = (Root2, offsetString, problems) => {
+
+    Root2 = incrementVariableBy(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`, 1)
+        
+    // {
+    //     ...Root2,
+        
+    //     [numberOfProblems3.name[0]]: {
+    //         ...Root2.numberOfProblems,
+    //         value: getVariable(Root2, ['problem set 0'], 'numberOfProblems').value + 1
+    //     }
+    // }
+
+    let numberOfProblems = getVariable(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value
+    let i = numberOfProblems - 1
+    // console.log(numberOfProblems, problems[numberOfProblems])
+    const ithProblem = problems[i]
+    // console.log(i, 'th problem', ithProblem)
+    let iA = 3 * i
+    let iB = iA + 1
+    let iAnswer = iA + 2
+    // console.log("new starting values", iA, iB, iAnswer)
+    // program froze here
+    // make the base branch for the generated tree
+    Root2 = addChild(Root2, `${offsetString}problemSet 0`, [`${offsetString}problem ${i}`])
+
+    return {Root2: Root2, problemPartVars: {iA, iB, iAnswer}, ithProblem}
+}
 // make a simpler version for just showing a + b = c
 const setupProblem = (state, action) => {
 
@@ -295,307 +613,39 @@ const setupProblem = (state, action) => {
 
     for(let i = 0; i < numberOfProblems2; i++) {
 
-        
-        Root2 = incrementVariableBy(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`, 1)
-        
-        // {
-        //     ...Root2,
-            
-        //     [numberOfProblems3.name[0]]: {
-        //         ...Root2.numberOfProblems,
-        //         value: getVariable(Root2, ['problem set 0'], 'numberOfProblems').value + 1
-        //     }
-        // }
-    
-        let numberOfProblems = getVariable(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value
-        let i = numberOfProblems - 1
-        // console.log(numberOfProblems, problems[numberOfProblems])
-        const ithProblem = problems[i]
-        // console.log(i, 'th problem', ithProblem)
-        let iA = 3 * i
-        let iB = iA + 1
-        let iAnswer = iA + 2
-        // console.log("new starting values", iA, iB, iAnswer)
-        // program froze here
-        // make the base branch for the generated tree
-        Root2 = addChild(Root2, `${offsetString}problemSet 0`, [`${offsetString}problem ${i}`])
-        // Root2 = appendState(Root2, {
-        //     [`${offsetString}problemSet 0`]: {
-        //         ...Root2[`${offsetString}problemSet 0`],
-        //         children: [...Root2[`${offsetString}problemSet 0`].children, `${offsetString}problem ${i}`]
-        //     }
-        // })
-       
+        // reusable
+        const baseStructure = setupLogicForProblemBaseTree(Root2, offsetString, problems)
+        Root2 = baseStructure.Root2
+        let {iA, iB, iAnswer} = baseStructure.problemPartVars
+        let ithProblem = baseStructure.ithProblem
 
+
+        // partially reusable
+        const problemParts = makeProblemParts(ithProblem)
+                  
+        // can reuse some of the function calls here
         Root2 = {
                 ...Root2,
-                // the last problem is never correct
-                // answer was correct but marked wrong
-                // answer is an empty string
-                // the printout is showing no data for this
-                // 1 indent for child/variable name
-                [`${offsetString}problem ${i}`]: {
-                    parent: `${offsetString}problemSet 0`,
-                    name: `${offsetString}problem ${i}`,  // key of AddTwoValues maps to this
-
-                    // 0, 1, 2    3, 4, 5   6, 7, 8
-                    // 0
-
-                    children: [
-                        `${offsetString}${iA} ${i}`,
-                        `${offsetString}${iB} ${i}`,
-                        `${offsetString}${iAnswer} ${i}`// can use the OneValue key and the AddTwoValues key
-                    ],
-                    variableNames: [`${offsetString}problemParts ${i}`]
-                },
-                /*
-                problem parts: {
-
-                    problem part 1: {
-                        value:
-                        quantity:
-                        isform:
-                        operationType:
-
-                    }
-                    problem part 2: {
-                        value:
-                        quantity:
-                        isform:
-                        operationType:
-
-                    }
-                    problem art 3: {
-                        answerForm: {
-                            isform:
-                            operationType:
-
-                            submission: {
-                                    value`,
-                                    quantity:
-                                    correct:
-                                    firstAnswer:
-                                    actualAnswer:
-                                    submitCount:
-                                    feedbackMessage:
-                                    backgroundColor:
-
-                            },
-                            progressMeter: {
-                                    correctFirstTime:
-                                    testingWithoutForm:
-
-                            },
-                        }
-                    }
-
-                }
-
-                */
-                // plusProblems isForm 0 doesn't exist
-                // the items do exist, but their links are wrong
-                // vanishes when we view it in presentProblems
-                    [`${offsetString}problemParts ${i}`]: {
-                        parent: `${offsetString}problem ${i}`,
-                        name: `${offsetString}problemParts ${i}`,
-                        value: 3
-                    },
+                ...putInProblemBaseTree(offsetString, iA, iB, iAnswer, i),
+                    // these are children of the problem so they are indented 1 time
                     ...makeProblemPart1And2(iA,
                                             i,
                                             offsetString, 
-                                            {   value: ithProblem.a,
-                                                quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b),
-                                                isForm: false,
-                                                // make an operationTypeForPadding
-                                                // make an isOperationTypeForPadding
+                                            problemParts.problemPart1
+                                            ),
 
-                                                operationType: '',
-
-                                                // flags for displaying the result
-                                                isCorrect: false,
-                                                isActualAnswer: false,
-                                                isResult: false}),
                     ...makeProblemPart1And2(iB,
                                             i,
                                             offsetString, 
-                                            {   value: ithProblem.b,
-                                                quantity: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b),
-                                                isForm: false,
-                                                operationType: '+',
+                                            problemParts.problemPart2
+                                            ),
 
-                                                // flags for displaying the results
-                                                isCorrect: false,
-                                                isActualAnswer: false,
-                                                isResult: false}),
-
-                    [`${offsetString}${iAnswer} ${i}`]: {
-                        parent: `${offsetString}problem ${i}`,
-                        name: `${offsetString}${iAnswer} ${i}`,
-                        substates: [`submission ${i}`, `progressMeter ${i}`],
-                        variableNames: [`${offsetString}isForm ${iAnswer}`, `${offsetString}operationType ${iAnswer}`]
-                    },
-                        [`${offsetString}isForm ${iAnswer}`]: {
-                            parent: `${offsetString}${iAnswer} ${i}`,
-                            name: `${offsetString}isForm ${iAnswer}`,
-                            value: true
-                        },
-                        [`${offsetString}operationType ${iAnswer}`]: {
-                            parent: `${offsetString}${iAnswer} ${i}`,
-                            name: `${offsetString}operationType ${iAnswer}`,
-                            value: ''
-                        },
-                            // 2 indents from `${offsetString}${iAnswer} ${i}` as it's a substate
-                            // has the same parent as the superstate
-                            // we start our submitting the answer with this cell
-                            // this index(i) corresponds to the total number of problems
-
-                            [`${offsetString}${iAnswer} ${i} submission ${i}`]: {
-                                parent: `${offsetString}problem ${i}`,
-                                name: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                substates: [`updateTypedAnswer ${i}`],
-                                functionCode: returnState,
-                                nextStates: [`${offsetString}${iAnswer} ${i} progressMeter ${i}`],
-                                children: [
-                                    `${offsetString}noValue ${iAnswer}`,
-                                    `${offsetString}isInteger ${iAnswer}`,
-                                    `${offsetString}isNotInteger ${iAnswer}`,
-                                    `${offsetString}submitValue ${iAnswer}`
-                                ],
-                                variableNames: [
-                                    `${offsetString}value ${iAnswer}`,
-                                    `${offsetString}quantity ${iAnswer}`,
-                                    `${offsetString}correct ${iAnswer}`,
-                                    `${offsetString}firstAnswer ${iAnswer}`,
-                                    `${offsetString}actualAnswer ${iAnswer}`,
-                                    `${offsetString}submitCount ${iAnswer}`,
-                                    `${offsetString}feedbackMessage ${iAnswer}`,
-                                    `${offsetString}backgroundColor ${iAnswer}`
-                                ]
-
-                            },
-                                    // 4 total indents as it the substate of `${offsetString}${iAnswer} ${i} submission ${i}`
-                                    [`${offsetString}${iAnswer} ${i} submission ${i} updateTypedAnswer ${i}`]: {
-                                        parent: `${offsetString}problem ${i}`,
-                                        name: `${offsetString}${iAnswer} ${i} submission ${i} updateTypedAnswer ${i}`,
-                                        functionCode: updateTypedAnswer
-                                    },
-                                [`${offsetString}value ${iAnswer}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}value ${iAnswer}`,
-                                    value: ''
-                                },
-                                [`${offsetString}quantity ${iAnswer}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}quantity ${iAnswer}`,
-                                    value: makeQuantity(0, ithProblem.a + ithProblem.b)
-                                },
-                                [`${offsetString}correct ${iAnswer}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}correct ${iAnswer}`,
-                                    value: false
-                                },
-                                [`${offsetString}firstAnswer ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}firstAnswer ${iAnswer}`,
-                                    value: null
-                                },
-                                [`${offsetString}actualAnswer ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}actualAnswer ${iAnswer}`,
-                                    value: ithProblem.a + ithProblem.b
-                                },
-                                [`${offsetString}submitCount ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}submitCount ${iAnswer}`,
-                                    value: 0
-                                },
-                                [`${offsetString}feedbackMessage ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}feedbackMessage ${iAnswer}`,
-                                    value: 'O'
-                                },
-                                [`${offsetString}backgroundColor ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}backgroundColor ${iAnswer}`,
-                                    value: 'white'
-                                },
-                                [`${offsetString}noValue ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}noValue ${iAnswer}`,
-                                    functionCode: noValue
-                                },
-                                [`${offsetString}isInteger ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}isInteger ${iAnswer}`,
-                                    functionCode: isInteger,
-                                    nextStates: [`${offsetString}submitValue ${iAnswer}`]
-                                },
-                                [`${offsetString}isNotInteger ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}isNotInteger ${iAnswer}`,
-                                    functionCode: returnState,
-                                },
-                                [`${offsetString}submitValue ${iAnswer}`]: {
-                                    parents: `${offsetString}${iAnswer} ${i} submission ${i}`,
-                                    name: `${offsetString}submitValue ${iAnswer}`,
-                                    functionCode: submitValue,
-                                },
-                            [`${offsetString}${iAnswer} ${i} progressMeter ${i}`]: {
-                                parent: `${offsetString}problem ${i}`,
-                                name: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
-                                functionCode: returnState,
-                                children: [ `${offsetString}gotItRightTheFirstTime ${i}`, // passes if they are right and submission count == 1
-                                            `${offsetString}else ${i}`
-                                    ],
-                                variableNames: [
-                                    `${offsetString}correctFirstTime ${i}`,
-                                    `${offsetString}testingWithoutForm ${i}`
-                                ]
-                            },
-                                [`${offsetString}correctFirstTime ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
-                                    name: `${offsetString}correctFirstTime ${i}`,
-                                    value: false
-                                },
-                                [`${offsetString}testingWithoutForm ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
-                                    name: `${offsetString}testingWithoutForm ${i}`,
-                                    value: false
-                                },
-                                [`${offsetString}gotItRightTheFirstTime ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
-                                    name: `${offsetString}gotItRightTheFirstTime ${i}`,
-                                    functionCode: gotItRightTheFirstTime
-                                },
-                                [`${offsetString}else ${i}`]: {
-                                    parent: `${offsetString}${iAnswer} ${i} progressMeter ${i}`,
-                                    name: `${offsetString}else ${i}`,
-                                    functionCode: returnState
-                                }
-
-
-
-
+                    ...makeAnswerForm(iAnswer,
+                                        i,
+                                        offsetString,
+                                        problemParts.problemPart3
+                                        )
         }
-        // let elementarySchoolName = 'elementarySchool'
-        // let x = treeVisualizer2(Root2, elementarySchoolName)
-        // console.log('tree', x)
-        // console.log(Root2)
-        // console.log('made stuff')
-
-        // prefixForStateNames: ''  this is so we can use the same numeric formula to generate different
-        // sets of state trees without the trees overwriting each other
-        // problemPartNumber: iA,
-        // ithProblem: i,
-        // value: ithProblem.a,
-        // quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b))
-        // isform: false
-        // operationType: '+'
-        // display operator: false
-        // hiding operator color: 'white'
-                
-                        // display operator
-                        // hiding operator color
     }
     
     return [Root2, true]
