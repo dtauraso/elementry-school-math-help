@@ -145,20 +145,6 @@ const generateProblemStructure = (state, action) => {
     //     isVariable: false,
     //     isIntermediateState: false})
 }
-const setJSObject = (state, parentStateName, variableName, newValue) => {
-
-    // parentStateName is an array of strings
-    let variable = getVariable(state, parentStateName, variableName)
-
-    return {
-        ...state,
-        
-        [variable.name[0]]: {
-            ...variable,
-            jsObject: newValue
-        }
-    }
-}
 
 const setJSObject2 = (state, parentStateName, variableName, newValue) => {
 
@@ -212,6 +198,83 @@ const appendState = (table, state) => {
         }
     }
 }
+const makeProblemPart1And2 = (  problemPartNumber,
+                                i,
+                                offsetString,
+                                {   value,
+                                    quantity,
+                                    isForm,
+                                    operationType,
+                                    isCorrect,
+                                    isActualAnswer,
+                                    isResult}) => {
+
+    // i is the ith problem
+    return {
+        [`${offsetString}${problemPartNumber} ${i}`]: {
+            parent: `${offsetString}problem ${i}`,
+            name: `${offsetString}${problemPartNumber} ${i}`,
+            substates: [`displayResult`],
+            variableNames: [`${offsetString}value ${problemPartNumber}`,
+                            `${offsetString}quantity ${problemPartNumber}`,
+                            `${offsetString}isForm ${problemPartNumber}`,
+                            `${offsetString}operationType ${problemPartNumber}`]
+
+            },
+                // These are set to meaningfull values in the results route
+                [`${offsetString}${problemPartNumber} ${i} displayResult`]: {
+                    parent: `${offsetString}${problemPartNumber} ${i}`,
+                    name: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                    variableNames: [`${offsetString}isCorrect ${problemPartNumber}`,
+                                    `${offsetString}isActualAnswer ${problemPartNumber}`,
+
+                                    // tells OneValue to render a slightly different sequence of components when we are
+                                    // in the results route (redux flag -> sequence of react components,
+                                    // also, each flag must be exclusive)
+                                    `${offsetString}isResult ${problemPartNumber}`,
+                    ]
+                },
+                    [`${offsetString}isCorrect ${problemPartNumber}`]: {
+                        parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                        name: `${offsetString}isCorrect ${problemPartNumber}`,
+                        value: isCorrect
+                    },
+                    [`${offsetString}isActualAnswer ${problemPartNumber}`]: {
+                        parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                        name: `${offsetString}isActualAnswer ${problemPartNumber}`,
+                        value: isActualAnswer
+                    },
+                    [`${offsetString}isResult ${problemPartNumber}`]: {
+                        parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                        name: `${offsetString}isResult ${problemPartNumber}`,
+                        value: isResult
+                    },
+
+            [`${offsetString}value ${problemPartNumber}`]: {
+                parent: `${offsetString}${problemPartNumber} ${i}`,
+                name: `${offsetString}value ${problemPartNumber}`,
+                value: value
+            },
+            [`${offsetString}quantity ${problemPartNumber}`]: {
+                parent: `${offsetString}${problemPartNumber} ${i}`,
+                name: `${offsetString}quantity ${problemPartNumber}`,
+                value: quantity
+            },
+            [`${offsetString}isForm ${problemPartNumber}`]: {
+                parent: `${offsetString}${problemPartNumber} ${i}`,
+                name: `${offsetString}isForm ${problemPartNumber}`,
+                value: isForm
+            },
+            [`${offsetString}operationType ${problemPartNumber}`]: {
+                parent: `${offsetString}${problemPartNumber} ${i}`,
+                name: `${offsetString}operationType ${problemPartNumber}`,
+                value: operationType
+            },
+    }
+
+
+}
+// make a simpler version for just showing a + b = c
 const setupProblem = (state, action) => {
 
     // 
@@ -254,6 +317,7 @@ const setupProblem = (state, action) => {
         let iAnswer = iA + 2
         // console.log("new starting values", iA, iB, iAnswer)
         // program froze here
+        // make the base branch for the generated tree
         Root2 = addChild(Root2, `${offsetString}problemSet 0`, [`${offsetString}problem ${i}`])
         // Root2 = appendState(Root2, {
         //     [`${offsetString}problemSet 0`]: {
@@ -284,6 +348,50 @@ const setupProblem = (state, action) => {
                     ],
                     variableNames: [`${offsetString}problemParts ${i}`]
                 },
+                /*
+                problem parts: {
+
+                    problem part 1: {
+                        value:
+                        quantity:
+                        isform:
+                        operationType:
+
+                    }
+                    problem part 2: {
+                        value:
+                        quantity:
+                        isform:
+                        operationType:
+
+                    }
+                    problem art 3: {
+                        answerForm: {
+                            isform:
+                            operationType:
+
+                            submission: {
+                                    value`,
+                                    quantity:
+                                    correct:
+                                    firstAnswer:
+                                    actualAnswer:
+                                    submitCount:
+                                    feedbackMessage:
+                                    backgroundColor:
+
+                            },
+                            progressMeter: {
+                                    correctFirstTime:
+                                    testingWithoutForm:
+
+                            },
+                        }
+                    }
+
+                }
+
+                */
                 // plusProblems isForm 0 doesn't exist
                 // the items do exist, but their links are wrong
                 // vanishes when we view it in presentProblems
@@ -292,62 +400,34 @@ const setupProblem = (state, action) => {
                         name: `${offsetString}problemParts ${i}`,
                         value: 3
                     },
-                    [`${offsetString}${iA} ${i}`]: {
-                        parent: `${offsetString}problem ${i}`,
-                        name: `${offsetString}${iA} ${i}`,
-                        variableNames: [`${offsetString}value ${iA}`,
-                                        `${offsetString}quantity ${iA}`,
-                                        `${offsetString}isForm ${iA}`,
-                                        `${offsetString}operationType ${iA}`]
-                    },
-                        [`${offsetString}value ${iA}`]: {
-                            parent: `${offsetString}${iA} ${i}`,
-                            name: `${offsetString}value ${iA}`,
-                            value: ithProblem.a
-                        },
-                        [`${offsetString}quantity ${iA}`]: {
-                            parent: `${offsetString}${iA} ${i}`,
-                            name: `${offsetString}quantity ${iA}`,
-                            value: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b)
-                        },
-                        [`${offsetString}isForm ${iA}`]: {
-                            parent: `${offsetString}${iA} ${i}`,
-                            name: `${offsetString}isForm ${iA}`,
-                            value: false
-                        },
-                        [`${offsetString}operationType ${iA}`]: {
-                            parent: `${offsetString}${iA} ${i}`,
-                            name: `${offsetString}operationType ${iA}`,
-                            value: ''
-                        },
-                    [`${offsetString}${iB} ${i}`]: {
-                        parent: `${offsetString}problem ${i}`,
-                        name: `${offsetString}${iB} ${i}`,
-                        variableNames: [`${offsetString}value ${iB}`,
-                                        `${offsetString}quantity ${iB}`,
-                                        `${offsetString}isForm ${iB}`,
-                                        `${offsetString}operationType ${iB}`]
-                    },
-                        [`${offsetString}value ${iB}`]: {
-                            parent: `${offsetString}${iB} ${i}`,
-                            name: `${offsetString}value ${iB}`,
-                            value: ithProblem.b
-                        },
-                        [`${offsetString}quantity ${iB}`]: {
-                            parent: `${offsetString}${iB} ${i}`,
-                            name: `${offsetString}quantity ${iB}`,
-                            value: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b)
-                        },
-                        [`${offsetString}isForm ${iB}`]: {
-                            parent: `${offsetString}${iB} ${i}`,
-                            name: `${offsetString}isForm ${iB}`,
-                            value: false
-                        },
-                        [`${offsetString}operationType ${iB}`]: {
-                            parent: `${offsetString}${iB} ${i}`,
-                            name: `${offsetString}operationType ${iB}`,
-                            value: '+'
-                        },
+                    ...makeProblemPart1And2(iA,
+                                            i,
+                                            offsetString, 
+                                            {   value: ithProblem.a,
+                                                quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b),
+                                                isForm: false,
+                                                // make an operationTypeForPadding
+                                                // make an isOperationTypeForPadding
+
+                                                operationType: '',
+
+                                                // flags for displaying the result
+                                                isCorrect: false,
+                                                isActualAnswer: false,
+                                                isResult: false}),
+                    ...makeProblemPart1And2(iB,
+                                            i,
+                                            offsetString, 
+                                            {   value: ithProblem.b,
+                                                quantity: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b),
+                                                isForm: false,
+                                                operationType: '+',
+
+                                                // flags for displaying the results
+                                                isCorrect: false,
+                                                isActualAnswer: false,
+                                                isResult: false}),
+
                     [`${offsetString}${iAnswer} ${i}`]: {
                         parent: `${offsetString}problem ${i}`,
                         name: `${offsetString}${iAnswer} ${i}`,

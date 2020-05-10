@@ -72,7 +72,7 @@ const SubmitAnswer = (props) => {
         // call submit answer here
         // get the answer from Root
         // getVariable(Root, submissionStateName, 'value')
-
+        // submitting the answer multiple times causes duplicate results
         props.submitAnswer(submissionStateName)
         // console.log(event)
         // const data = new FormData(event.target);
