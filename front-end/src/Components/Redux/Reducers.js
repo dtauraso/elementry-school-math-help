@@ -694,8 +694,10 @@ const setupProblemForResults = (state, action) => {
     // need to put this into a for loop
     // ['elementary school', 'utilities', 'create problem']
     // ['problemCount']
-    const parentOfProblemCount = 'elementarySchool utilities createProblem'
-    const offsetString = 'displayResult '
+    const parentOfProblemCount = 'elementarySchool displayResults'
+    const offsetString = 'displayResults '
+    console.log('setupProblemForResults', parentOfProblemCount)
+    printTreeInteractive(state)
     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
     // console.log('we need to make', numberOfProblems2, 'problems')
     // console.log(state)
@@ -705,9 +707,10 @@ const setupProblemForResults = (state, action) => {
 
     let Root2 = state
 
-
+    console.log('here', numberOfProblems2)
     for(let i = 0; i < numberOfProblems2; i++) {
 
+        console.log(i)
         // reusable
         const baseStructure = setupLogicForProblemBaseTree(Root2, offsetString, problems, 4)
         // have to get Root2 out this way
@@ -1356,6 +1359,28 @@ const storeResults = (state, action) => {
     // console.log(temporaryState)
     return [temporaryState, true]
 }
+
+const setupSubmachineForDisplay = (state, action) => {
+
+    const stateName = action.type
+    const payload = action.payload
+    let temporaryState = state
+
+    let problemSets = getCell(temporaryState, 'resultsFromBackend').jsObject['problems']
+    let problemSetId = getCell(temporaryState, 'selectedProblemSetFromBackend').value
+
+    console.log('my problem sets', problemSets, 'selected problem set id', problemSetId)
+    const myProblemSet = problemSets[problemSetId]
+    console.log('the problem set to display', myProblemSet)
+    // make the state machine structure for each problem
+
+    let result = setupProblemForResults(temporaryState, action)
+    temporaryState = result[0]
+    printTreeInteractive(temporaryState)
+
+    // have the viewing card read the structure
+    return [temporaryState, true]
+}
 // reducers and the state for it in the same file
 // merge the states with 1 initialState
 // group by context of problem, not by kind of coding construct
@@ -1370,7 +1395,7 @@ let Root2 = {
     'elementarySchool': {
         parent: 'root',
         name: 'elementarySchool',
-        substates: ['utilities', 'testing', 'storeResults'],
+        substates: ['utilities', 'testing', 'storeResults', 'displayResults'],
         children: ['plusProblems problemSet 0'],
         variableNames: ['plusProblems problemSets 0']
     },
@@ -1391,11 +1416,11 @@ let Root2 = {
                         functionCode: setupProblem,
                         variableNames: ['plusProblems problemCount']
                     },
-                    'plusProblems problemCount': {
-                        parent: 'root',
-                        name: 'plusProblems problemCount',
-                        value: problems.length
-                    },
+                        'plusProblems problemCount': {
+                            parent: 'root',
+                            name: 'plusProblems problemCount',
+                            value: problems.length
+                        },
             'elementarySchool testing': {
                 parent: 'root',
                 name: 'elementarySchool testing',
@@ -1423,7 +1448,6 @@ let Root2 = {
                 name: 'elementarySchool storeResults',
                 functionCode: storeResults,
                 variableNames: ['resultsFromBackend', 'payload'],
-                // children: ['getProblemsFromBackend']
             },
                 'resultsFromBackend': {
                     parent: 'elementarySchool storeResults',
@@ -1437,11 +1461,12 @@ let Root2 = {
                     jsObject: {'problem set table': []}
                 },
 
+            // for displaying results only
             'elementarySchool displayResults' : {
                 parent: 'root',
                 name: 'elementarySchool displayResults',
                 chilren: ['saveProblemSetSelectedForDisplay'],
-                variableNames: ['selectedProblemSetFromBackend']
+                variableNames: ['selectedProblemSetFromBackend', 'displayResults problemCount']
             },
                 // variables shouldn't call functions
                 'selectedProblemSetFromBackend': {
@@ -1450,23 +1475,26 @@ let Root2 = {
                     // functionCode: savePayloadToFrontEnd,
                     value: -1,
                 },
+                'displayResults problemCount': {
+                    parent: 'elementarySchool displayResults',
+                    name: 'displayResults problemCount',
+                    value: 0
+                },
                 'saveProblemSetSelectedForDisplay': {
                     parent: 'elementarySchool storeResults',
                     name: 'getProblemsFromBackend',
                     functionCode: saveProblemSetSelectedForDisplay,
-                    // nextStates: ['setupSubmachineForDisplay']
+                    nextStates: ['setupSubmachineForDisplay']
                 },
+
+                // get the data from resultsFromBackend and selectedProblemSetFromBackend
+                // and use it to identify the right js object to make the submachine out of
                 // I don't have a state that saves the current problem they clicked on
                 'setupSubmachineForDisplay': {
                     parent: 'elementarySchool storeResults',
                     name: 'setupSubmachineForDisplay',
-                    // functionCode: setupSubmachineForDisplay
+                    functionCode: setupSubmachineForDisplay
                 },
-
-
-
-
-
 
 
         'plusProblems problemSet 0': {
