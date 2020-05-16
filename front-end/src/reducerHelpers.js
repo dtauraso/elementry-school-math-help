@@ -463,7 +463,7 @@ const hasSubstates = (cell) => {
     if(!Object.keys(cell).includes('nextParts')) {
         return false
     }
-    else if(Object.keys(cell.nextParts).length == 0) {
+    else if(Object.keys(cell.nextParts).length === 0) {
         return false
     }
     else {
@@ -474,7 +474,7 @@ const hasSubstates2 = (cell) => {
     if(!Object.keys(cell).includes('substates')) {
         return false
     }
-    else if(Object.keys(cell.substates).length == 0) {
+    else if(Object.keys(cell.substates).length === 0) {
         return false
     }
     else {
@@ -486,7 +486,7 @@ const hasAttributeOfCollection = (cell, attributeName) => {
     if(!Object.keys(cell).includes(attributeName)) {
         return false
     }
-    else if(cell[attributeName].length == 0) {
+    else if(cell[attributeName].length === 0) {
         return false
     }
     else {
@@ -574,12 +574,12 @@ export const treeVisualizer = (table, currentState) => {
     return {
             // a, b, and c parts are so this is the order they show up in the inspector
             a_name: cell.name,
-            ...(cell.function == undefined? {} : {b_function: cell.function.name}),
+            ...(cell.function === undefined? {} : {b_function: cell.function.name}),
             // missing next states
-            ...(cell.nextStates == undefined? {} : {c_nextStates: cell.nextStates}),
+            ...(cell.nextStates === undefined? {} : {c_nextStates: cell.nextStates}),
             d_children: children,
             e_variables: variables,
-            ...(cell.jsObject == undefined? {} : {jsObject: cell.jsObject}),
+            ...(cell.jsObject === undefined? {} : {jsObject: cell.jsObject}),
             substates: substates  
     }
 }
@@ -657,12 +657,12 @@ export const treeVisualizer2 = (table, currentState) => {
     return {
             // a, b, and c parts are so this is the order they show up in the inspector
             a_name: cell.name,
-            ...(cell.functionCode == undefined? {} : {b_function: cell.functionCode.name}),
+            ...(cell.functionCode === undefined? {} : {b_function: cell.functionCode.name}),
             // missing next states
-            ...(cell.nextStates == undefined? {} : {c_nextStates: cell.nextStates}),
+            ...(cell.nextStates === undefined? {} : {c_nextStates: cell.nextStates}),
             d_children: children,
             e_variables: variables,
-            ...(cell.jsObject == undefined? {} : {jsObject: cell.jsObject}),
+            ...(cell.jsObject === undefined? {} : {jsObject: cell.jsObject}),
             substates: substates  
     }
 }
@@ -681,6 +681,8 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
     // for each one
         // return the state then the stateSuceded flag
     // return the state once endState is reached
+
+    // This function will create a stack overflow if the state chart tree has any cycles
     // let currentState = getValue(state, stateStateName)
     // this will cumulatively hold the state copies untill we are done with the machine
     let temporaryState = state
@@ -778,6 +780,8 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             // putting this in would force all states to have it as an attribute even if they have no edges
             if(!Object.keys(currentStateObject).includes('nextStates')) {
                 console.log('The next states doesn\'t exist')
+                printTreeInteractive(temporaryState)
+
                 return [temporaryState, true]
             }
             if(currentStateObject.nextStates.length === 0) {
@@ -915,6 +919,7 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
             // putting this in would force all states to have it as an attribute even if they have no edges
             if(!Object.keys(currentStateObject).includes('nextStates')) {
                 console.log('The next states doesn\'t exist')
+                printTreeInteractive(temporaryState)
                 return [temporaryState, true]
             }
             if(currentStateObject.nextStates.length === 0) {

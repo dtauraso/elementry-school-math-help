@@ -198,6 +198,7 @@ const appendState = (table, state) => {
         }
     }
 }
+
 const makeProblemPart1And2 = (  problemPartNumber,
                                 i,
                                 offsetString,
@@ -208,7 +209,9 @@ const makeProblemPart1And2 = (  problemPartNumber,
                                     isCorrect,
                                     isActualAnswer,
                                     isResult
-                                }
+                                },
+
+                                isForDisplayResultsOnly
                             ) => {
 
     // i is the ith problem
@@ -216,41 +219,44 @@ const makeProblemPart1And2 = (  problemPartNumber,
         [`${offsetString}${problemPartNumber} ${i}`]: {
             parent: `${offsetString}problem ${i}`,
             name: `${offsetString}${problemPartNumber} ${i}`,
-            substates: [`displayResult`],
+            substates: isForDisplayResultsOnly? []: [`displayResult`],
             variableNames: [`${offsetString}value ${problemPartNumber}`,
                             `${offsetString}quantity ${problemPartNumber}`,
                             `${offsetString}isForm ${problemPartNumber}`,
                             `${offsetString}operationType ${problemPartNumber}`]
 
             },
-                // These are set to meaningfull values in the results route
-                [`${offsetString}${problemPartNumber} ${i} displayResult`]: {
-                    parent: `${offsetString}${problemPartNumber} ${i}`,
-                    name: `${offsetString}${problemPartNumber} ${i} displayResult`,
-                    variableNames: [`${offsetString}isCorrect ${problemPartNumber}`,
-                                    `${offsetString}isActualAnswer ${problemPartNumber}`,
+            ...(isForDisplayResultsOnly? {}: {
+                    // These are set to meaningfull values in the results route
+                    [`${offsetString}${problemPartNumber} ${i} displayResult`]: {
+                        parent: `${offsetString}${problemPartNumber} ${i}`,
+                        name: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                        variableNames: [`${offsetString}isCorrect ${problemPartNumber}`,
+                                        `${offsetString}isActualAnswer ${problemPartNumber}`,
 
-                                    // tells OneValue to render a slightly different sequence of components when we are
-                                    // in the results route (redux flag -> sequence of react components,
-                                    // also, each flag must be exclusive)
-                                    `${offsetString}isResult ${problemPartNumber}`,
-                    ]
-                },
-                    [`${offsetString}isCorrect ${problemPartNumber}`]: {
-                        parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
-                        name: `${offsetString}isCorrect ${problemPartNumber}`,
-                        value: isCorrect
+                                        // tells OneValue to render a slightly different sequence of components when we are
+                                        // in the results route (redux flag -> sequence of react components,
+                                        // also, each flag must be exclusive)
+                                        `${offsetString}isResult ${problemPartNumber}`,
+                        ]
                     },
-                    [`${offsetString}isActualAnswer ${problemPartNumber}`]: {
-                        parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
-                        name: `${offsetString}isActualAnswer ${problemPartNumber}`,
-                        value: isActualAnswer
-                    },
-                    [`${offsetString}isResult ${problemPartNumber}`]: {
-                        parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
-                        name: `${offsetString}isResult ${problemPartNumber}`,
-                        value: isResult
-                    },
+                        [`${offsetString}isCorrect ${problemPartNumber}`]: {
+                            parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                            name: `${offsetString}isCorrect ${problemPartNumber}`,
+                            value: isCorrect
+                        },
+                        [`${offsetString}isActualAnswer ${problemPartNumber}`]: {
+                            parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                            name: `${offsetString}isActualAnswer ${problemPartNumber}`,
+                            value: isActualAnswer
+                        },
+                        [`${offsetString}isResult ${problemPartNumber}`]: {
+                            parent: `${offsetString}${problemPartNumber} ${i} displayResult`,
+                            name: `${offsetString}isResult ${problemPartNumber}`,
+                            value: isResult
+                        }
+            }),
+                
 
             [`${offsetString}value ${problemPartNumber}`]: {
                 parent: `${offsetString}${problemPartNumber} ${i}`,
@@ -294,7 +300,8 @@ const makeAnswerForm = (    iAnswer,
                                 progressMeter: {
                                     correctFirstTime,
                                     testingWithoutForm
-                                }}
+                                }
+                            }
                         ) => {
 
     return {
@@ -447,20 +454,19 @@ const makeAnswerForm = (    iAnswer,
     }
 
 }
-const makeDigit = (
-                    {
-                    value,
-                    quantity,
-                    isForm,
-                    // make an operationTypeForPadding
-                    // make an isOperationTypeForPadding
+const makeNumber = (
+                    {   value,
+                        quantity,
+                        isForm,
+                        // make an operationTypeForPadding
+                        // make an isOperationTypeForPadding
 
-                    operationType,
+                        operationType,
 
-                    // flags for displaying the result
-                    isCorrect,
-                    isActualAnswer,
-                    isResult
+                        // flags for displaying the result
+                        isCorrect,
+                        isActualAnswer,
+                        isResult
                     }
                 ) => {
 
@@ -481,12 +487,84 @@ const makeDigit = (
         
     }
 }
+const makeProblemPartsForDisplayResults = (ithProblem) => {
+
+    const {a, b, theirAnswer, actualAnswer, gotItRightTheFirstTime} = ithProblem
+
+    const mySum = a + b
+    return [
+        // a
+        makeNumber({
+                value: a,
+                quantity: makeQuantity(a, mySum),
+                isForm: false,
+                // make an operationTypeForPadding
+                // make an isOperationTypeForPadding
+    
+                operationType: '',
+    
+                // flags for displaying the result
+                isCorrect: false,
+                isActualAnswer: false,
+                isResult: false
+        }),
+
+        // b
+        makeNumber({
+            value: b,
+            quantity: makeQuantity(b, mySum),
+            isForm: false,
+            // make an operationTypeForPadding
+            // make an isOperationTypeForPadding
+
+            operationType: '+',
+
+            // flags for displaying the result
+            isCorrect: false,
+            isActualAnswer: false,
+            isResult: false
+        }),
+
+        // theirAnswer
+        makeNumber({
+            value: theirAnswer,
+            quantity: makeQuantity(theirAnswer, mySum),
+            isForm: false,
+            // make an operationTypeForPadding
+            // make an isOperationTypeForPadding
+
+            operationType: '',
+
+            // flags for displaying the result
+            isCorrect: gotItRightTheFirstTime,
+            isActualAnswer: false,
+            isResult: true
+        }),
+
+        // actualAnswer
+        makeNumber({
+            value: actualAnswer,
+            quantity: makeQuantity(actualAnswer, mySum),
+            isForm: false,
+            // make an operationTypeForPadding
+            // make an isOperationTypeForPadding
+
+            operationType: '',
+
+            // flags for displaying the result
+            isCorrect: false,
+            isActualAnswer: true,
+            isResult: false
+        })
+    ]
+    
+}
 const makeProblemParts = (ithProblem) => {
 
     return {
         problemPart1: {
             // reusable
-            ...makeDigit({
+            ...makeNumber({
                 value: ithProblem.a,
                 quantity: makeQuantity(ithProblem.a, ithProblem.a + ithProblem.b),
                 isForm: false,
@@ -502,7 +580,7 @@ const makeProblemParts = (ithProblem) => {
             })
         },
         problemPart2: {
-            ...makeDigit({ 
+            ...makeNumber({ 
                 value: ithProblem.b,
                 quantity: makeQuantity(ithProblem.b, ithProblem.a + ithProblem.b),
                 isForm: false,
@@ -535,7 +613,8 @@ const makeProblemParts = (ithProblem) => {
     }
 }
 
-const putInProblemBaseTree = (offsetString, iA, iB, iAnswer, i) => {
+const putInProblemBaseTree = (offsetString, problemPartIndicies, i) => {
+
 
     return {
         // 1 indent for child/variable name
@@ -546,11 +625,9 @@ const putInProblemBaseTree = (offsetString, iA, iB, iAnswer, i) => {
             // 0, 1, 2    3, 4, 5   6, 7, 8
             // 0
 
-            children: [
-                `${offsetString}${iA} ${i}`,
-                `${offsetString}${iB} ${i}`,
-                `${offsetString}${iAnswer} ${i}`// can use the OneValue key and the AddTwoValues key
-            ],
+            children: problemPartIndicies.map(problemPartIndex => (
+                `${offsetString}${problemPartIndex} ${i}`// can use the OneValue key and the AddTwoValues key
+            )),
             variableNames: [`${offsetString}problemParts ${i}`]
         },
         // plusProblems isForm 0 doesn't exist
@@ -559,12 +636,12 @@ const putInProblemBaseTree = (offsetString, iA, iB, iAnswer, i) => {
             [`${offsetString}problemParts ${i}`]: {
                 parent: `${offsetString}problem ${i}`,
                 name: `${offsetString}problemParts ${i}`,
-                value: 3
+                value: problemPartIndicies.length
             }
     }
 }
 
-const setupLogicForProblemBaseTree = (Root2, offsetString, problems) => {
+const setupLogicForProblemBaseTree = (Root2, offsetString, problems, numberOfProblemParts) => {
 
     Root2 = incrementVariableBy(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`, 1)
         
@@ -582,17 +659,96 @@ const setupLogicForProblemBaseTree = (Root2, offsetString, problems) => {
     // console.log(numberOfProblems, problems[numberOfProblems])
     const ithProblem = problems[i]
     // console.log(i, 'th problem', ithProblem)
-    let iA = 3 * i
-    let iB = iA + 1
-    let iAnswer = iA + 2
+    // make a list dependent on how many numbers will be included
+
+    // this is the numerical sequence for making sure the problem parts are unique in every senario
+    // 0, 1, 2   3, 4, 5    6, 7, 8
+    // where i is 0, 1, 2 and the number of problem parts is 3
+
+    // 0, 1, 2, 3, 4,   5, 6, 7, 8, 9
+    // where i is 0, 1, 2 and the number of problem parts is 5
+    // each time this function is called 1 set of indicies are generated (ex: 0, 1, 2 )
+    let a = numberOfProblemParts * i
+
+    let offsets = [a]
+
+    let j = 1
+    while(j < numberOfProblemParts) {
+        offsets = [...offsets, a + j]
+        j += 1
+    }
+    // let b = a + 1
+    // let c = a + 2
     // console.log("new starting values", iA, iB, iAnswer)
     // program froze here
     // make the base branch for the generated tree
     Root2 = addChild(Root2, `${offsetString}problemSet 0`, [`${offsetString}problem ${i}`])
 
-    return {Root2: Root2, problemPartVars: {iA, iB, iAnswer}, ithProblem}
+    return {Root2, indexArray: offsets, ithProblem}
 }
+// reducers that make state machines holding references to other reducers
 // make a simpler version for just showing a + b = c
+const setupProblemForResults = (state, action) => {
+
+    // 
+    // need to put this into a for loop
+    // ['elementary school', 'utilities', 'create problem']
+    // ['problemCount']
+    const parentOfProblemCount = 'elementarySchool utilities createProblem'
+    const offsetString = 'displayResult '
+    let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
+    // console.log('we need to make', numberOfProblems2, 'problems')
+    // console.log(state)
+    // let numberOfProblems3 = getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`)
+    // console.log(numberOfProblems3.name)
+    // console.log('about to make a problem', getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value)
+
+    let Root2 = state
+
+
+    for(let i = 0; i < numberOfProblems2; i++) {
+
+        // reusable
+        const baseStructure = setupLogicForProblemBaseTree(Root2, offsetString, problems, 4)
+        // have to get Root2 out this way
+        Root2 = baseStructure.Root2
+        // array destructuring is positional not key so they can be renamed this way
+        // showing the items inside indexArray to show the similarity it has with the code for making the problems
+        let {indexArray: [iA, iB, iAnswer, iYourAnswer], ithProblem} = baseStructure
+
+        // partially reusable
+        const problemParts = makeProblemPartsForDisplayResults(ithProblem)
+
+        let problemPartStates = {}
+        baseStructure.indexArray.forEach((problemIndex, j) => {
+
+            // collect all states from each call
+            problemPartStates = {
+                ...problemPartStates,
+                ...makeProblemPart1And2(    problemIndex,
+                                            i,
+                                            offsetString,
+                                            problemParts[j],
+                                            true)
+            }
+            })
+                
+        // can reuse some of the function calls here
+        Root2 = {
+                ...Root2,
+                // reusable
+                ...putInProblemBaseTree(offsetString, baseStructure.indexArray, i),
+
+                    // reusable
+                    // these are children of the problem so they are indented 1 time
+                    // spread all already spread states into Root2
+                    ...problemPartStates
+        }
+    }
+    
+    return [Root2, true]
+}
+
 const setupProblem = (state, action) => {
 
     // 
@@ -603,8 +759,8 @@ const setupProblem = (state, action) => {
     const offsetString = 'plusProblems '
     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
     // console.log('we need to make', numberOfProblems2, 'problems')
-    console.log(state)
-    let numberOfProblems3 = getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`)
+    // console.log(state)
+    // let numberOfProblems3 = getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`)
     // console.log(numberOfProblems3.name)
     // console.log('about to make a problem', getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value)
 
@@ -614,11 +770,11 @@ const setupProblem = (state, action) => {
     for(let i = 0; i < numberOfProblems2; i++) {
 
         // reusable
-        const baseStructure = setupLogicForProblemBaseTree(Root2, offsetString, problems)
+        const baseStructure = setupLogicForProblemBaseTree(Root2, offsetString, problems, 3)
+        // have to get Root2 out this way
         Root2 = baseStructure.Root2
-        let {iA, iB, iAnswer} = baseStructure.problemPartVars
-        let ithProblem = baseStructure.ithProblem
-
+        // array destructuring is positional not key so they can be renamed this way
+        let {indexArray: [iA, iB, iAnswer], ithProblem} = baseStructure
 
         // partially reusable
         const problemParts = makeProblemParts(ithProblem)
@@ -626,20 +782,25 @@ const setupProblem = (state, action) => {
         // can reuse some of the function calls here
         Root2 = {
                 ...Root2,
-                ...putInProblemBaseTree(offsetString, iA, iB, iAnswer, i),
+                // reusable
+                ...putInProblemBaseTree(offsetString, [iA, iB, iAnswer], i),
+
+                    // reusable
                     // these are children of the problem so they are indented 1 time
                     ...makeProblemPart1And2(iA,
                                             i,
                                             offsetString, 
-                                            problemParts.problemPart1
+                                            problemParts.problemPart1,
+                                            false
                                             ),
 
                     ...makeProblemPart1And2(iB,
                                             i,
                                             offsetString, 
-                                            problemParts.problemPart2
+                                            problemParts.problemPart2,
+                                            false
                                             ),
-
+                    // not reusable
                     ...makeAnswerForm(iAnswer,
                                         i,
                                         offsetString,
@@ -1084,14 +1245,18 @@ const setupForBackend = (state, action) => {
     */
     return [temporaryState, true]
 }
-const updateStateValue = (state, action) => {
+
+const saveProblemSetSelectedForDisplay = (state, action) => {
 
     // wouldn't be possible if stateName is an array of strings
     // takes in a new value and updates itself
     const stateName = action.type
     const parentStateName = action.meta.parentStateName
-    let newValue = action.payload
+    let problemSetId = action.payload
     let temporaryState = state
+    // console.log(stateName, newValue)
+    // debugger
+    // store the payload to selectedProblemSetFromBackend instead
 
     // not connected to the main graph
     // temporaryState = setVariable(temporaryState, parentStateName, stateName, newValue) => {
@@ -1105,8 +1270,17 @@ const updateStateValue = (state, action) => {
     //         value: newValue
     //     })        
     // }
-    temporaryState = setVariable(temporaryState, parentStateName, stateName, newValue)
+    temporaryState = setVariable(   temporaryState,
+                                    parentStateName,
+                                    'selectedProblemSetFromBackend',
+                                    problemSetId)
 
+    // temporaryState = setJSObject2(   temporaryState,
+    //                                 parentStateName,
+    //                                 'resultsFromBackend',
+    //                                 newValue)
+    // console.log('new value', newValue)
+    // printTreeInteractive(temporaryState)
     return [temporaryState, true]
 }
 // only runs when user does autocompute
@@ -1243,28 +1417,57 @@ let Root2 = {
                 },
 
 
+            // after this is run there is no need to transfer the payload
             'elementarySchool storeResults': {
                 parent: 'root',
                 name: 'elementarySchool storeResults',
                 functionCode: storeResults,
-                variableNames: ['resultsFromBackend', 'selectedProblemSetFromBackend', 'payload']
+                variableNames: ['resultsFromBackend', 'payload'],
+                // children: ['getProblemsFromBackend']
             },
                 'resultsFromBackend': {
                     parent: 'elementarySchool storeResults',
                     name: 'resultsFromBackend',
                     jsObject: -1
                 },
-                'selectedProblemSetFromBackend': {
-                    parent: 'elementarySchool storeResults',
-                    name: 'selectedProblemSetFromBackend',
-                    functionCode: updateStateValue,
-                    value: -1
-                },
+                
                 'payload': {
                     parent: 'elementarySchool storeResults',
                     name: 'payload',
                     jsObject: {'problem set table': []}
                 },
+
+            'elementarySchool displayResults' : {
+                parent: 'root',
+                name: 'elementarySchool displayResults',
+                chilren: ['saveProblemSetSelectedForDisplay'],
+                variableNames: ['selectedProblemSetFromBackend']
+            },
+                // variables shouldn't call functions
+                'selectedProblemSetFromBackend': {
+                    parent: 'elementarySchool storeResults',
+                    name: 'selectedProblemSetFromBackend',
+                    // functionCode: savePayloadToFrontEnd,
+                    value: -1,
+                },
+                'saveProblemSetSelectedForDisplay': {
+                    parent: 'elementarySchool storeResults',
+                    name: 'getProblemsFromBackend',
+                    functionCode: saveProblemSetSelectedForDisplay,
+                    // nextStates: ['setupSubmachineForDisplay']
+                },
+                // I don't have a state that saves the current problem they clicked on
+                'setupSubmachineForDisplay': {
+                    parent: 'elementarySchool storeResults',
+                    name: 'setupSubmachineForDisplay',
+                    // functionCode: setupSubmachineForDisplay
+                },
+
+
+
+
+
+
 
         'plusProblems problemSet 0': {
             parent: 'elementarySchool',

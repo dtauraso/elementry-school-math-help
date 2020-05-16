@@ -127,15 +127,17 @@ export const getProblemSets = () => dispatch => {
         })
 }
 
-export const setProblemSetSelector = (payload) => dispatch => {
+// what does this do?
+export const setProblemSetSelector = (problemSetId) => dispatch => {
 
+    // assume we have loaded the data from the backend into a jsObject state
     dispatch({
-        type: ['selectedProblemSetFromBackend'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
-        payload: payload,
+        type: ['saveProblemSetSelectedForDisplay'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+        payload: problemSetId,
         meta: {
                 offsetString: 'plusProblems ',
                 // basePath: pathToState, // base state(for the object data)
-                parentStateName: 'elementarySchool storeResults'//pathToState,
+                parentStateName: 'elementarySchool displayResults'//pathToState,
             }
     });
 
