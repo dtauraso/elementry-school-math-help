@@ -697,6 +697,8 @@ const setupProblemForResults = (state, action) => {
     const parentOfProblemCount = 'elementarySchool displayResults'
     const offsetString = 'displayResults '
     console.log('setupProblemForResults', parentOfProblemCount)
+    let problems = action.meta.problemSet
+    // pull problems from action for displaying the results
     printTreeInteractive(state)
     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
     // console.log('we need to make', numberOfProblems2, 'problems')
@@ -1373,7 +1375,9 @@ const setupSubmachineForDisplay = (state, action) => {
     const myProblemSet = problemSets[problemSetId]
     console.log('the problem set to display', myProblemSet)
     // make the state machine structure for each problem
-
+    action.meta.problemSet = myProblemSet
+    
+    temporaryState = setVariable(temporaryState, 'elementarySchool displayResults', 'problemCount', myProblemSet.length)
     let result = setupProblemForResults(temporaryState, action)
     temporaryState = result[0]
     printTreeInteractive(temporaryState)
@@ -1465,7 +1469,7 @@ let Root2 = {
             'elementarySchool displayResults' : {
                 parent: 'root',
                 name: 'elementarySchool displayResults',
-                chilren: ['saveProblemSetSelectedForDisplay'],
+                children: ['saveProblemSetSelectedForDisplay', 'displayResults problemSet 0'],
                 variableNames: ['selectedProblemSetFromBackend', 'displayResults problemCount']
             },
                 // variables shouldn't call functions
@@ -1495,6 +1499,18 @@ let Root2 = {
                     name: 'setupSubmachineForDisplay',
                     functionCode: setupSubmachineForDisplay
                 },
+
+                'displayResults problemSet 0': {
+                    parent: 'elementarySchool displayResults',
+                    children: [],
+                    name: 'displayResults problemSet 0',
+                    variableNames: ['displayResults numberOfProblems 0']
+                },
+                    'displayResults numberOfProblems 0': {
+                        parent: 'displayResults problemSet 0',
+                        name: 'displayResults numberOfProblems 0',
+                        value: 0
+                    },
 
 
         'plusProblems problemSet 0': {
