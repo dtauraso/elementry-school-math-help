@@ -724,7 +724,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             // action.type is the parent state untill this line is run(in the first level the parent == current state)
             // console.log('parent state', action.meta.parentStateName)
             action.type = nextState
-            // console.log(nextState)
+            // console.log('got here')
             // action's current state is .type
             // action.meta.currentState = nextState // bad idea
             // console.log("function to run", getValue(temporaryState, nextState), action)

@@ -16,17 +16,22 @@ const Problems = styled.p`
 const ProblemSetCard = (props) => {
 
     const { Root,
-            stateCoordinates: {problemSet, problem}} = props
+            stateCoordinates: {problemSet, problemId, offsetString}} = props
 
+    console.log('coordinnates', problemSet, problemId, offsetString)
+    // use coordinates to access the right collection to run AddTwoValues on them
     let {   id,
         problemSetId,
         a,
         b,
         theirAnswer,
         actualAnswer,
-        gotItRightTheFirstTime} = getCell(Root, 'resultsFromBackend').jsObject['problems'][problemSet][problem]
+        gotItRightTheFirstTime} = getCell(Root, 'resultsFromBackend').jsObject['problems'][problemSet][problemId]
     // console.log('myProblem', myProblem)
-
+    // run AddTwoValues on each problem
+    // stateCoordinates.offsetString}problem ${stateCoordinates.problemId
+    // displayResults problemSet 0
+    // let problemSet = `${offsetString}problemSet `
     return (
         <div>
             <Problems>

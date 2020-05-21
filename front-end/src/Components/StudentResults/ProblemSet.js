@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Loader from 'react-loader-spinner';
 import ProblemSetCard from './ProblemSetCard'
+import AddTwoValues from '../AddTwoValues'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer, addToAnswer } from '../Redux/Actions'
 import {
@@ -21,7 +22,10 @@ const ProblemSet = (props) => {
         return (
             <div>
                 {problemSet[id].map((problem, i) => (
-                    <ProblemSetCard key={i} stateCoordinates={{problemSet: id, problem: i}}/>
+                    <ProblemSetCard key={i} stateCoordinates={{
+                                                    problemSet: id,
+                                                    problemId: i,
+                                                    offsetString: 'displayResults '}}/>
                 ))}
             </div>
         )
