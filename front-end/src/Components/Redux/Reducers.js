@@ -111,29 +111,6 @@ else
     table[lastName] = new node
     return new node name
 */
-const generateProblemStructure = (state, action) => {
-    // action has an offset sequence
-    // when making the state structure add the offset to each of them(first string in name)
-    // make sure the views are using the offset sequence as another coordinate to access them
-    // let contextName = 'plusProblems'
-    // let stateCell = makeCell({
-    //     name: [`${contextName}problem ${i}`],  // key of AddTwoValues maps to this
-
-    //     // 0, 1, 2    3, 4, 5   6, 7, 8
-    //     // 0
-    //     children: [ [`${contextName}${iA} ${i}`],
-    //                 [`${contextName}${iB} ${i}`],
-    //                 [`${contextName}${iAnswer} ${i}`]],   // can use the OneValue key and the AddTwoValues key
-    //     variableNames: [`${contextName}problemParts ${i}`]
-    // })
-
-    //     Root2 = makeLinks(Root2, {
-    //     newStateName: [`problem ${i}`],
-    //     parent: ['problem set 0'],
-    //     stateCells: stateCell,
-    //     isVariable: false,
-    //     isIntermediateState: false})
-}
 
 const setJSObject2 = (state, parentStateName, variableName, newValue) => {
 
@@ -164,29 +141,7 @@ const setVariable = (state, parentStateName, variableName, newValue) => {
         }
     }
 }
-const incrementVariableBy = (state, parentStateName, variableName, newValue) => {
 
-    // parentStateName is an array of strings
-    let variable = getVariable(state, parentStateName, variableName)
-
-    return {
-        ...state,
-        
-        [variable.name]: {
-            ...variable,
-            value: variable.value + newValue
-        }
-    }
-}
-
-const appendState = (table, state) => {
-    return {
-        ...table,
-        [state.name]: {
-            ...state
-        }
-    }
-}
 
 const makeProblemPartNumber = (  offsetString,
                                 i,
@@ -377,6 +332,8 @@ const makeAnswerForm = (    offsetString,
             name: operationTypeName,
             value: operationType
         },
+        
+
             // 2 indents from `${offsetString}${iAnswer} ${i}` as it's a substate
             // has the same parent as the superstate
             // we start our submitting the answer with this cell
@@ -667,33 +624,6 @@ const makeProblemParts = (ithProblem) => {
     ]
 }
 
-const putInProblemBaseTree = (offsetString, problemPartIndicies, i) => {
-
-
-    return {
-        // 1 indent for child/variable name
-        [`${offsetString}problem ${i}`]: {
-            parent: `${offsetString}problemSet 0`,
-            name: `${offsetString}problem ${i}`,  // key of AddTwoValues maps to this
-
-            // 0, 1, 2    3, 4, 5   6, 7, 8
-            // 0
-
-            children: problemPartIndicies.map(problemPartIndex => (
-                `${offsetString}${problemPartIndex} ${i}`// can use the OneValue key and the AddTwoValues key
-            )),
-            variableNames: [`${offsetString}problemParts ${i}`]
-        },
-        // plusProblems isForm 0 doesn't exist
-        // the items do exist, but their links are wrong
-        // vanishes when we view it in presentProblems
-            [`${offsetString}problemParts ${i}`]: {
-                parent: `${offsetString}problem ${i}`,
-                name: `${offsetString}problemParts ${i}`,
-                value: problemPartIndicies.length
-            }
-    }
-}
 const initState = (temporaryState, parentName, stateName) => {
     return {
         ...temporaryState,
@@ -739,15 +669,15 @@ const makeProblemSet = (state, action) => {
 
     const nameOfProblemSet = `${offsetString}problemSet ${problemSetId}`
 
-    printTreeInteractive(temporaryState)
-    console.log("|", nameOfProblemSetCetagory, "|" , nameOfProblemSet)
+    // printTreeInteractive(temporaryState)
+    // console.log("|", nameOfProblemSetCetagory, "|" , nameOfProblemSet)
     temporaryState = addChild(temporaryState, nameOfProblemSetCetagory, nameOfProblemSet)
-    console.log('got here')
+    // console.log('got here')
 
     // need to also add the problem set state
     temporaryState = initState(temporaryState, nameOfProblemSetCetagory, nameOfProblemSet)
     // correct up to here
-    printTreeInteractive(temporaryState)
+    // printTreeInteractive(temporaryState)
 
     // make a test run with just printing out the number's
     mathProblems.forEach((mathProblem, i) => {
@@ -772,8 +702,8 @@ const makeProblemSet = (state, action) => {
 
         temporaryState = initState(temporaryState, nameOfProblemSet, nameOfProblem)
 
-        console.log('added problem')
-        printTreeInteractive(temporaryState)
+        // console.log('added problem')
+        // printTreeInteractive(temporaryState)
         // children: problemPartIndicies.map(problemPartIndex => (
         //     `${offsetString}${problemPartIndex} ${i}`// can use the OneValue key and the AddTwoValues key
         // )),
@@ -822,13 +752,15 @@ const makeProblemSet = (state, action) => {
             // make a problem part branch with the attributes using (offset, i, j)
             
         })
-        console.log('added problem parts')
-        printTreeInteractive(temporaryState)
-        console.log(temporaryState)
+        // console.log('added problem parts')
+        // printTreeInteractive(temporaryState)
+        // console.log(temporaryState)
 
 
         
     })
+    printTreeInteractive(temporaryState)
+
     // for each problem
         // get the list data for a single problem
         // const dataForSingleProblem = {}
@@ -846,182 +778,9 @@ const makeProblemSet = (state, action) => {
     return [temporaryState, true]
 }
 
-const setupLogicForProblemBaseTree = (Root2, offsetString, problems, numberOfProblemParts) => {
 
-    Root2 = incrementVariableBy(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`, 1)
-        
-    // {
-    //     ...Root2,
-        
-    //     [numberOfProblems3.name[0]]: {
-    //         ...Root2.numberOfProblems,
-    //         value: getVariable(Root2, ['problem set 0'], 'numberOfProblems').value + 1
-    //     }
-    // }
-
-    let numberOfProblems = getVariable(Root2, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value
-    let i = numberOfProblems - 1
-    // console.log('our problem', numberOfProblems, problems)
-    // console.log(numberOfProblems, problems[numberOfProblems])
-    const ithProblem = problems[i]
-    // console.log(i, 'th problem', ithProblem)
-    // make a list dependent on how many numbers will be included
-
-    // this is the numerical sequence for making sure the problem parts are unique in every senario
-    // 0, 1, 2   3, 4, 5    6, 7, 8
-    // where i is 0, 1, 2 and the number of problem parts is 3
-
-    // 0, 1, 2, 3, 4,   5, 6, 7, 8, 9
-    // where i is 0, 1, 2 and the number of problem parts is 5
-    // each time this function is called 1 set of indicies are generated (ex: 0, 1, 2 )
-    let a = numberOfProblemParts * i
-
-    let offsets = [a]
-
-    let j = 1
-    while(j < numberOfProblemParts) {
-        offsets = [...offsets, a + j]
-        j += 1
-    }
-    // let b = a + 1
-    // let c = a + 2
-    // console.log("new starting values", iA, iB, iAnswer)
-    // program froze here
-    // make the base branch for the generated tree
-    Root2 = addChild(Root2, `${offsetString}problemSet 0`, [`${offsetString}problem ${i}`])
-
-    return {Root2, indexArray: offsets, ithProblem}
-}
 // reducers that make state machines holding references to other reducers
 // make a simpler version for just showing a + b = c
-// const setupProblemForResults = (state, action) => {
-
-//     // 
-//     // need to put this into a for loop
-//     // ['elementary school', 'utilities', 'create problem']
-//     // ['problemCount']
-//     const parentOfProblemCount = 'elementarySchool displayResults'
-//     const offsetString = 'displayResults '
-//     console.log('setupProblemForResults', parentOfProblemCount)
-//     let problems = action.meta.problemSet
-//     // pull problems from action for displaying the results
-//     printTreeInteractive(state)
-//     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
-//     // console.log('we need to make', numberOfProblems2, 'problems')
-//     // console.log(state)
-//     // let numberOfProblems3 = getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`)
-//     // console.log(numberOfProblems3.name)
-//     // console.log('about to make a problem', getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value)
-
-//     let Root2 = state
-
-//     console.log('here', numberOfProblems2)
-//     for(let i = 0; i < numberOfProblems2; i++) {
-
-//         console.log(i)
-//         // reusable
-//         const baseStructure = setupLogicForProblemBaseTree(Root2, offsetString, problems, 4)
-//         // have to get Root2 out this way
-//         Root2 = baseStructure.Root2
-//         // array destructuring is positional not key so they can be renamed this way
-//         // showing the items inside indexArray to show the similarity it has with the code for making the problems
-//         let {indexArray: [iA, iB, iAnswer, iYourAnswer], ithProblem} = baseStructure
-
-//         // partially reusable
-//         const problemParts = makeProblemPartsForDisplayResults(ithProblem)
-
-//         let problemPartStates = {}
-//         baseStructure.indexArray.forEach((problemIndex, j) => {
-
-//             // collect all states from each call
-//             problemPartStates = {
-//                 ...problemPartStates,
-//                 ...makeProblemPart1And2(    problemIndex,
-//                                             i,
-//                                             offsetString,
-//                                             problemParts[j],
-//                                             true)
-//             }
-//             })
-                
-//         // can reuse some of the function calls here
-//         Root2 = {
-//                 ...Root2,
-//                 // reusable
-//                 ...putInProblemBaseTree(offsetString, baseStructure.indexArray, i),
-
-//                     // reusable
-//                     // these are children of the problem so they are indented 1 time
-//                     // spread all already spread states into Root2
-//                     ...problemPartStates
-//         }
-//     }
-    
-//     return [Root2, true]
-// }
-
-// const setupProblem = (state, action) => {
-
-//     // 
-//     // need to put this into a for loop
-//     // ['elementary school', 'utilities', 'create problem']
-//     // ['problemCount']
-//     const parentOfProblemCount = 'elementarySchool utilities createProblem'
-//     const offsetString = 'plusProblems '
-//     let numberOfProblems2 = getVariable(state, parentOfProblemCount, `${offsetString}problemCount`).value
-//     // console.log('we need to make', numberOfProblems2, 'problems')
-//     // console.log(state)
-//     // let numberOfProblems3 = getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`)
-//     // console.log(numberOfProblems3.name)
-//     // console.log('about to make a problem', getVariable(state, `${offsetString}problemSet 0`, `${offsetString}numberOfProblems`).value)
-
-//     let Root2 = state
-
-
-//     for(let i = 0; i < numberOfProblems2; i++) {
-
-//         // reusable
-//         const baseStructure = setupLogicForProblemBaseTree(Root2, offsetString, problems, 3)
-//         // have to get Root2 out this way
-//         Root2 = baseStructure.Root2
-//         // array destructuring is positional not key so they can be renamed this way
-//         let {indexArray: [iA, iB, iAnswer], ithProblem} = baseStructure
-
-//         // partially reusable
-//         const problemParts = makeProblemParts(ithProblem)
-                  
-//         // can reuse some of the function calls here
-//         Root2 = {
-//                 ...Root2,
-//                 // reusable
-//                 ...putInProblemBaseTree(offsetString, [iA, iB, iAnswer], i),
-
-//                     // reusable
-//                     // these are children of the problem so they are indented 1 time
-//                     ...makeProblemPart1And2(iA,
-//                                             i,
-//                                             offsetString, 
-//                                             problemParts.problemPart1,
-//                                             false
-//                                             ),
-
-//                     ...makeProblemPart1And2(iB,
-//                                             i,
-//                                             offsetString, 
-//                                             problemParts.problemPart2,
-//                                             false
-//                                             ),
-//                     // not reusable
-//                     ...makeAnswerForm(iAnswer,
-//                                         i,
-//                                         offsetString,
-//                                         problemParts.problemPart3
-//                                         )
-//         }
-//     }
-    
-//     return [Root2, true]
-// }
 export const fetchCatStart = (state, action) => {
 
     return {...state,
@@ -1060,6 +819,7 @@ const returnState = (state, action) => {
 const updateTypedAnswer = (state, action) => {
     const { newValue } = action.payload
     const stateName = action.type
+    console.log('updating the typed answer')
     console.log(action.meta.parentStateName)
     let parentList = action.meta.parentStateName.split(' ')
     const parentStateName = parentList.slice(0, parentList.length - 2).join(' ')
@@ -1071,9 +831,10 @@ const updateTypedAnswer = (state, action) => {
     console.log('new value', newValue, 'parent name', parentStateName)
 
     // set is probably wrong
-    state = set2(state, parentStateName, `${offsetString}value`, newValue)
+    // the value is now in the submission context
+    state = set2(state, `${parentStateName} submission`, `${offsetString}value`, newValue)
     console.log("after set", state)
-    let newValue2 = getVariable(state, parentStateName, `${offsetString}value`)
+    let newValue2 = getVariable(state, `${parentStateName} submission`, `${offsetString}value`)
     // it's like the value is set for certain sanerios
     console.log(newValue2)
     return [state, true]

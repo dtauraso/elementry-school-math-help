@@ -51,6 +51,7 @@ export const autoSolve = (pathToState) => dispatch => {
 export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
 
     // have a custom state that just lets you save to the field variable
+    console.log(lotsOfThings, pathToState)
     dispatch({
         type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
         payload: lotsOfThings,

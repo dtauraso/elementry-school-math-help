@@ -9,14 +9,15 @@ import {
     getVariable,
     getChild,
     treeVisualizer,
-    treeVisualizer2 } from '../reducerHelpers'
+    treeVisualizer2,
+    printTreeInteractive } from '../reducerHelpers'
 import AddTwoValues from './AddTwoValues'
 
 
 const getMyProblems = ( state, location ) => {
 
     let Root = state
-    console.log('my lcoation inside the selector', location)
+    // console.log('my lcoation inside the selector', location)
     const offsetString = location
     let elementarySchoolName = 'elementarySchool'
     // let x = treeVisualizer2(state, elementarySchoolName)
@@ -25,10 +26,13 @@ const getMyProblems = ( state, location ) => {
     // let problemSetDataSetName = props.location.pathname//useHistory().location.pathname
     // console.log('history', problemSetDataSetName.slice(1, problemSetDataSetName.length))
     let elementarySchool = getCell(Root, elementarySchoolName)
-    let problemSets = getVariable(Root, elementarySchoolName, `${offsetString}problemSets`)
+    // console.log(elementarySchool)
+    printTreeInteractive(Root)
+    let problemSets = getChild(Root, elementarySchool, `${offsetString}`)
     // console.log('stuff', elementarySchool, problemSets.value - 1)
     // messed up here
-    let problemSet = getChild(Root, elementarySchool, `${offsetString}problemSet ${problemSets.value - 1}`)
+    // console.log(problemSets, `${offsetString}problemSet ${problemSets.children.length - 1}`)
+    let problemSet = getChild(Root, problemSets, `${offsetString}problemSet ${problemSets.children.length - 1}`)
     // console.log('problem set', problemSet)
     let problems = problemSet.children//Object.keys(problemSet.children)
     // console.log('my problems', problems)

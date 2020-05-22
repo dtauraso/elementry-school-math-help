@@ -44,21 +44,20 @@ export const AddTwoValues = (props) => {
     // getValue(Root).table['AddTwoValues'][stateCoordinates.problemId] => #
     // problem #
     // console.log('our key', stateCoordinates)
-
+    // console.log(stateCoordinates)
     // console.log('state to look for|', `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
     // get problem parts
     let x = getCell(Root, `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
     // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
 
-
     // console.log({problemParts})
     // get the quantity size
-    // the item # is the first number after the offset string
-    let item = problemParts[0].split(' ')[1]
+    // the item # is the second number after the offset string
+    let problemPart = problemParts[0].split(' ')[2]
     // console.log({item})
 
-    let stateName = `${stateCoordinates.offsetString}${item} ${stateCoordinates.problemId}`
+    let stateName = `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${problemPart}`
     let state = getCell(Root, stateName)
     // let isForm = getVariable(Root,
     //     stateName,
@@ -68,11 +67,13 @@ export const AddTwoValues = (props) => {
 
     // }
     // console.log('state', state.name)
+    // the submission context is only with the 3rd number in each problem
     let myQuantity = getVariable(Root,
-        stateName,
+        `${stateCoordinates.offsetString}${stateCoordinates.problemId} 2 submission`,
         `${stateCoordinates.offsetString}quantity`
         ).value
     let sizeOfQuantity = myQuantity.length
+    // console.log({problemParts})
     // console.log('quantity for the add 2 values', myQuantity)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
 
@@ -95,7 +96,7 @@ export const AddTwoValues = (props) => {
                 <OneValue
                     key={i}
                     stateCoordinates={{...stateCoordinates,
-                                        problemPart: problemKey.split(' ')[1],
+                                        problemPart: problemKey.split(' ')[2],
                                         offsetString: stateCoordinates.offsetString}}
                     />
             ))}

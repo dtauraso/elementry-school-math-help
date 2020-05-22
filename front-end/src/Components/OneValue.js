@@ -6,7 +6,8 @@ import { connect } from 'react-redux'
 import { getCat, submitAnswer } from './Redux/Actions'
 import {
     getCell,
-    getVariable } from '../reducerHelpers'
+    getVariable,
+    printTreeInteractive } from '../reducerHelpers'
 
 // convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action
 // https://codesandbox.io/s/wizardly-waterfall-w3vf2
@@ -46,14 +47,15 @@ const OneValue = (props) => {
         stateCoordinates,
         Root} = props
     // console.log('redux tree', Root)
-    // console.log('one value state name|', `${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`)
-    let problemPartName = `${stateCoordinates.offsetString}${stateCoordinates.problemPart} ${stateCoordinates.problemId}`
+    // console.log('one value state name|', `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${stateCoordinates.problemPart}`)
+    let problemPartName = `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     // console.log(stateCoordinates)
     let x = getCell(Root, problemPartName)
     // console.log('problem part', x)
     let isForm = getVariable(Root,
                             problemPartName,
                             `${stateCoordinates.offsetString}isForm`).value
+    
     // console.log('isForm', isForm)
     let operationType = getVariable(Root,
         problemPartName,
@@ -65,6 +67,7 @@ const OneValue = (props) => {
             problemPartName,
             `${stateCoordinates.offsetString}value`).value
     }
+    // printTreeInteractive(Root)
     // we cannot assume there is a form right now
     // const oneValue = getValue(Root, statePath)
     // let { isForm, operationType } = oneValue.variables

@@ -197,8 +197,9 @@ export const getVariable = (state, parentStateName, variableName) => {
     // as long as the same parent doesn't also have a variable name called 'quantity 3'.
     // This is to allow the user to use variable names with this contextual state chart
     // at a simular level of detail they would use in a programming lnagugae
-
+    // console.log("here", parentStateName, state)
     let cell = getCell(state, parentStateName)
+    // console.log({cell})
     if(!cell) {
         return null
     }
@@ -214,16 +215,19 @@ export const getVariable = (state, parentStateName, variableName) => {
         if(cellVariableName.search(variableName) === -1) {
             return null
         }
+        // console.log(cellVariableName.search(variableName))
+
         variableNameIsInCellVariableNamesCount ++
         found = true
         variable = state[cellVariableName]
     })
+    // console.log(found)
     if(variableNameIsInCellVariableNamesCount > 1) {
         console.log(`You cannot have more than 1 variable name that contains |${variableName}|`)
         return null
     }
     if(!found) {
-        console.log(variableName, `may exist but there is no link from |${parentStateName}| to |${variableName}|`)
+        console.log(`A variable similarly called ${variableName} may exist but there is no link from |${parentStateName}| to |${variableName}|`)
         return null
 
     }
@@ -269,7 +273,7 @@ export const getJsObject = (state, parentStateName, variableName) => {
         return null
     }
     if(!found) {
-        console.log(variableName, `may exist but there is no link from |${parentStateName}| to |${variableName}|`)
+        console.log(`A variable similarly called ${variableName} may exist but there is no link from |${parentStateName}| to |${variableName}|`)
         return null
 
     }
@@ -301,11 +305,13 @@ export const getChild = (state, cell, childName) => {
     if(!cell) {
         return null
     }
+    // console.log('getting child', cell)
+    // console.log(Object.keys(cell))
     if(!Object.keys(cell).includes('children')) {
         return null
     }
     let child = null
-    
+    // console.log(cell.children, childName, cell.children.includes(childName))
     if(cell.children.includes(childName)) {
         child = getCell(state, childName)
     }
