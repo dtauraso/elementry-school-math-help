@@ -31,6 +31,7 @@ import {    makeCell,
 
 // Only add states when they need to be initially created or enumaerated with a graph generator.
 // No singletone states should be created just cause they don't need to exist untill that reducer runs.
+// variables shouldn't call functions
 
 const problems = [
     {a: 4, b: 3},
@@ -85,32 +86,6 @@ const appendStates = (temporaryState, states) => {
     }
 }
 
-
-
-// root -> stateName1 -> stateName2
-/*
-guarantees links are made in a consistent manner
-f(table, remainingName, stateData)
-if remainingName is empty
-    return ''
-
-if table[car(remainingName)] exists
-    newNextPartName = f(table, rest(remainingName), stateData)
-    if newNextPartName !== ''
-        // linking current to next
-        table[car(remainingName)].nextparts[newNextPartName] = 1
-        
-        // maintain already existing link
-        return car(remainingName)
-    else
-
-        // maintain already existing link
-        return car(remainingName)
-else
-    make new node
-    table[lastName] = new node
-    return new node name
-*/
 
 const setJSObject2 = (state, parentStateName, variableName, newValue) => {
 
@@ -711,17 +686,6 @@ const makeProblemSet = (state, action) => {
             if(j < 2) {
                 temporaryState = appendStates(  temporaryState,
                     makeProblemPartNumber(offsetString, i, j, problemPart))
-
-                // if(j === 2 && offsetString === 'displayResults ') {
-                //     // temporaryState = appendStates(  temporaryState,
-                //     //     makeProblemPartNumber(offsetString, i, j, problemPart))
-
-                // }
-                // else {
-                //     temporaryState = appendStates(  temporaryState,
-                //         makeProblemPartNumber(offsetString, i, j, problemPart))
-
-                // }
             }
             
             // answerForm or answer
@@ -754,20 +718,6 @@ const makeProblemSet = (state, action) => {
     })
     printTreeInteractive(temporaryState)
 
-    // for each problem
-        // get the list data for a single problem
-        // const dataForSingleProblem = {}
-
-        // for each problem part
-
-            // a, b, (c or answer form), yourAnswer
-            // if we are at the 3rd problem part
-                // if the offset says displayProblems
-                    // use a different function
-                // else
-                    // use the number function
-            // else
-                // use the regular number function
     return [temporaryState, true]
 }
 
@@ -1122,43 +1072,12 @@ const setupForBackend = (state, action) => {
 
     console.log('we are setting the completed form data for submitting to the backend')
     console.log('state', state, action)
-
-    // Root2 = makeLinks(Root2, {
-    //     parent: [`${iAnswer} ${i}`],
-    //     newStateName: [`operationType ${iAnswer}`],
-    //     stateCells: makeCell({
-    //         name: [`operationType ${iAnswer}`],
-    //         value: ''
-    //     }),
-    //     isVariable: true,
-    //     isIntermediateState: false
-    // })
     // make a single payload state
-    // let problemTable = makeCell({
-    //     name: ['payload'],
-    //     jsObject: {'problem set table': []}
-    // })
+
 
     let temporaryState = state
     const offsetString = action.meta.offsetString
     
-    // temporaryState = {
-    //     ...temporaryState,
-    //     ...problemTable
-        
-    // }
-    // temporaryState = makeLinks(temporaryState, {
-    //         parent: ['elementary school', 'store results'],
-    //         newStateName: ['payload'],
-    //         stateCells: makeCell({
-    //             name: ['payload'],
-    //             jsObject: {'problem set table': []}
-    //         }),
-    //         isVariable: true,
-    //         isIntermediateState: false
-    // })
-
-    // temporaryState = tableAssignJsObject(temporaryState, problemTable['XXXXXXX'], [])
     // console.log('added the problem set table', temporaryState)
     temporaryState = processProblems(temporaryState, action, collectProblems)
 
@@ -1170,19 +1089,6 @@ const setupForBackend = (state, action) => {
     // console.log('correctProblems', correctProblems)
     // calculate % of correct problems
     // round to largest whole number
-    // let problemSetTable = makeCell({
-    //     name: ['problem sets table'],
-    //     jsObject: {nameOfProblemSet: 'problem set 0',
-    //                     numberCorrect: correctProblems,
-    //                     totalProblems: myCompletedProblems.length
-    //                 }
-
-    // })
-    // temporaryState = {
-    //     ...temporaryState,
-    //     ...problemSetTable
-        
-    // }
     temporaryState = tableAssignJsObject2(
         temporaryState,
         myCompletedProblems, 
@@ -1195,24 +1101,6 @@ const setupForBackend = (state, action) => {
         )
 
 
-    /*
-
-    maybe just make a js object table
-    makeCell({
-        name: ['problem set table'],
-        jsObject: {
-            dddddddd
-        }
-    })
-    problem set table
-        the name of the problem set0 | % right
-
-    problems table
-        problem
-        a0 | b0 | answer0 | theirAnswer0 | gotItRightTheFirstTime0
-
-
-    */
     return [temporaryState, true]
 }
 
@@ -1231,24 +1119,11 @@ const saveProblemSetSelectedForDisplay = (state, action) => {
     // not connected to the main graph
     // temporaryState = setVariable(temporaryState, parentStateName, stateName, newValue) => {
     // console.log('updating value', stateName)
-    // temporaryState = {
-    //     ...temporaryState,
-    //     ...makeCell({
-    //         name: stateName,
-    //         nextStates: [],
-    //         functionCode: updateStateValue,
-    //         value: newValue
-    //     })        
-    // }
     temporaryState = setVariable(   temporaryState,
                                     parentStateName,
                                     'selectedProblemSetFromBackend',
                                     problemSetId)
 
-    // temporaryState = setJSObject2(   temporaryState,
-    //                                 parentStateName,
-    //                                 'resultsFromBackend',
-    //                                 newValue)
     // console.log('new value', newValue)
     // printTreeInteractive(temporaryState)
     return [temporaryState, true]
@@ -1262,67 +1137,9 @@ const storeResults = (state, action) => {
 
     // console.log('store resulst', payload)
 
-//     temporaryState = makeLinks(temporaryState, {
-//         parent: ['elementary school', 'store results'],
-//         newStateName: ['payload'],
-//         stateCells: makeCell({
-//             name: ['payload'],
-//             jsObject: {'problem set table': []}
-//         }),
-//         isVariable: true,
-//         isIntermediateState: false
-// })
     let parentStateName = 'elementarySchool storeResults'
     temporaryState = setJSObject2(temporaryState, parentStateName, 'resultsFromBackend', payload)
     // console.log('saved payload')
-    // let tree = treeVisualizer(temporaryState, ['elementary school'])
-    // console.log('tree', tree)
-    // temporaryState = makeLinks(temporaryState, {
-    //     parent: ['elementary school', 'store results'],
-    //     newStateName: ['resultsFromBackend'],
-    //     stateCells: makeCell({
-    //         name: ['resultsFromBackend'],
-    //         // nextParts: ['problemSetSelected'],
-    //         jsObject: payload
-    //     }),
-    //     isVariable: true,
-    //     isIntermediateState: true
-    // })
-
-    // let problemTable = makeCell({
-    //     name: ['resultsFromBackend'],
-    //     nextParts: ['problemSetSelected'],
-    //     jsObject: payload
-    // })
-
-    // this is an index state
-    // It's purpose is to store and update a value without relying on a parent state to access the variable
-    // let ithProblemSet = makeCell({
-    //     name: ['resultsFromBackend', 'problemSetSelected'],
-    //     nextStates: [],
-    //     functionCode: updateStateValue,
-    //     value: -1
-    // })
-    // temporaryState = makeLinks(temporaryState, {
-    //     parent: ['elementary school', 'store results'],
-    //     newStateName: ['selectedProblemSetFromBackend'],
-    //     stateCells: makeCell({
-    //         name: ['selectedProblemSetFromBackend'],
-    //         nextStates: [],
-    //         functionCode: updateStateValue,
-    //         value: -1
-    //     }),
-    //     isVariable: true,
-    //     isIntermediateState: false
-    // })
-
-    // let temporaryState = state
-    // temporaryState = {
-    //     ...temporaryState,
-    //     // ...problemTable,
-    //     // ...ithProblemSet
-        
-    // }
     // console.log(temporaryState)
     return [temporaryState, true]
 }
@@ -1447,27 +1264,6 @@ let Root2 = {
         name: 'displayResults ',
         children: []
     },
-        // 'plusProblems problemSets 0': {
-        //     parent: 'elementarySchool',
-        //     name: 'plusProblems problemSets 0',
-        //     value: 1
-        // },
-             // do later(after program is finished)
-            //  change of plan, the program doesn't even work for all problem sets
-            // and the problem has to do with the problem counts
-            // fix the program count issue
-            // fix the problems being passed in 2 different ways
-            // 'plusProblems problemSet 0': {
-            //     parent: 'elementarySchool',
-            //     children: [],
-            //     name: 'plusProblems problemSet 0',
-            //     variableNames: ['plusProblems numberOfProblems 0']
-            // },
-            //     'plusProblems numberOfProblems 0': {
-            //         parent: 'plusProblems problemSet 0',
-            //         name: 'plusProblems numberOfProblems 0',
-            //         value: 0
-            //     },
             'elementarySchool testing': {
                 parent: 'root',
                 name: 'elementarySchool testing',
@@ -1515,11 +1311,9 @@ let Root2 = {
                 children: ['saveProblemSetSelectedForDisplay', 'displayResults problemSet 0'],
                 variableNames: ['selectedProblemSetFromBackend', 'displayResults problemCount']
             },
-                // variables shouldn't call functions
                 'selectedProblemSetFromBackend': {
                     parent: 'elementarySchool storeResults',
                     name: 'selectedProblemSetFromBackend',
-                    // functionCode: savePayloadToFrontEnd,
                     value: -1,
                 },
                 'displayResults problemCount': {
