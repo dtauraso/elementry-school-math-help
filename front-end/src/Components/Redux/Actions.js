@@ -143,3 +143,11 @@ export const setProblemSetSelector = (problemSetId) => dispatch => {
     });
 
 }
+
+export const clearResults = () => dispatch => {
+    axios
+        .delete(`http://localhost:3001/api`)
+        .catch(error => {
+            console.log('error', error)
+        })
+}

@@ -678,12 +678,12 @@ const makeProblemSet = (state, action) => {
     temporaryState = initState(temporaryState, nameOfProblemSetCetagory, nameOfProblemSet)
     // correct up to here
     // printTreeInteractive(temporaryState)
-
+    console.log({mathProblems})
     // make a test run with just printing out the number's
     mathProblems.forEach((mathProblem, i) => {
         let dataForSingleProblem = {}
         let problemParts = []
-        if(offsetString == 'displayResults ') {
+        if(offsetString === 'displayResults ') {
             dataForSingleProblem = makeProblemPartsForDisplayResults(mathProblem)
             const [a, b, answer, yourAnswer] = dataForSingleProblem
             problemParts = [a, b, answer, yourAnswer]
@@ -701,17 +701,10 @@ const makeProblemSet = (state, action) => {
         temporaryState = addChild(temporaryState, nameOfProblemSet, nameOfProblem)
 
         temporaryState = initState(temporaryState, nameOfProblemSet, nameOfProblem)
-
-        // console.log('added problem')
-        // printTreeInteractive(temporaryState)
-        // children: problemPartIndicies.map(problemPartIndex => (
-        //     `${offsetString}${problemPartIndex} ${i}`// can use the OneValue key and the AddTwoValues key
-        // )),
     
-        // temporaryState = addChild(temporaryState, ) plusProblems problem 0
         problemParts.forEach((problemPart, j) => {
 
-            const problemPartCoordinates = `${offsetString}${i} ${j}`
+            const problemPartCoordinates = `${offsetString}${i} ${j}` // can use the OneValue key and the AddTwoValues key
             temporaryState = addChild(temporaryState, nameOfProblem, problemPartCoordinates)
 
             // a, b
@@ -819,64 +812,67 @@ const returnState = (state, action) => {
 const updateTypedAnswer = (state, action) => {
     const { newValue } = action.payload
     const stateName = action.type
-    console.log('updating the typed answer')
-    console.log(action.meta.parentStateName)
+    // console.log('updating the typed answer')
+    // console.log(action.meta.parentStateName)
     let parentList = action.meta.parentStateName.split(' ')
     const parentStateName = parentList.slice(0, parentList.length - 2).join(' ')
     const offsetString = action.meta.offsetString
-    console.log("got here", parentStateName)
+    // console.log("got here", parentStateName)
     // parent state name plusProblems 2 0 submission 0
     // plusProblems 2 0 submission 0 
     // the one passed into here plusProblems 2 0 submission 0 updateTypedAnswer 0
-    console.log('new value', newValue, 'parent name', parentStateName)
+    // console.log('new value', newValue, 'parent name', parentStateName)
 
     // set is probably wrong
     // the value is now in the submission context
     state = set2(state, `${parentStateName} submission`, `${offsetString}value`, newValue)
-    console.log("after set", state)
+    // console.log("after set", state)
     let newValue2 = getVariable(state, `${parentStateName} submission`, `${offsetString}value`)
     // it's like the value is set for certain sanerios
-    console.log(newValue2)
+    // console.log(newValue2)
     return [state, true]
 
 }
 const noValue = (state, action) => {
-    console.log("is invalid")
-    const parentStateName = action.meta.parentStateName
+    // console.log("is invalid")
+    const submissionStateName = action.meta.parentStateName
     const offsetString = action.meta.offsetString
+    // console.log({submissionStateName})
+    // printTreeInteractive(state)
     // this value should have been set by updateTypedAnswer
-    let newValue2 = getVariable(state, parentStateName, `${offsetString}value`)
-    console.log('value', newValue2)
+    let newValue2 = getVariable(state, submissionStateName, `${offsetString}value`)
+    // console.log('value', newValue2)
 
-    let newValue = getVariable(state, parentStateName, `${offsetString}value`).value
+    let newValue = getVariable(state, submissionStateName, `${offsetString}value`).value
     if(newValue.length === 0) {
 
         // const parentStateName = action.meta.parentStateName
 
         let newState = setArray2(
             state,
-            parentStateName,
+            submissionStateName,
             `${offsetString}quantity`,
             makeQuantity(0,
-                    getVariable(state, parentStateName, `${offsetString}actualAnswer`).value))
+                    getVariable(state, submissionStateName, `${offsetString}actualAnswer`).value))
 
-        newState = set2(newState, parentStateName, `${offsetString}feedbackMessage`, 'O')
+        newState = set2(newState, submissionStateName, `${offsetString}feedbackMessage`, 'O')
 
-        newState = set2(newState, parentStateName, `${offsetString}backgroundColor`, 'white')
+        newState = set2(newState, submissionStateName, `${offsetString}backgroundColor`, 'white')
         
         return [newState, true]
     
     }
     return [state, false]
 }
+
 const isInteger = (state, action) => {
-    const parentStateName = action.meta.parentStateName
+    const submissionStateName = action.meta.parentStateName
     const offsetString = action.meta.offsetString
 
     // console.log(getVariable(state, parentStateName, 'value').value,
             // parseInt(getVariable(state, parentStateName, 'value').value))
 
-    return [state, !isNaN(parseInt(getVariable(state, parentStateName, `${offsetString}value`).value)) === true]
+    return [state, !isNaN(parseInt(getVariable(state, submissionStateName, `${offsetString}value`).value)) === true]
 }
 const determineAnswerMessage = (actualAnswer, value) => {
     
@@ -888,6 +884,11 @@ const determineAnswerMessage = (actualAnswer, value) => {
 const determineAnswer = (actualAnswer, value) => {
     return actualAnswer === value
 }
+// submit value
+// 66(passs), 8(passes), 7(passes), ''(passes), 'gh'(pass)
+
+// all reducers below this line probably point to the wrong states
+
 const submitValue = (state, action/*e*/) => {
     // start changing this state
     // console.log("submit value", action.type, action.meta.parentStateName)
@@ -903,11 +904,11 @@ const submitValue = (state, action/*e*/) => {
     // all the info has made it this far
     // const { newValue } = action.payload
     const stateName = action.type
-    const parentStateName = action.meta.parentStateName
+    const submissionStateName = action.meta.parentStateName
     const offsetString = action.meta.offsetString
-    console.log('submitting our value function')
-    console.log(parentStateName, stateName)
-    const newValue = getVariable(state, parentStateName, `${offsetString}value`).value
+    // console.log('submitting our value function')
+    // console.log(submissionStateName, stateName)
+    const newValue = getVariable(state, submissionStateName, `${offsetString}value`).value
 
     // const { basePath } = action.meta.basePath
     // const variablesBasePath = [...action.meta.basePath, 'variables']
@@ -916,46 +917,46 @@ const submitValue = (state, action/*e*/) => {
     // console.log(getValue(state, makeVariablesObjectPath(action)))
     // console.log("set value", parentStateName, getVariable(state, parentStateName, 'value'))
     // this line works
-    let newState = set2(state, parentStateName, `${offsetString}value`, parseInt(newValue))
-    console.log('after the value is set')
-    printTreeInteractive(state)
+    let newState = set2(state, submissionStateName, `${offsetString}value`, parseInt(newValue))
+    // console.log('after the value is set')
+    // printTreeInteractive(state)
     // console.log('new tree')
     // console.log(newState, stateName)
     // console.log("correct", getVariable(state, parentStateName, 'correct'))
-    let actualAnswer = getVariable(newState, parentStateName, `${offsetString}actualAnswer`).value
+    let actualAnswer = getVariable(newState, submissionStateName, `${offsetString}actualAnswer`).value
     let maxValue = newValue > actualAnswer? newValue: actualAnswer
     // wrong
     newState = setArray2(
         newState,
-        parentStateName,
+        submissionStateName,
         `${offsetString}quantity`,
         makeQuantity(newValue,
             maxValue)
                 )
-    console.log('after the quantity is set', maxValue)
-    printTreeInteractive(state)
+    // console.log('after the quantity is set', maxValue)
+    // printTreeInteractive(state)
     // we have no way of knowing if the value they entered is wrong or too small
     // console.log('new tree 2', newState, stateName)
 // pass in correctFirstTime
 
 
-    newState = set2(newState, parentStateName, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
+    newState = set2(newState, submissionStateName, `${offsetString}correct`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswer)
 
-    newState = set2(newState, parentStateName, `${offsetString}feedbackMessage`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswerMessage)
+    newState = set2(newState, submissionStateName, `${offsetString}feedbackMessage`, [`${offsetString}actualAnswer`, `${offsetString}value`], determineAnswerMessage)
 
-    newState = set2(newState, parentStateName, `${offsetString}backgroundColor`, 'black')
+    newState = set2(newState, submissionStateName, `${offsetString}backgroundColor`, 'black')
 
     // console.log('new tree 3', newState, stateName)
-    newState = set2(newState, parentStateName, `${offsetString}submitCount`, getVariable(newState, parentStateName, `${offsetString}submitCount`).value + 1)
-    const submitCount = getVariable(newState, parentStateName, `${offsetString}submitCount`).value
+    newState = set2(newState, submissionStateName, `${offsetString}submitCount`, getVariable(newState, submissionStateName, `${offsetString}submitCount`).value + 1)
+    const submitCount = getVariable(newState, submissionStateName, `${offsetString}submitCount`).value
 
     // so this matches gotItRightTheFirstTime
     if(submitCount === 1) {
-        newState = set2(newState, parentStateName, `${offsetString}firstAnswer`, getVariable(newState, parentStateName, `${offsetString}value`).value)
+        newState = set2(newState, submissionStateName, `${offsetString}firstAnswer`, getVariable(newState, submissionStateName, `${offsetString}value`).value)
 
     }
-    console.log('after everything')
-    printTreeInteractive(state)
+    // console.log('after everything')
+    // printTreeInteractive(state)
 
     // console.log('new tree 4', newState, stateName)
 
@@ -989,25 +990,21 @@ const gotItRightTheFirstTime = (state, action) => {
     return [newState, false]
 
 }
+// tests above this line pass
 const processProblems = (state, action, cb) => {
 
     // This function generates the (i, j) coordinates for finding the correct state
-    // (i, j) => 00, 10, 20, 31, 41, 51... (numberOfProblems * 3, numberOfProblems)
+    // (i, j) => 00, 13, ... (numberOfProblems, numberOfProblems * 3)
     // "problem set 0" tells me how many problems we need to use to look for the forms
     const offsetString = action.meta.offsetString
 
     let problems = getChildren(state, `${offsetString}problemSet 0`)
     let numberOfProblems = problems.length
     let temporaryState = state
-    let i = 0
-    let j = -1
-    for(; i < numberOfProblems * 3; i += 3) {
 
-        if(i % 3 === 0) {
-            j += 1
-        }
 
-        temporaryState = cb(temporaryState, action, i, j)
+    for(let i = 0; i < numberOfProblems; i += 1) {
+        temporaryState = cb(temporaryState, action, i, 0)
     }
     return temporaryState
 
@@ -1020,26 +1017,27 @@ const solveProblem = (state, action, i, j) => {
     // now it seems to be working
     // don't know if it was solved
     const offsetString = action.meta.offsetString
-    console.log("insied solveProblem", `|${offsetString}|`)
+    console.log("inside solveProblem", `|${offsetString}|${i} ${j}`)
+    printTreeInteractive(state)
     let temporaryState = state
     let a = getVariable(state, `${offsetString}${i} ${j}`, `${offsetString}value`).value
-    let b = getVariable(state, `${offsetString}${i + 1} ${j}`, `${offsetString}value`).value
-    let submission =           `${offsetString}${i + 2} ${j} submission ${j}`
-    // console.log(a, b, submission)
+    let b = getVariable(state, `${offsetString}${i} ${j + 1}`, `${offsetString}value`).value
+    let submission =           `${offsetString}${i} ${j + 2} submission`
+    console.log(a, b, submission)
     // randomly get it wrong
     let randomValue = Math.floor(Math.random() * 10) % 2
     // plusProblems correctFirstTime 4
     if(randomValue === 0) {
         // console.log("answer is right the first time")
         temporaryState = set2(temporaryState, submission, `${offsetString}value`, a + b)
-        let progressMeter = `${offsetString}${i + 2} ${j} progressMeter ${j}`
+        let progressMeter = `${offsetString}${i} ${j + 2} progressMeter`
         temporaryState = set2(temporaryState, progressMeter, `${offsetString}correctFirstTime`, true)
     
     }
     else {
         // if b == 1 then this is always messed up
         temporaryState = set2(temporaryState, submission, `${offsetString}value`, -1)
-        let progressMeter = `${offsetString}${i + 2} ${j} progressMeter ${j}`
+        let progressMeter = `${offsetString}${i} ${j + 2} progressMeter`
         temporaryState = set2(temporaryState, progressMeter, `${offsetString}correctFirstTime`, false)
 
     }
@@ -1083,9 +1081,9 @@ const collectProblems = (state, action, i, j) => {
     const offsetString = action.meta.offsetString
 
     let a = getVariable(state, `${offsetString}${i} ${j}`, `${offsetString}value`).value
-    let b = getVariable(state, `${offsetString}${i + 1} ${j}`, `${offsetString}value`).value
-    let submission =           `${offsetString}${i + 2} ${j} submission ${j}`
-    let progressMeter =        `${offsetString}${i + 2} ${j} progressMeter ${j}`
+    let b = getVariable(state, `${offsetString}${i} ${j + 1}`, `${offsetString}value`).value
+    let submission =           `${offsetString}${i} ${j + 2} submission`
+    let progressMeter =        `${offsetString}${i} ${j + 2} progressMeter`
 
 
     let firstAnswer = getVariable(state, submission, `${offsetString}firstAnswer`).value
@@ -1336,17 +1334,19 @@ const setupSubmachineForDisplay = (state, action) => {
     let temporaryState = state
 
     let problemSets = getCell(temporaryState, 'resultsFromBackend').jsObject['problems']
+    console.log({problemSets})
+    // problemSetId is too large(the sql id table isn't getting reset)
     let problemSetId = getCell(temporaryState, 'selectedProblemSetFromBackend').value
 
     console.log('my problem sets', problemSets, 'selected problem set id', problemSetId)
     const myProblemSet = problemSets[problemSetId]
     console.log('the problem set to display', myProblemSet)
     // make the state machine structure for each problem
-    action.meta.problemSet = myProblemSet
-    
+    // action.meta.problemSet = myProblemSet
+    action.meta.mathProblems = myProblemSet
     temporaryState = setVariable(temporaryState, 'elementarySchool displayResults', 'problemCount', myProblemSet.length)
-    // let result = setupProblemForResults(temporaryState, action)
-    // temporaryState = result[0]
+    let result = makeProblemSet(temporaryState, action)
+    temporaryState = result[0]
     printTreeInteractive(temporaryState)
 
     // have the viewing card read the structure

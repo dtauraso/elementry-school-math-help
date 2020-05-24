@@ -5,7 +5,7 @@ import ProblemSet from './ProblemSet'
 import Loader from 'react-loader-spinner';
 
 import { connect } from 'react-redux'
-import { getProblemSets } from '../Redux/Actions'
+import { getProblemSets, clearResults } from '../Redux/Actions'
 import {
     getCell,
     treeVisualizer } from '../../reducerHelpers'
@@ -48,14 +48,25 @@ const Results = (props) => {
     // .jsObject already existed when the state chart was initialized
     let stuff = getCell(Root, 'resultsFromBackend').jsObject['problemSets']
     // let problemSets = getCell(Root, ['resultsFromBackend']).jsObject['problemSets']
-
+    const clearResults = () => {
+        props.clearResults()
+    }
     if(stuff) {
         // console.log('stuff', stuff.jsObject)
         return (
-            <ShowProblems>
-                <ProblemSets />
-                <ProblemSet />
-            </ShowProblems>
+            <div>
+                <ShowProblems>
+                    <ProblemSets />
+                    <ProblemSet />
+                </ShowProblems>
+
+                {/* <button onClick={() => clearResults()}>clear results</button> */}
+
+            </div>
+            
+
+
+            
         )
     
     }
@@ -73,6 +84,6 @@ const mapStateToProps = state => {
 }
 export default connect(
     mapStateToProps,
-    { getProblemSets }
+    { getProblemSets, clearResults }
 
 )(Results)
