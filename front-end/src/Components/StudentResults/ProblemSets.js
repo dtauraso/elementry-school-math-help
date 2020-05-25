@@ -15,11 +15,11 @@ const ProblemSets = (props) => {
 
     // console.log(x)
     let problemSets = getCell(Root, 'resultsFromBackend').jsObject['problemSets']
-    // console.log('my problem sets', problemSets)
+    console.log('my problem sets', problemSets)
     return (
         <div>
-            {problemSets.map((problemSetStat, i) => (
-                <ProblemSetsCard key={i} stateCoordinates={{problemSetStat: i}}/>
+            {problemSets.map((problemSet, i) => (
+                <ProblemSetsCard key={i} stateCoordinates={{problemSet: i}}/>
             ))}
         </div>
     )

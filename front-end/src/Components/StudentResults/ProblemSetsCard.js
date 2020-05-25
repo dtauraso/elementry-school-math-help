@@ -15,22 +15,26 @@ const ProblemSetStat = styled.p`
 const ProblemSetCard = (props) => {
 
     const { Root,
-            stateCoordinates: {problemSetStat}} = props
+            stateCoordinates: {problemSet}} = props
 
     let {   id,
             nameOfProblemSet,
             numberCorrect,
-            totalProblems} = getCell(Root, 'resultsFromBackend').jsObject['problemSets'][problemSetStat]
+            totalProblems} = getCell(Root, 'resultsFromBackend').jsObject['problemSets'][problemSet]
     // console.log(myProblemSetStat)
 
-    const selectProblemSetStat = (id) => {
+    const selectProblemSet = (id) => {
 
         console.log(`get problem set ${id - 1}`)
         props.setProblemSetSelector(id - 1)
     }
+    // at presentProblems level?
+    // yes
+    // ith problem set
+
     return (
         <div>
-            <ProblemSetStat onClick={() => selectProblemSetStat(id)}>
+            <ProblemSetStat onClick={() => selectProblemSet(id)}>
                 {nameOfProblemSet}  {numberCorrect} / {totalProblems} correct
             </ProblemSetStat>
         </div>

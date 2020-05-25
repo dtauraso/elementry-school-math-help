@@ -28,11 +28,14 @@ const getMyProblems = ( state, location ) => {
     let elementarySchool = getCell(Root, elementarySchoolName)
     // console.log(elementarySchool)
     printTreeInteractive(Root)
+    // const offsetStateName = offsetString.slice(0, offsetString.length - 1)
+
+    // fails as offsetstring is not exactly the state name
     let problemSets = getChild(Root, elementarySchool, `${offsetString}`)
     // console.log('stuff', elementarySchool, problemSets.value - 1)
     // messed up here
     // console.log(problemSets, `${offsetString}problemSet ${problemSets.children.length - 1}`)
-    let problemSet = getChild(Root, problemSets, `${offsetString}problemSet ${problemSets.children.length - 1}`)
+    let problemSet = getChild(Root, problemSets, `${offsetString} problemSet ${problemSets.children.length - 1}`)
     // console.log('problem set', problemSet)
     let problems = problemSet.children//Object.keys(problemSet.children)
     // console.log('my problems', problems)

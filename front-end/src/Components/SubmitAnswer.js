@@ -33,7 +33,7 @@ const SubmitAnswer = (props) => {
         Root} = props
     // console.log("submit answer", stateCoordinates)
     // should assume the coordinates for the answer form were passed in
-    let answerFormStateName = `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    let answerFormStateName = `${stateCoordinates.offsetString} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     let answer = getCell(Root, answerFormStateName)
     // console.log('answer', answer)
 //     `${offsetString}${i} ${j}`
@@ -50,10 +50,10 @@ const SubmitAnswer = (props) => {
     // let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
     //                             `submission ${stateCoordinates.problemId}`]
     // let dataSetName = ''
-    let y = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}value`)//[`value ${stateCoordinates.problemPart}`])
+    let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
     // console.log("submission's value", y)
-    let feedbackMessage = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}feedbackMessage`).value
-    let backgroundColor = getVariable(Root, submissionStateName, `${stateCoordinates.offsetString}backgroundColor`).value
+    let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
+    let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value
 
     let updateTypedAnswerStateName = `${submissionStateName} updateTypedAnswer`
     // console.log("submit answer form path", statePath)

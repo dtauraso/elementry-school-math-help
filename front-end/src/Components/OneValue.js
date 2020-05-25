@@ -48,24 +48,24 @@ const OneValue = (props) => {
         Root} = props
     // console.log('redux tree', Root)
     // console.log('one value state name|', `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${stateCoordinates.problemPart}`)
-    let problemPartName = `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     // console.log(stateCoordinates)
     let x = getCell(Root, problemPartName)
     // console.log('problem part', x)
     let isForm = getVariable(Root,
                             problemPartName,
-                            `${stateCoordinates.offsetString}isForm`).value
+                            'isForm').value
     
     // console.log('isForm', isForm)
     let operationType = getVariable(Root,
         problemPartName,
-        `${stateCoordinates.offsetString}operationType`).value
+        'operationType').value
     // console.log('operationType', "|", operationType, "|")
     let oneValue = null
     if(!isForm) {
         oneValue = getVariable(Root,
             problemPartName,
-            `${stateCoordinates.offsetString}value`).value
+            'value').value
     }
     // printTreeInteractive(Root)
     // we cannot assume there is a form right now

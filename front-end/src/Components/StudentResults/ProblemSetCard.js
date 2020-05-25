@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import { getProblemSets } from '../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../../reducerHelpers'
+    getVariable,
+    printTreeInteractive } from '../../reducerHelpers'
 
 const Problems = styled.p`
 
@@ -18,7 +19,9 @@ const ProblemSetCard = (props) => {
     const { Root,
             stateCoordinates: {problemSet, problemId, offsetString}} = props
 
-    console.log('coordinnates', problemSet, problemId, offsetString)
+    console.log('coordinnates', {problemSet}, {problemId}, offsetString)
+    
+    printTreeInteractive(Root)
     // use coordinates to access the right collection to run AddTwoValues on them
     let {   id,
         problemSetId,

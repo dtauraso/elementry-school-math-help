@@ -15,10 +15,14 @@ const ProblemSet = (props) => {
 
     // assume the state chart is already made
     // look for states using the old frontend components with a start offset of 'display '
+
     let problemSet = getCell(Root, 'resultsFromBackend').jsObject['problems']
     let id = getCell(Root, 'selectedProblemSetFromBackend').value
     if(id >= 0) {
         console.log('my problems', problemSet[id])
+        // corrdinates from the 'displayResults ' states
+        // ith problem set
+        // run AddTwoValues for each problem in the ith problem set
         return (
             <div>
                 {problemSet[id].map((problem, i) => (
