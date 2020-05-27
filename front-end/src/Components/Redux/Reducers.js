@@ -106,7 +106,7 @@ const setVariable = (state, parentStateName, variableName, newValue) => {
 
     // parentStateName is an array of strings
     let variable = getVariable(state, parentStateName, variableName)
-
+    // console.log(variable)
     return {
         ...state,
         
@@ -117,6 +117,20 @@ const setVariable = (state, parentStateName, variableName, newValue) => {
     }
 }
 
+const setValueForChild = (state, parentStateName, childName, newValue) => {
+
+    // console.log({parentStateName, childName})
+    let cell = getChild(state, getCell(state, parentStateName), childName)
+    // console.log(cell)
+    return {
+        ...state,
+        
+        [cell.name]: {
+            ...cell,
+            value: newValue
+        }
+    }
+}
 
 const makeProblemPartNumber = (  offsetString,
                                 i,
@@ -618,8 +632,8 @@ const addChild = (Root2, stateName, newChildName) => {
     
     // console.log('here')
     // add starting trie links to root and add the new problem child to the problem set
-    console.log({stateName})
-    console.log("here", Object.keys(Root2[stateName]))
+    // console.log({stateName})
+    // console.log("here", Object.keys(Root2[stateName]))
     Root2 = {
         ...Root2,
         [stateName]: {
@@ -631,6 +645,29 @@ const addChild = (Root2, stateName, newChildName) => {
     }
     return Root2
 }
+const addVariable = (Root2, stateName, newVariableName) => {
+
+    // newChildName is an array of strings
+    // let newChildrenForProblemSet = [
+    //     [`problem ${i}`]
+    // ]
+    
+    // console.log('here')
+    // add starting trie links to root and add the new problem child to the problem set
+    // console.log({stateName})
+    // console.log("here", Object.keys(Root2[stateName]))
+    Root2 = {
+        ...Root2,
+        [stateName]: {
+            ...Root2[stateName],
+            variableNames: !Object.keys(Root2[stateName]).includes('variableNames')?
+                            [newVariableName]:
+                            [...Root2[stateName].variableNames, newVariableName]
+        }
+    }
+    return Root2
+}
+
 const addSubstate = (Root2, stateName, newSubstateName) => {
 
     // console.log(stateName, newSubstateName)
@@ -1190,7 +1227,7 @@ const setupSubmachineForDisplay = (state, action) => {
     // make the state machine structure for each problem
     // action.meta.problemSet = myProblemSet
     action.meta.mathProblems = myProblemSet
-    action.meta.offsetString = 'displayResults '
+    action.meta.offsetString = 'displayResults'
     console.log({action})
     // can't just append the next problem set for display when a user selects a random problem set
     // we can change the problem set gneration to using a dict system
@@ -1207,9 +1244,9 @@ const setupSubmachineForDisplay = (state, action) => {
     let result = makeProblemSet(temporaryState, action)
     temporaryState = result[0]
     let myDisplayResults = getCell(temporaryState, 'displayResults')
-    let appenedProblemId = myDisplayResults.children.length - 1
+    let appendedProblemId = myDisplayResults.children.length - 1
     // works
-    console.log({problemSetId, appenedProblemId})
+    console.log({problemSetId, appendedProblemId})
     /*
     problemSetIdMapToAppendedProblemId
         children
@@ -1217,27 +1254,94 @@ const setupSubmachineForDisplay = (state, action) => {
             appenedProblemId
 
     
+    problemSetId -> appenedProblemId
+    
+
+    plan for making a state chart js object style
+
+    state
+        hashTable: {
+            key: stateMappedTo
+        }
+    stateMappedTo
+        value: our value
+
+
+    parent state for this machine
+    
+        problemSetIdMapToAppendedProblemId
+            hashTable: {
+                problemSetId: 'appenedProblemId'
+            },
+        appenedProblemId
+            value: appenedProblemId
     */
 
     // make new context
     // temporaryState = initState(temporaryState, 'displayResults ', 'displayResults idMaps')
+    /*
+    make next context 'displayResults idMaps'
+    make child connction: 'displayResults idMaps' -> 'problemSetIdMapToAppendedProblemId'
+    make child connction: 'displayResults idMaps' -> 'appenedProblemId'
+
+    make child state: 'problemSetIdMapToAppendedProblemId'
+    make child state: 'appenedProblemId'
+
+    make a connction  'problemSetIdMapToAppendedProblemId' problemSetId-> 'appenedProblemId'
+    via the hashTable
+
+
+    */
+    //    problemSetId -> appendedProblemId
+    temporaryState = initState(temporaryState, 'displayResults', 'displayResults idMaps')
+    temporaryState = addSubstate(temporaryState, 'displayResults', 'idMaps')
+    // a child can't be a variable(the reason is we can't recurse on a variable)
+    // cheat and make a child with a value
+    temporaryState = addChild(temporaryState, 'displayResults idMaps', 'problemSetId')
+    temporaryState = addChild(temporaryState, 'displayResults idMaps', 'appendedProblemId')
+
+
+    temporaryState = initState(temporaryState, 'displayResults idMaps', 'problemSetId')
+
+    temporaryState = initState(temporaryState, 'displayResults idMaps', 'appendedProblemId')
+
+    // store the value part here
+    temporaryState = setValueForChild(temporaryState, 'displayResults idMaps', 'appendedProblemId', appendedProblemId)
+    // printTreeInteractive(temporaryState)
+
+    // store the key -> valueState map here
+    // make the js object link
+    temporaryState = {
+        ...temporaryState,
+        problemSetId: {
+            ...temporaryState.problemSetId,
+            hashTable: {
+                [problemSetId]: 'appendedProblemId'
+            }
+        }
+    }
+    console.log('set dict up', temporaryState)
+    // the printing system doesn't look for a hashTable
+    printTreeInteractive(temporaryState)
+
 
     // subclass js object style in the new context
-    temporaryState = initState(temporaryState, 'displayResults', 'displayResults problemSetIdMapToAppendedProblemId')
-    temporaryState = addSubstate(temporaryState, 'displayResults', 'problemSetIdMapToAppendedProblemId')
-    console.log(temporaryState)
-    // fails here
-    temporaryState = addChild(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'problemSetId')
-    temporaryState = addChild(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'appenedProblemId')
+//     temporaryState = initState(temporaryState, 'displayResults', 'displayResults problemSetIdMapToAppendedProblemId')
+//     temporaryState = addSubstate(temporaryState, 'displayResults', 'problemSetIdMapToAppendedProblemId')
+//     console.log(temporaryState)
+//     // fails here
+//     temporaryState = addChild(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'problemSetId')
+//     temporaryState = addChild(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'appenedProblemId')
 
 
-   temporaryState = initState(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'problemSetId')
-   printTreeInteractive(temporaryState)
-   temporaryState = setVariable(temporaryState, 'problemSetId', problemSetId)
+//    temporaryState = initState(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'problemSetId')
+//    printTreeInteractive(temporaryState)
+//    temporaryState = setVariable(temporaryState, 'problemSetId', problemSetId)
 
-   temporaryState = initState(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'appenedProblemId')
-   temporaryState = setVariable(temporaryState, 'appenedProblemId', appenedProblemId)
+//    temporaryState = initState(temporaryState, 'displayResults problemSetIdMapToAppendedProblemId', 'appenedProblemId')
+//    temporaryState = setVariable(temporaryState, 'appenedProblemId', appenedProblemId)
 
+    //    add a next edge to problemSetId that links to appenedProblemId
 
     /*
     parentStateName: 'displayResults problemSetIdMapToAppendedProblemId',

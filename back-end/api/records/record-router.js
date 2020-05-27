@@ -76,6 +76,30 @@ router.post('/', async (req, res) => {
 
 })
 
+router.delete('/', async (req, res) => {
+    let tables = ['problemSet', 'problemSets']
+    // let deleteData = await ourCrud.clearTable('problemSet')
+    // let deleteData2 = await ourCrud.clearTable('problemSets')
+
+    let idFromProblemSet = await ourCrud.getAll('problemSet')
+    console.log(idFromProblemSet)
+    idFromProblemSet.forEach(async (id) => {
+        let deleteData = await ourCrud.removeById(id, 'problemSet')
+
+    })
+
+    let idFromProblemSets = await ourCrud.getAll('problemSets')
+    console.log(idFromProblemSets)
+    idFromProblemSets.forEach(async (id) => {
+        let deleteData2 = await ourCrud.removeById(id, 'problemSets')
+        
+    })
+    // tables.forEach( async (table) => {
+    //     let deleteData = await ourCrud.clearTable(table)
+    // })
+    // await ourCrud.clearAllTables(['problemSets', 'problemSet'])
+    res.status(200).json()
+})
 // router.put('/:problemSetId')
 
 // router.delete('/:problemSetId')

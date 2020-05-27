@@ -3,6 +3,7 @@ const db = require('../config/dbConfig')
 module.exports = {
 
     getAll,
+    getIds,
     getOneByFilter,
     getAllByFilter,
     make,
@@ -12,6 +13,10 @@ module.exports = {
 
 // Universal CRUD operations
 function getAll(table) {
+    return db(table)
+        .select('*');
+}
+function getIds(table) {
     return db(table)
         .select('*');
 }
@@ -45,6 +50,6 @@ function updateById(id, body, table) {
 }
 function removeById(id, table) {
     return db(table)
-        .where({ id })
+        .where(id, '=', 'id')
         .delete()
 }

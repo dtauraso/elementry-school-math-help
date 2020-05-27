@@ -15,6 +15,20 @@
 // The other glitch is this. Each name in the root hash table must be unique or
 // a cell will overwrite another cell
 
+/*
+limitations
+a function state cannot have a value
+you should always access a variable state using the parent state name
+a variable state can't have children attributes(a nested jsObject doesn't count as a child)
+
+alowances(not currently imlemented)
+children can be variables
+variables can store jsObjects as values
+submahcines can be treated like hash tables as long as the parent state is used to access them
+use flags to keep track of things
+make special functions to assume different properties of the states and print out error messages when they fail
+*/
+
 // state chart selling point is I made the is from the ground up
 
 // if they ask about xstate say I wanted to make something similar to prove I could do it
@@ -199,7 +213,7 @@ export const getVariable = (state, parentStateName, variableName) => {
     // at a simular level of detail they would use in a programming lnagugae
     // console.log("here", parentStateName, state)
     let cell = getCell(state, parentStateName)
-    // console.log({cell})
+    console.log({cell})
     if(!cell) {
         return null
     }
@@ -614,8 +628,19 @@ export const treeVisualizer2 = (table, currentState) => {
     if(hasAttribute(cell, 'jsObject')) {
         return {jsObject: cell.jsObject}
     }
+    // this is why a child state with a value gets messed up
     else if(hasAttribute(cell, 'value')) {
-        return {value: cell.value}
+        let mainPart = {name: cell.name, value: cell.value}
+        if(Object.keys(cell).includes('hashTable')) {
+            mainPart = {
+                ...mainPart,
+                hashTable: cell.hashTable
+            }
+        }
+        return mainPart
+    }
+    else if(hasAttribute(cell, 'hashTable')) {
+        return {name: cell.name, hashTable: cell.hashTable}
     }
 
     let variables = {}
@@ -659,7 +684,11 @@ export const treeVisualizer2 = (table, currentState) => {
                 ]
         })
     }
-
+    // console.log(cell.name, Object.keys(cell))
+    // if(Object.keys(cell).includes('hashTable')) {
+    //     console.log({f_hashTable: cell.hashTable})
+    // }
+    
     return {
             // a, b, and c parts are so this is the order they show up in the inspector
             a_name: cell.name,
@@ -668,6 +697,7 @@ export const treeVisualizer2 = (table, currentState) => {
             ...(cell.nextStates === undefined? {} : {c_nextStates: cell.nextStates}),
             d_children: children,
             e_variables: variables,
+            // ...(!Object.keys(cell).includes('hashTable')? {} : {f_hashTable: cell.hashTable}),
             ...(cell.jsObject === undefined? {} : {jsObject: cell.jsObject}),
             substates: substates  
     }
