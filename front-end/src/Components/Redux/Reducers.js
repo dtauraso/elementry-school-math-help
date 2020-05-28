@@ -1293,13 +1293,39 @@ const setupSubmachineForDisplay = (state, action) => {
 
     */
     //    problemSetId -> appendedProblemId
+    //   {problemSetId: appendedProblemId}
+    /*
+        {
+            key1: value1,
+            key2: value2
+        }
+    */
+    //   `${keyName}`
+    //   `${value}`
+    /*
+
+    parentState
+        children
+            for all keys in jsObject
+                `${keyName_i}`
+                `${value_i}`
+    
+        `${keyName}`
+            hashTable: {
+                    [`${keyName}`]: `${value}`
+                }
+        `${value}`
+                value: value
+    */
+    // f(table, parentState, `${keyName}`) -> value
+    // state name where the hash table is is also the key
+    //  f(temporaryState, 'displayResults idMaps', 'problemSetId') -> appendedProblemId
     temporaryState = initState(temporaryState, 'displayResults', 'displayResults idMaps')
     temporaryState = addSubstate(temporaryState, 'displayResults', 'idMaps')
     // a child can't be a variable(the reason is we can't recurse on a variable)
     // cheat and make a child with a value
     temporaryState = addChild(temporaryState, 'displayResults idMaps', 'problemSetId')
     temporaryState = addChild(temporaryState, 'displayResults idMaps', 'appendedProblemId')
-
 
     temporaryState = initState(temporaryState, 'displayResults idMaps', 'problemSetId')
 
@@ -1323,7 +1349,43 @@ const setupSubmachineForDisplay = (state, action) => {
     console.log('set dict up', temporaryState)
     // the printing system doesn't look for a hashTable
     printTreeInteractive(temporaryState)
+    // "3[a]2[bc]"
+    // "3[a2[c]]"
+    // "2[abc]3[cd]ef"
+    // "2[yu6[7[hg]]20[j2[kj]]ef"
+    // 'yuhghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghgjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjyuhghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghgjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkj'
+    // 'yuhghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghgjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjyuhghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghghgjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjjkjkjef
+    
+    /*
+    
+[3,5,1]
+1
+[1]
+0
+[1]
+1
+[1,3]
+0
+[1,3,5]
+0
+[4,5,6,7,0,1,2]
+0
+[2,4,5,6,7,0,1]
+0
+[6,7,0,1,2,4,5]
+0
+[7,0,1,2,4,5,6]
+0
+[8,1,2,3,5,6,7]
+0
 
+ If the section between the left value and the mid are ascending order
+ if nums[l] <= nums[mid]
+
+ assending values vs an interruption
+ so we want to eliminate the assending values
+
+*/
 
     // subclass js object style in the new context
 //     temporaryState = initState(temporaryState, 'displayResults', 'displayResults problemSetIdMapToAppendedProblemId')
