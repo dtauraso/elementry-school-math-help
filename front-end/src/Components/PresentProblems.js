@@ -48,10 +48,20 @@ const getMyProblems = ( state, location ) => {
 const getProblems = createSelector( (state, location) => ( getMyProblems(state, location) ),
                                     (stuff) => (stuff) )
   
+const getTheProblemSetId = (Root, location) => {
+    let elementarySchoolName = 'elementarySchool'
 
+    let elementarySchool = getCell(Root, elementarySchoolName)
+
+    let problemSets = getChild(Root, elementarySchool, `${location}`)
+    let ithProblemSet = problemSets.children.length - 1
+    return ithProblemSet
+}
+const getProblemSetId = createSelector( (state) => (getTheProblemSetId(state)),
+                                        (stuff) => stuff)
 const PresentProblems = (props) => {
 
-    const { problems, myPath } = props
+    const { problems, myPath, ithProblemSet } = props
     
     const autoSolve1 = () => {
         props.autoSolve( 'elementarySchool testing')
@@ -62,7 +72,6 @@ const PresentProblems = (props) => {
     problem set, #of problems, 
     */
 //    console.log({problems})
-
     // need the problem set
     return (
         <div>
@@ -73,7 +82,9 @@ const PresentProblems = (props) => {
             <AddTwoValues
                 key={i}
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                stateCoordinates={{problemId: problem.split(' ')[2], offsetString: myPath}}
+                stateCoordinates={{ ithProblemSet: ithProblemSet,
+                                    problemId: problem.split(' ')[2],
+                                    offsetString: myPath}}
                 // pass in a state name prefix to identify the prefixth data set
                 />
 
@@ -89,7 +100,8 @@ const mapStateToProps = (state, ownProps) => {
 
     return {
         
-        problems: getProblems(state, ownProps.myPath)
+        problems: getProblems(state, ownProps.myPath),
+        problemSetId: getProblemSetId(state, ownProps.myPath)
 
     }
 }

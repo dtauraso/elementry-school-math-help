@@ -33,7 +33,7 @@ const SubmitAnswer = (props) => {
         Root} = props
     // console.log("submit answer", stateCoordinates)
     // should assume the coordinates for the answer form were passed in
-    let answerFormStateName = `${stateCoordinates.offsetString} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    let answerFormStateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     let answer = getCell(Root, answerFormStateName)
     // console.log('answer', answer)
 //     `${offsetString}${i} ${j}`

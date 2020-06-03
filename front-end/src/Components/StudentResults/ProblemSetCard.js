@@ -19,9 +19,8 @@ const ProblemSetCard = (props) => {
     const { Root,
             stateCoordinates: {problemSet, problemId, offsetString}} = props
 
-    console.log('coordinnates', {problemSet}, {problemId}, offsetString)
-    
-    printTreeInteractive(Root)
+    // console.log('coordinnates', {problemSet}, {problemId}, offsetString)
+    // printTreeInteractive(Root)
     // use coordinates to access the right collection to run AddTwoValues on them
     let {   id,
         problemSetId,

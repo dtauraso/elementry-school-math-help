@@ -213,7 +213,7 @@ export const getVariable = (state, parentStateName, variableName) => {
     // at a simular level of detail they would use in a programming lnagugae
     // console.log("here", parentStateName, state)
     let cell = getCell(state, parentStateName)
-    console.log({cell})
+    // console.log({cell})
     if(!cell) {
         return null
     }

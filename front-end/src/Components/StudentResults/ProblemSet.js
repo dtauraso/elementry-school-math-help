@@ -21,9 +21,13 @@ const ProblemSet = (props) => {
     let problemsId = getCell(Root, 'problemSetIdMapToAppendedProblemId').value
     let displayResults = getCell(Root, 'displayResults')
     let children = displayResults.children
-
+    let childName = children[ problemsId[id] ]
+    console.log({childName})
     console.log({id, problemsId, children: children[ problemsId[id] ]})
     console.log({offsetString: 'displayResults', id: `${problemsId[id]}`})
+    // seems to work till we visit it again and it restores the prev item only 1 time
+    // why are we selecting the ith problem within the ith problem set?
+    // appears to select the same items but if the previous item is -1 then itt's changed to -1
     if(id >= 0) {
         console.log('my problems', problemSet[id])
         // corrdinates from the 'displayResults ' states
@@ -41,8 +45,11 @@ const ProblemSet = (props) => {
                 ))}
                 <AddTwoValues
                 // key={i}
+                // using the array id instead of the child id?
+                // the child id for the parent of the problems != the problem name id
+                // using wrong kind of number for the problemId
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                stateCoordinates={{problemId: `${problemsId[id]}`, offsetString: 'displayResults'}}
+                stateCoordinates={{problemId: `0`, offsetString: 'displayResults'}}
                 // pass in a state name prefix to identify the prefixth data set
                 />
             </div>

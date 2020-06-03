@@ -26,6 +26,7 @@ const ProblemSetCard = (props) => {
     const selectProblemSet = (id) => {
 
         console.log(`get problem set ${id - 1}`)
+        // supposed to set selectedProblemSetFromBackend
         props.setProblemSetSelector(id - 1)
     }
     // at presentProblems level?

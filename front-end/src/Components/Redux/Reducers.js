@@ -106,7 +106,7 @@ const setVariable = (state, parentStateName, variableName, newValue) => {
 
     // parentStateName is an array of strings
     let variable = getVariable(state, parentStateName, variableName)
-    console.log({variable, newValue})
+    // console.log({variable, newValue})
     return {
         ...state,
         
@@ -135,6 +135,7 @@ const setValueForChild = (state, parentStateName, childName, newValue) => {
 const makeProblemPartNumber = (  offsetString,
                                 i,
                                 j,
+                                k,
                                 {   value,
                                     quantity,
                                     isForm,
@@ -147,23 +148,25 @@ const makeProblemPartNumber = (  offsetString,
                                 isForDisplayResultsOnly
                             ) => {
 
-    // i is the ith problem
-    let problemPartCoordinates = `${offsetString} ${i} ${j}`
-    let ij = `${i} ${j}`
+    // i is the ith problem set, j is the jth problem
 
-    let problem_i = `${offsetString} problem ${i}`
+    let problemPartCoordinates = `${offsetString} ${i} ${j} ${k}`
+
+    let ijk = `${i} ${j} ${k}`
+
+    let problem_i = `${offsetString} problem ${i} ${j}`
     let problem_i_displayResult = `${problemPartCoordinates} displayResult`
 
-    let valueName = `${offsetString} value ${ij}`
-    let quantityName = `${offsetString} quantity ${ij}`
-    let isFormName = `${offsetString} isForm ${ij}`
-    let operationTypeName = `${offsetString} operationType ${ij}`
+    let valueName = `${offsetString} value ${ijk}`
+    let quantityName = `${offsetString} quantity ${ijk}`
+    let isFormName = `${offsetString} isForm ${ijk}`
+    let operationTypeName = `${offsetString} operationType ${ijk}`
 
 
 
-    let isCorrectName = `${offsetString} isCorrect ${ij}`
-    let isActualAnswerName = `${offsetString} isActualAnswerName ${ij}`
-    let isResultName = `${offsetString} isResultName ${ij}`
+    let isCorrectName = `${offsetString} isCorrect ${ijk}`
+    let isActualAnswerName = `${offsetString} isActualAnswerName ${ijk}`
+    let isResultName = `${offsetString} isResultName ${ijk}`
 
     return {
         [problemPartCoordinates]: {
@@ -235,6 +238,7 @@ const makeProblemPartNumber = (  offsetString,
 const makeAnswerForm = (    offsetString,
                             i,
                             j,
+                            k,
                             {   isForm,
                                 operationType,
                                 submission: {
@@ -254,38 +258,41 @@ const makeAnswerForm = (    offsetString,
                             }
                         ) => {
 
-    let problemPartCoordinates = `${offsetString} ${i} ${j}`
-    let ij = `${i} ${j}`
-    let problem_i = `${offsetString} problem ${i}`
+    let problemPartCoordinates = `${offsetString} ${i} ${j} ${k}`
+    let ijk = `${i} ${j} ${k}`
+    let problem_i = `${offsetString} problem ${i} ${j}`
 
     let problem_i_submission = `${problemPartCoordinates} submission`
 
-    let valueName = `${offsetString} value ${ij}`
-    let quantityName = `${offsetString} quantity ${ij}`
-    let correctName = `${offsetString} correct ${ij}`
-    let firstAnswerName = `${offsetString} firstAnswer ${ij}`
-    let actualAnswerName = `${offsetString} actualAnswer ${ij}`
-    let submitCountName = `${offsetString} submitCount ${ij}`
-    let feedbackMessageName = `${offsetString} feedbackMessage ${ij}`
-    let backgroundColorName = `${offsetString} backgroundColor ${ij}`
+    let valueName = `${offsetString} value ${ijk}`
+    let quantityName = `${offsetString} quantity ${ijk}`
+    let correctName = `${offsetString} correct ${ijk}`
+    let firstAnswerName = `${offsetString} firstAnswer ${ijk}`
+    let actualAnswerName = `${offsetString} actualAnswer ${ijk}`
+    let submitCountName = `${offsetString} submitCount ${ijk}`
+    let feedbackMessageName = `${offsetString} feedbackMessage ${ijk}`
+    let backgroundColorName = `${offsetString} backgroundColor ${ijk}`
 
-    let noValueName = `${offsetString} noValue ${ij}`
-    let isIntegerName = `${offsetString} isInteger ${ij}`
-    let isNotIntegerName = `${offsetString} isNotInteger ${ij}`
-    let submitValueName = `${offsetString} submitValue ${ij}`
+    let noValueName = `${offsetString} noValue ${ijk}`
+    let isIntegerName = `${offsetString} isInteger ${ijk}`
+    let isNotIntegerName = `${offsetString} isNotInteger ${ijk}`
+    let submitValueName = `${offsetString} submitValue ${ijk}`
 
 
     let problem_i_submission_updateTypedAnswer = `${problem_i_submission} updateTypedAnswer`
     
     let problem_i_progressMeter = `${problemPartCoordinates} progressMeter`
     
-    let gotItRightTheFirstTimeName = `${offsetString} gotItRightTheFirstTime ${i}`
+    // for the ith problem set jth problem
+    // unique to 1 program not k problem parts
+    let ij = `${i} ${j}`
+    let gotItRightTheFirstTimeName = `${offsetString} gotItRightTheFirstTime ${ij}`
 
     // 'else' is a keyword in js
-    let elseStateName = `${offsetString} else ${i}`
+    let elseStateName = `${offsetString} else ${ij}`
 
-    let correctFirstTimeName = `${offsetString} correctFirstTime ${i}`
-    let testingWithoutFormName = `${offsetString} testingWithoutForm ${i}`
+    let correctFirstTimeName = `${offsetString} correctFirstTime ${ij}`
+    let testingWithoutFormName = `${offsetString} testingWithoutForm ${ij}`
 
 
     let isFormName = `${offsetString} isForm ${ij}`
@@ -489,7 +496,7 @@ const makeNumber = (
 }
 const makeProblemPartsForDisplayResults = (ithProblem) => {
 
-    // console.log('ith problem', ithProblem)
+    // console.log('ith problem', {ithProblem})
     const {a, b, theirAnswer, actualAnswer, gotItRightTheFirstTime} = ithProblem
 
     const mySum = a + b
@@ -704,7 +711,8 @@ const makeProblemSet = (state, action) => {
     const nameOfProblemSet = `${offsetString} problemSet ${problemSetId}`
 
     // printTreeInteractive(temporaryState)
-    // console.log("|", nameOfProblemSetCetagory, "|" , nameOfProblemSet)
+    // displayResults -> 'displayResults problemSet 1'
+    console.log("|", nameOfProblemSetCetagory, "|" , nameOfProblemSet)
     temporaryState = addChild(temporaryState, nameOfProblemSetCetagory, nameOfProblemSet)
     // console.log('got here')
 
@@ -713,8 +721,9 @@ const makeProblemSet = (state, action) => {
     // correct up to here
     // printTreeInteractive(temporaryState)
     // console.log({mathProblems})
+    const i = problemSetId
     // make a test run with just printing out the number's
-    mathProblems.forEach((mathProblem, i) => {
+    mathProblems.forEach((mathProblem, j) => {
         let dataForSingleProblem = {}
         let problemParts = []
         if(offsetString === 'displayResults') {
@@ -731,43 +740,47 @@ const makeProblemSet = (state, action) => {
         // console.log('got the data')
         // console.log(dataForSingleProblem)
         // add a problem branch
-        const nameOfProblem = `${offsetString} problem ${i}`
+        // the children of each problem set have the same name as the ones in the neighbor problem set
+        // had 2 parents pointing to the same set of children the entire time
+        // make sure each problem has the problem set id, the problem id, and the problem part id
+        const nameOfProblem = `${offsetString} problem ${i} ${j}`
         temporaryState = addChild(temporaryState, nameOfProblemSet, nameOfProblem)
 
         temporaryState = initState(temporaryState, nameOfProblemSet, nameOfProblem)
     
-        problemParts.forEach((problemPart, j) => {
+        problemParts.forEach((problemPart, k) => {
 
-            const problemPartCoordinates = `${offsetString} ${i} ${j}` // can use the OneValue key and the AddTwoValues key
+            const problemPartCoordinates = `${offsetString} ${i} ${j} ${k}` // can use the OneValue key and the AddTwoValues key
             temporaryState = addChild(temporaryState, nameOfProblem, problemPartCoordinates)
 
             // a, b
-            if(j < 2) {
+            if(k < 2) {
                 temporaryState = appendStates(  temporaryState,
-                    makeProblemPartNumber(offsetString, i, j, problemPart))
+                    makeProblemPartNumber(offsetString, i, j, k, problemPart))
             }
             
             // answerForm or answer
-            if(j === 2) {
+            if(k === 2) {
                 // answer
                 if(offsetString === 'displayResults') {
                     temporaryState = appendStates(  temporaryState,
-                        makeProblemPartNumber(offsetString, i, j, problemPart))
+                        makeProblemPartNumber(offsetString, i, j, k, problemPart))
     
                 }
                 else {
                     // answerForm
+                    // console.log({problemPart})
                     temporaryState = appendStates(  temporaryState,
-                        makeAnswerForm(offsetString, i, j, problemPart))
+                        makeAnswerForm(offsetString, i, j, k, problemPart))
     
                 }
                 
             }
-            if(j === 3) {
+            if(k === 3) {
                 // yourAnswer
                 if(offsetString === 'displayResults') {
                     temporaryState = appendStates(  temporaryState,
-                        makeProblemPartNumber(offsetString, i, j, problemPart))
+                        makeProblemPartNumber(offsetString, i, j, k, problemPart))
     
                 }
             }
@@ -1022,13 +1035,13 @@ const processProblems = (state, action, cb) => {
 
 
     for(let i = 0; i < numberOfProblems; i += 1) {
-        temporaryState = cb(temporaryState, action, i, 0)
+        temporaryState = cb(temporaryState, action, 0, i, 0)
     }
     return temporaryState
 
 }
 
-const solveProblem = (state, action, i, j) => {
+const solveProblem = (state, action, i, j, k) => {
 
     // the last one is always ""
     // the last one's correctFirstTime is always not getting set
@@ -1038,9 +1051,9 @@ const solveProblem = (state, action, i, j) => {
     // console.log("inside solveProblem", `|${offsetString}|${i} ${j}`)
     // printTreeInteractive(state)
     let temporaryState = state
-    let a = getVariable(state, `${offsetString} ${i} ${j}`, 'value').value
-    let b = getVariable(state, `${offsetString} ${i} ${j + 1}`, 'value').value
-    let submission =           `${offsetString} ${i} ${j + 2} submission`
+    let a = getVariable(state, `${offsetString} ${i} ${j} ${k}`, 'value').value
+    let b = getVariable(state, `${offsetString} ${i} ${j} ${k + 1}`, 'value').value
+    let submission =           `${offsetString} ${i} ${j} ${k + 2} submission`
     // console.log(a, b, submission)
     // randomly get it wrong
     let randomValue = Math.floor(Math.random() * 10) % 2
@@ -1048,14 +1061,14 @@ const solveProblem = (state, action, i, j) => {
     if(randomValue === 0) {
         // console.log("answer is right the first time")
         temporaryState = set2(temporaryState, submission, 'value', a + b)
-        let progressMeter = `${offsetString} ${i} ${j + 2} progressMeter`
+        let progressMeter = `${offsetString} ${i} ${j} ${k + 2} progressMeter`
         temporaryState = set2(temporaryState, progressMeter, 'correctFirstTime', true)
     
     }
     else {
         // if b == 1 then this is always messed up
         temporaryState = set2(temporaryState, submission, 'value', -1)
-        let progressMeter = `${offsetString} ${i} ${j + 2} progressMeter`
+        let progressMeter = `${offsetString} ${i} ${j} ${k + 2} progressMeter`
         temporaryState = set2(temporaryState, progressMeter, 'correctFirstTime', false)
 
     }
@@ -1091,17 +1104,17 @@ const autoSolve = (state, action) => {
     return [temporaryState, true]
 
 }
-const collectProblems = (state, action, i, j) => {
+const collectProblems = (state, action, i, j, k) => {
 
     // getCell(state, parentStateName)
     // console.log('in collect problems', state)
     let temporaryState = state
     const offsetString = action.meta.offsetString
 
-    let a = getVariable(state, `${offsetString} ${i} ${j}`, 'value').value
-    let b = getVariable(state, `${offsetString} ${i} ${j + 1}`, 'value').value
-    let submission =           `${offsetString} ${i} ${j + 2} submission`
-    let progressMeter =        `${offsetString} ${i} ${j + 2} progressMeter`
+    let a = getVariable(state, `${offsetString} ${i} ${j} ${k}`, 'value').value
+    let b = getVariable(state, `${offsetString} ${i} ${j} ${k + 1}`, 'value').value
+    let submission =           `${offsetString} ${i} ${j} ${k + 2} submission`
+    let progressMeter =        `${offsetString} ${i} ${j} ${k + 2} progressMeter`
 
 
     let firstAnswer = getVariable(state, submission, 'firstAnswer').value
@@ -1243,7 +1256,11 @@ const setupSubmachineForDisplay = (state, action) => {
     // 'plusProblems' as a state name vs 'plusProblems ' as a state name access substring
     // for(let i = 0; i < problemSets.length; i += 1 ) {
     let problemSetIdMapToAppendedProblemId = getVariable(temporaryState, 'elementarySchool displayResults', 'problemSetIdMapToAppendedProblemId').value
-    if(!(problemSetId in problemSetIdMapToAppendedProblemId)) {
+    // the second time selecting problemSetId messes things up
+    // it's using the previously selected one for a different item
+    // seems to be set to the previously selected item
+    // this if statement may be wrong
+    if(problemSetIdMapToAppendedProblemId[problemSetId] === undefined) {
 
         temporaryState = setVariable(temporaryState, 'elementarySchool displayResults', 'problemCount', myProblemSet.length)
 
@@ -1251,6 +1268,7 @@ const setupSubmachineForDisplay = (state, action) => {
         // and we map the set they picked with the index of the last position of the parent's child array
 
         // "displayResults problemSet 0" is the problem set name genrated but the '0' doesn't refer to the ith problem set
+        // when this runs it's overriting previous correctly calculated results for a different problem set
         let result = makeProblemSet(temporaryState, action)
         temporaryState = result[0]
         let myDisplayResults = getCell(temporaryState, 'displayResults')

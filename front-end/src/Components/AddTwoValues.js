@@ -46,22 +46,22 @@ export const AddTwoValues = (props) => {
     // problem #
     // console.log('our key', stateCoordinates)
     // console.log(stateCoordinates)
-    console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.problemId}`)
+    // console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.problemId}`)
     // get problem parts
-    let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.problemId}`)
+    let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
     // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
 
     // console.log({problemParts})
     // get the quantity size
     // the item # is the second number after the offset string
-    let problemPart = problemParts[0].split(' ')[2]
+    let problemPart = problemParts[0].split(' ')[3]
     // console.log({item})
 
-    let stateName = `${stateCoordinates.offsetString} ${stateCoordinates.problemId} ${problemPart}`
-    console.log({stateName})
+    let stateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${problemPart}`
+    // console.log({stateName})
     // printTreeInteractive(Root)
-    console.log(Root)
+    // console.log(Root)
     let state = getCell(Root, stateName)
     // let isForm = getVariable(Root,
     //     stateName,
@@ -70,16 +70,17 @@ export const AddTwoValues = (props) => {
     // if(!isForm) {
 
     // }
-    console.log('state', state)
+    // console.log('state', state)
     // the submission context is only with the 3rd number in each problem
     // this state only exists for the problem set
     let isForm = getVariable(Root,
         stateName,
         'isForm').value
-    console.log({isForm})
+    // console.log({isForm, problemParts})
+    // printTreeInteractive(Root)
     let myQuantity = null
     let sizeOfQuantity = 0
-    if(isForm) {
+    if(stateCoordinates.offsetString === 'plusProblems') {
         myQuantity = getVariable(Root,
             `${stateCoordinates.offsetString} ${stateCoordinates.problemId} 2 submission`,
             'quantity'
