@@ -1,0 +1,139 @@
+
+
+
+
+
+
+-------------------------
+'use strict';
+
+const fs = require('fs');
+
+process.stdin.resume();
+process.stdin.setEncoding('utf-8');
+
+let inputString = '';
+let currentLine = 0;
+
+process.stdin.on('data', function(inputStdin) {
+    inputString += inputStdin;
+});
+
+process.stdin.on('end', function() {
+    inputString = inputString.split('\n');
+
+    main();
+});
+
+function readLine() {
+    return inputString[currentLine++];
+}
+
+
+/*
+ * Complete the 'threeNumberSum' function below.
+ *
+ * The function is expected to return a 2D_INTEGER_ARRAY.
+ * The function accepts following parameters:
+ *  1. INTEGER_ARRAY arr
+ *  2. INTEGER target
+ */
+
+function lessThan(a, b) {
+    return a > b
+}
+function tripletCompare(a, b) {
+    // console.log(a, b, a[0] <= b[0] && a[1] <= b[1])
+    if(a[0] > b[0] && a[1] > b[1]) {
+        return true
+    }
+    else if(a[0] > b[0]) {
+        return true
+    }
+    return false
+}
+function threeNumberSum(arr, target) {
+
+    // a + b + c = target
+    // a + b = target - c
+
+    // a + b -> [a, b]
+    // didn't get picked
+
+    // -6 0 6
+    // 6 + 0 = 0 -- 6
+
+
+    let triplets = {}
+    let pairs = {}
+    for(let i = 0; i < arr.length; i += 1) {
+        for(let j = 0; j < arr.length; j += 1) {
+            let pair = arr[i] + arr[j]
+            if(!(pair in pairs)) {
+                pairs[pair] = [arr[i], arr[j]]
+            }
+        }
+        // let pair = arr[i - 1] + arr[i]
+        
+        // let firstNumber = arr[i]
+        // for(let j = 1; j < arr.length - 1; j += 1) {
+        //     let secondNumber = arr[j]
+        //     for(let k = 2; k < arr.length; k += 1) {
+        //         let thirdNumber = arr[k]
+        //         // console.log(firstNumber, secondNumber, thirdNumber, firstNumber + secondNumber + thirdNumber, target)
+        //         if(firstNumber + secondNumber + thirdNumber === target) {
+        //             let item = `${firstNumber} ${secondNumber} ${thirdNumber}`
+        //             if(item in triplets) {
+        //                 // triplets[item] += 1
+        //             }
+        //             else {
+        //                 triplets[item] = 1
+        //             }
+                    
+        //         }
+        //     }
+        // }
+    }
+    
+    for(let i = 0; i < arr.length; i += 1) {
+        let thirdItem = target - arr[i]
+        if(thirdItem in pairs) {
+            pairs[thirdItem].push(arr[i])
+        }
+    }
+    console.log(pairs)
+     let myTriplets = []
+
+    Object.keys(pairs).forEach(pair => {
+        if(pairs[pair].length === 3) {
+            let newTriplet = pairs[pair]
+            newTriplet.sort(lessThan)
+            myTriplets.push(newTriplet)
+        }
+    })
+    myTriplets.sort(tripletCompare)
+    console.log(myTriplets)
+    return myTriplets
+    for(let l = 0; l < triplets.length; l += 1) {
+        // console.log(triplets[l])
+        triplets[l].sort(lessThan)
+    }
+    // triplets = triplets.map(triplet => {
+    //     return triplet.sort()
+    // })
+    // console.log(triplets)
+    return pairs
+    
+}
+function main() {
+
+
+
+[-2,0,1,1,2]
+[1,-1,-1,0]
+[-1,0,1,0]
+[1,2,-2,-1]
+[0]
+[0,0]
+[0,0,0]
+[-1,0,1,2,-1,-4]

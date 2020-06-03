@@ -18,11 +18,19 @@ const ProblemSet = (props) => {
 
     let problemSet = getCell(Root, 'resultsFromBackend').jsObject['problems']
     let id = getCell(Root, 'selectedProblemSetFromBackend').value
+    let problemsId = getCell(Root, 'problemSetIdMapToAppendedProblemId').value
+    let displayResults = getCell(Root, 'displayResults')
+    let children = displayResults.children
+
+    console.log({id, problemsId, children: children[ problemsId[id] ]})
+    console.log({offsetString: 'displayResults', id: `${problemsId[id]}`})
     if(id >= 0) {
         console.log('my problems', problemSet[id])
         // corrdinates from the 'displayResults ' states
         // ith problem set
         // run AddTwoValues for each problem in the ith problem set
+        // problemSetIdMapToAppendedProblemId
+        // before we display anything prove we can find the right data
         return (
             <div>
                 {problemSet[id].map((problem, i) => (
@@ -31,6 +39,12 @@ const ProblemSet = (props) => {
                                                     problemId: i,
                                                     offsetString: 'displayResults '}}/>
                 ))}
+                <AddTwoValues
+                // key={i}
+                // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
+                stateCoordinates={{problemId: `${problemsId[id]}`, offsetString: 'displayResults'}}
+                // pass in a state name prefix to identify the prefixth data set
+                />
             </div>
         )
     } else {

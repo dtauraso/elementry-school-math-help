@@ -7,7 +7,8 @@ import { getCat } from './Redux/Actions'
 import {
     getCell,
     getChildren,
-    getVariable } from '../reducerHelpers'
+    getVariable,
+    printTreeInteractive } from '../reducerHelpers'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
@@ -45,7 +46,7 @@ export const AddTwoValues = (props) => {
     // problem #
     // console.log('our key', stateCoordinates)
     // console.log(stateCoordinates)
-    // console.log('state to look for|', `${stateCoordinates.offsetString}problem ${stateCoordinates.problemId}`)
+    console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.problemId}`)
     // get problem parts
     let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.problemId}`)
     // console.log("our state", x)
@@ -58,6 +59,9 @@ export const AddTwoValues = (props) => {
     // console.log({item})
 
     let stateName = `${stateCoordinates.offsetString} ${stateCoordinates.problemId} ${problemPart}`
+    console.log({stateName})
+    // printTreeInteractive(Root)
+    console.log(Root)
     let state = getCell(Root, stateName)
     // let isForm = getVariable(Root,
     //     stateName,
@@ -66,13 +70,27 @@ export const AddTwoValues = (props) => {
     // if(!isForm) {
 
     // }
-    // console.log('state', state.name)
+    console.log('state', state)
     // the submission context is only with the 3rd number in each problem
-    let myQuantity = getVariable(Root,
-        `${stateCoordinates.offsetString} ${stateCoordinates.problemId} 2 submission`,
-        'quantity'
-        ).value
-    let sizeOfQuantity = myQuantity.length
+    // this state only exists for the problem set
+    let isForm = getVariable(Root,
+        stateName,
+        'isForm').value
+    console.log({isForm})
+    let myQuantity = null
+    let sizeOfQuantity = 0
+    if(isForm) {
+        myQuantity = getVariable(Root,
+            `${stateCoordinates.offsetString} ${stateCoordinates.problemId} 2 submission`,
+            'quantity'
+            ).value
+        sizeOfQuantity = myQuantity.length
+    }
+    else {
+        // may want to visit all quantities and get the largest one
+        sizeOfQuantity = 10
+    }
+   
     // console.log({problemParts})
     // console.log('quantity for the add 2 values', myQuantity)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
@@ -90,7 +108,7 @@ export const AddTwoValues = (props) => {
     return (
         // <div></div>
         // needs a form and both values with the solution
-        <Container quantityLength={myQuantity.length}>
+        <Container quantityLength={sizeOfQuantity}>
             {/* <h1>testing</h1> */}
             {problemParts.map((problemKey, i) => (
                 <OneValue
