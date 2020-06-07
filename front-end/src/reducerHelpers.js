@@ -717,7 +717,8 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
     // for each one
         // return the state then the stateSuceded flag
     // return the state once endState is reached
-
+    // assume each occurrence of this function on the callstack represents the outcome of the state machine
+    // [state, pass/fail status]
     // This function will create a stack overflow if the state chart tree has any cycles
     // let currentState = getValue(state, stateStateName)
     // this will cumulatively hold the state copies untill we are done with the machine
@@ -737,6 +738,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
         let passes = false
         let winningStateName = ''
         let winningFunctionName = ''
+
         nextStates.forEach(nextState => {
             // console.log('trying', nextState)
             if(nextState === undefined) {
@@ -795,20 +797,32 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             // call the routing agin with next states holding the children
             
             const nestedResult = breathFirstTraversal(temporaryState, action, childrenStates, levelId + 1)
-            const submachineSuccess = nestedResult[1]
-            // console.log('done with submachine', nestedResult)
-            if(!submachineSuccess) {
-
-                // if the submachine is false then this state is also false 
-                passes = false
+            // const submachineSuccess = nestedResult[1]
+            passes = nestedResult[1]
+            if(!passes) {
                 return null
             }
+            // console.log('done with submachine', nestedResult)
+            // if(!submachineSuccess) {
+
+            //     // if the submachine is false then this state is also false 
+            //     passes = false
+            //     return null
+            // }
             temporaryState = nestedResult[0]
             // console.log('submachine passes', temporaryState)
 
         })
+        // if state is not end state
+            // if passes
+                // move on to next state
+            // else
+                // return false for entire machine(early exit)
+        // end state
+            // return [temporaryState, pass]
+
         if(passes) {
-            console.log("we have a winner", winningStateName, winningFunctionName, temporaryState)
+            console.log("we have a winner", winningStateName, winningFunctionName)
 
             currentStateName = winningStateName
             
@@ -816,7 +830,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             // putting this in would force all states to have it as an attribute even if they have no edges
             if(!Object.keys(currentStateObject).includes('nextStates')) {
                 console.log('The next states doesn\'t exist')
-                printTreeInteractive(temporaryState)
+                // printTreeInteractive(temporaryState)
 
                 return [temporaryState, true]
             }
@@ -828,144 +842,10 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             nextStates = currentStateObject.nextStates
 
             console.log("next set of edges", nextStates)
-        } else if(!passes && nextStates.length === 0) {
-            console.log('machine is done 2')
-            // return temporaryState
-            return [temporaryState, true]
-
-        } else {
-            console.log(currentStateName,
-                        "failed",
-                        "attempted next states",
-                        nextStates)
-            // return temporaryState
-            return [temporaryState, true]
-
-        }
-    
-    }
-    // machine is finished
-    // return [temporaryState, true]
-}
-
-export const breathFirstTraversal2 = (state, action, startStateName, levelId) => {
-    // startStateName, endStateName are lists of strings
-    // we can use the payload from the user for the entire traversal
-    // from start state to end state
-    // bft
-    // try all the options
-    // for each one
-        // return the state then the stateSuceded flag
-    // return the state once endState is reached
-    // let currentState = getValue(state, stateStateName)
-    // this will cumulatively hold the state copies untill we are done with the machine
-    let temporaryState = state
-    // console.log('breathFirstTraversal', startStateName)
-    // take out cropChildreaname
-    // let [ baseStateName, childStateName ] = cropChildName(startStateName)
-    console.log("level", levelId)
-    let nextStates = startStateName
-    // console.log('next states', nextStates, 'parent', action.type)
-    let currentStateName = startStateName
-    let keepGoing = true
-    // console.log(baseStateName, childStateName)
-    // have a list of end states and make sure the current state is not in the set
-    while(true) {
-        // console.log(nextStates)
-        let passes = false
-        let winningStateName = ''
-        let winningFunctionName = ''
-        nextStates.forEach(nextState => {
-            // console.log('trying', nextState)
-            if(nextState === undefined) {
-                console.log("the js syntax for the next states is wrong")
-                // keepGoing = false
-                return null
-
-            }
-
-            if(passes) {
-                return null
-            }
-            // console.log("getting state", temporaryState, nextState) 
-            let cell = getCell2(temporaryState, nextState)
-            console.log('cell found', cell.name)
-            // console.log(Object.keys(cell))
-            // ignore the state if it doesn't have a function to run
-            if(!Object.keys(cell).includes('functionCode')) {
-                console.log(cell, "doesn't have a function")
-                return null
-            }
-            // action.type is the parent state untill this line is run(in the first level the parent == current state)
-            // console.log('parent state', action.meta.parentStateName)
-            action.type = nextState
-            // console.log(nextState)
-            // action's current state is .type
-            // action.meta.currentState = nextState // bad idea
-            // console.log("function to run", getValue(temporaryState, nextState), action)
-            const result = cell['functionCode'](temporaryState, action)
-            const success = result[1]
-            // console.log("finished function")
-            // console.log(temporaryState, success)
-            if(!success) {
-                return null
-            }
-            // must keep the success value as we go up and down the call stack
-            temporaryState = result[0]
-
-            passes = true
-            winningStateName = nextState
-            winningFunctionName = cell['functionCode'].name
-            // action.type = winningStateName
-            // console.log('passes', action.type)
-            // console.log()
-            // untested
-            // if the winningStateName has any children
-            let childrenStates = getChildren(temporaryState, winningStateName)
-            // console.log(childrenStates)
-            if(childrenStates === null) {
-                return null
-            }
-            if(childrenStates.length === 0) {
-                return null
-            }
-            // console.log("we have children", childrenStates)
-            action.meta.parentStateName = [...action.type]
-            // call the routing agin with next states holding the children
-            
-            const nestedResult = breathFirstTraversal2(temporaryState, action, childrenStates, levelId + 1)
-            const submachineSuccess = nestedResult[1]
-            // console.log('done with submachine', nestedResult)
-            if(!submachineSuccess) {
-
-                // if the submachine is false then this state is also false 
-                passes = false
-                return null
-            }
-            temporaryState = nestedResult[0]
-            // console.log('submachine passes', temporaryState)
-
-        })
-        if(passes) {
-            console.log("we have a winner", winningStateName, winningFunctionName, temporaryState)
-
-            currentStateName = winningStateName
-            
-            const currentStateObject = getCell2(temporaryState, currentStateName)
-            // putting this in would force all states to have it as an attribute even if they have no edges
-            if(!Object.keys(currentStateObject).includes('nextStates')) {
-                console.log('The next states doesn\'t exist')
-                printTreeInteractive(temporaryState)
-                return [temporaryState, true]
-            }
-            if(currentStateObject.nextStates.length === 0) {
-                console.log(`machine is done 1 ${levelId}`)
-                // keepGoing = false
-                return [temporaryState, true]
-            }
-            nextStates = currentStateObject.nextStates
-
-            console.log("next set of edges", nextStates)
+        // we are at an end state
+        // what is the difference between a dead state(machine will return false) and an end state(
+        // machine will return true after finishing all state)
+        // assumes any end state means the machine will return true
         } else if(!passes && nextStates.length === 0) {
             console.log('machine is done 2')
             // return temporaryState

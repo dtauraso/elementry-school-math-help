@@ -55,7 +55,7 @@ export const AddTwoValues = (props) => {
 
     // console.log({problemParts})
     // get the quantity size
-    // the item # is the second number after the offset string
+     // 3rd coordinate point in the name [offsetString, x, y, z]
     let problemPart = problemParts[0].split(' ')[3]
     // console.log({item})
 
@@ -117,7 +117,7 @@ export const AddTwoValues = (props) => {
                 <OneValue
                     key={i}
                     stateCoordinates={{...stateCoordinates,
-                                        problemPart: problemKey.split(' ')[3], // 3rd coordinate point in the name [batchName, x, y, z]
+                                        problemPart: problemKey.split(' ')[3], // 3rd coordinate point in the name [offsetString, x, y, z]
                                         offsetString: stateCoordinates.offsetString}}
                     />
             ))}

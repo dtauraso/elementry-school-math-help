@@ -20,7 +20,6 @@ import {    makeCell,
             setArray2,
             hasSubstates2,
             treeVisualizer2,
-            breathFirstTraversal2,
             printTreeInteractive,
             getChild
         
@@ -342,9 +341,11 @@ const makeAnswerForm = (    offsetString,
                 functionCode: returnState,
                 nextStates: [problem_i_progressMeter],
                 children: [
+                    // need any non value or illegal value to terminate the process
                     noValueName,
+                    isNotIntegerName, // because this returned true then entire tree == true and we move
+                    // to the next state
                     isIntegerName,
-                    isNotIntegerName,
                     submitValueName
                 ],
                 variableNames: [
@@ -409,17 +410,24 @@ const makeAnswerForm = (    offsetString,
                     parents: problem_i_submission,
                     name: noValueName,
                     functionCode: noValue
+                    // []
                 },
+                [isNotIntegerName]: {
+                    parents: problem_i_submission,
+                    name: isNotIntegerName,
+                    functionCode: isNotInteger,
+                    // []
+                },
+                // ['terminateProcessEarly']: {
+                //     parents: problem_i_submission,
+                //     name: 'terminateProcessEarly'
+                // }
+                // returnStateFalse
                 [isIntegerName]: {
                     parents: problem_i_submission,
                     name: isIntegerName,
                     functionCode: isInteger,
                     nextStates: [submitValueName]
-                },
-                [isNotIntegerName]: {
-                    parents: problem_i_submission,
-                    name: isNotIntegerName,
-                    functionCode: returnState,
                 },
                 [submitValueName]: {
                     parents: problem_i_submission,
@@ -856,6 +864,9 @@ export const fetchCatFailure = (state, action) => {
 const returnState = (state, action) => {
     return [state, true]
 }
+const returnStateFalse = (state, action) => {
+    return [state, false]
+}
 const updateTypedAnswer = (state, action) => {
     const { newValue } = action.payload
     const stateName = action.type
@@ -918,8 +929,23 @@ const isInteger = (state, action) => {
 
     // console.log(getVariable(state, parentStateName, 'value').value,
             // parseInt(getVariable(state, parentStateName, 'value').value))
-
+    console.log(!isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true)
     return [state, !isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true]
+}
+const isNotInteger = (state, action) => {
+    const submissionStateName = action.meta.parentStateName
+    const offsetString = action.meta.offsetString
+
+    // console.log(getVariable(state, parentStateName, 'value').value,
+            // parseInt(getVariable(state, parentStateName, 'value').value))
+    // console.log(isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true)
+    if(isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true) {
+        return [state, false]
+
+    }
+    return [state, true]
+
+
 }
 const determineAnswerMessage = (actualAnswer, value) => {
     
@@ -1536,7 +1562,7 @@ let action = {
             mathProblems: problems
         }
 }
-const [temporaryState, success] = breathFirstTraversal2(
+const [temporaryState, success] = breathFirstTraversal(
     Root2,
     action,
     [action.type],
