@@ -46,14 +46,14 @@ export const AddTwoValues = (props) => {
     // problem #
     // console.log('our key', stateCoordinates)
     // console.log(stateCoordinates)
-    // console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
+    console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
     // printTreeInteractive(Root)
     // get problem parts
     let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
     // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
 
-    // console.log({problemParts})
+    console.log({problemParts})
     // get the quantity size
      // 3rd coordinate point in the name [offsetString, x, y, z]
     let problemPart = problemParts[0].split(' ')[3]

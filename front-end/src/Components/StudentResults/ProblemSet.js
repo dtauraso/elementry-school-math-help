@@ -7,7 +7,8 @@ import { connect } from 'react-redux'
 import { getCat, submitAnswer, addToAnswer } from '../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../../reducerHelpers'
+    getVariable,
+    getChild } from '../../reducerHelpers'
 
     
 const ProblemSet = (props) => {
@@ -25,6 +26,18 @@ const ProblemSet = (props) => {
     console.log({childName})
     console.log({id, problemsId, children: children[ problemsId[id] ]})
     console.log({offsetString: 'displayResults', id: `${problemsId[id]}`})
+
+
+    // get the ith problem set
+    // it appears the state chart data is not getting overwritten like last time
+    let elementarySchoolName = 'elementarySchool'
+
+    let elementarySchool = getCell(Root, elementarySchoolName)
+    let problemSets = getChild(Root, elementarySchool, 'displayResults')
+    console.log({problemSets})
+
+    let ithProblemSet = problemSets.children.length - 1
+    console.log({ithProblemSet})
     // seems to work till we visit it again and it restores the prev item only 1 time
     // why are we selecting the ith problem within the ith problem set?
     // appears to select the same items but if the previous item is -1 then itt's changed to -1
@@ -43,13 +56,19 @@ const ProblemSet = (props) => {
                                                     problemId: i,
                                                     offsetString: 'displayResults '}}/>
                 ))}
+                {/* { ithProblemSet: ithProblemSet,
+                                    problemId: problem.split(' ')[3],
+                                    offsetString: myPath} */}
                 <AddTwoValues
                 // key={i}
                 // using the array id instead of the child id?
                 // the child id for the parent of the problems != the problem name id
                 // using wrong kind of number for the problemId
                 // i={{problemId: problemId}}  // prefered pracice as accessing key directly is not a good idea
-                stateCoordinates={{problemId: `0`, offsetString: 'displayResults'}}
+                stateCoordinates={{
+                    ithProblemSet: problemsId[id],
+                    problemId: '0',
+                    offsetString: 'displayResults'}}
                 // pass in a state name prefix to identify the prefixth data set
                 />
             </div>

@@ -1216,7 +1216,7 @@ const setupForBackend = (state, action) => {
         temporaryState,
         myCompletedProblems, 
         {   ...myCompletedProblems.jsObject,
-            'problem sets table': {nameOfProblemSet: `${offsetString}problem set 0`,
+            'problem sets table': {nameOfProblemSet: `${offsetString} problem set 0`,
                                 numberCorrect: correctProblems,
                                 totalProblems: myCompletedProblems.jsObject['problem set table'].length
                             }
