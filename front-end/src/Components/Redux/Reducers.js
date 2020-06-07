@@ -756,7 +756,11 @@ const makeProblemSet = (state, action) => {
             // a, b
             if(k < 2) {
                 temporaryState = appendStates(  temporaryState,
-                    makeProblemPartNumber(offsetString, i, j, k, problemPart))
+                                                makeProblemPartNumber(  offsetString,
+                                                                        i,
+                                                                        j,
+                                                                        k,
+                                                                        problemPart))
             }
             
             // answerForm or answer
@@ -764,14 +768,22 @@ const makeProblemSet = (state, action) => {
                 // answer
                 if(offsetString === 'displayResults') {
                     temporaryState = appendStates(  temporaryState,
-                        makeProblemPartNumber(offsetString, i, j, k, problemPart))
+                                                    makeProblemPartNumber(  offsetString,
+                                                                            i,
+                                                                            j,
+                                                                            k,
+                                                                            problemPart))
     
                 }
                 else {
                     // answerForm
                     // console.log({problemPart})
                     temporaryState = appendStates(  temporaryState,
-                        makeAnswerForm(offsetString, i, j, k, problemPart))
+                                                    makeAnswerForm( offsetString,
+                                                                    i,
+                                                                    j,
+                                                                    k,
+                                                                    problemPart))
     
                 }
                 
@@ -780,7 +792,11 @@ const makeProblemSet = (state, action) => {
                 // yourAnswer
                 if(offsetString === 'displayResults') {
                     temporaryState = appendStates(  temporaryState,
-                        makeProblemPartNumber(offsetString, i, j, k, problemPart))
+                                                    makeProblemPartNumber(  offsetString,
+                                                                            i,
+                                                                            j,
+                                                                            k,
+                                                                            problemPart))
     
                 }
             }
@@ -1439,7 +1455,7 @@ let Root2 = {
                     name: 'resultsFromBackend',
                     jsObject: -1
                 },
-                
+                // from the backend response
                 'payload': {
                     parent: 'elementarySchool storeResults',
                     name: 'payload',
@@ -1458,7 +1474,7 @@ let Root2 = {
                     name: 'selectedProblemSetFromBackend',
                     value: -1,
                 },
-            
+                // maps the ith problem set to the jth appended problem set for display
                 'problemSetIdMapToAppendedProblemId': {
                     parent: 'elementarySchool displayResults',
                     name: 'problemSetIdMapToAppendedProblemId',
@@ -1481,7 +1497,6 @@ let Root2 = {
 
                 // get the data from resultsFromBackend and selectedProblemSetFromBackend
                 // and use it to identify the right js object to make the submachine out of
-                // I don't have a state that saves the current problem they clicked on
                 'setupSubmachineForDisplay': {
                     parent: 'elementarySchool storeResults',
                     name: 'setupSubmachineForDisplay',

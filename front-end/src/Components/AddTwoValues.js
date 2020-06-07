@@ -46,7 +46,8 @@ export const AddTwoValues = (props) => {
     // problem #
     // console.log('our key', stateCoordinates)
     // console.log(stateCoordinates)
-    // console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.problemId}`)
+    // console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
+    // printTreeInteractive(Root)
     // get problem parts
     let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
     // console.log("our state", x)
@@ -80,9 +81,10 @@ export const AddTwoValues = (props) => {
     // printTreeInteractive(Root)
     let myQuantity = null
     let sizeOfQuantity = 0
+    // ${offsetString} ${i} ${j} ${k}
     if(stateCoordinates.offsetString === 'plusProblems') {
         myQuantity = getVariable(Root,
-            `${stateCoordinates.offsetString} ${stateCoordinates.problemId} 2 submission`,
+            `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} 2 submission`,
             'quantity'
             ).value
         sizeOfQuantity = myQuantity.length
@@ -115,7 +117,7 @@ export const AddTwoValues = (props) => {
                 <OneValue
                     key={i}
                     stateCoordinates={{...stateCoordinates,
-                                        problemPart: problemKey.split(' ')[2],
+                                        problemPart: problemKey.split(' ')[3], // 3rd coordinate point in the name [batchName, x, y, z]
                                         offsetString: stateCoordinates.offsetString}}
                     />
             ))}

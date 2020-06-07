@@ -51,7 +51,7 @@ const OneValue = (props) => {
     let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     // console.log(stateCoordinates)
     let x = getCell(Root, problemPartName)
-    // console.log('problem part', x)
+    console.log('problem part', x)
     let isForm = getVariable(Root,
                             problemPartName,
                             'isForm').value

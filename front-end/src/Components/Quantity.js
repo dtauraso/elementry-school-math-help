@@ -59,7 +59,7 @@ const Quantity = (props) => {
         // get it from problem, problem part(2 0, submission 0) quntity call
     // else
         // get it from problem, problem part(1 0) quntity call
-    let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     // let x = getCell(Root, problemPartName)
     let quantity = []
     // console.log('problem for quantity', x)
