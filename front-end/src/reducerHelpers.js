@@ -58,15 +58,6 @@ export const getCell = (table, name) => {
     return {"error": 'no state'}
 }
 
-export const getCell2 = (table, name) => {
-
-    // console.log('path', path)
-    // for any valid cell the forEach must run at least 1 time
-    if(Object.keys(table).includes(name)) {
-        return table[name]
-    }
-    return {"error": 'no state'}
-}
 
 export const getVariable = (state, parentStateName, variableName) => {
 
@@ -217,34 +208,6 @@ export const getChildren = (state, stateName) => {
 
 export const tableAssign = (state, cell, value) => {
 
-    if(cell === null) {
-        return state
-    }
-    let cellName = cell.name[cell.name.length - 1]
-    return {
-        ...state,
-        [cellName]: {
-            ...state[cellName],
-            value: value
-        }
-    }
-    
-    /*
-    for premade cells
-    return {
-        ...state,
-        table: {
-            ...state.redux.table,
-            ...cells
-        }
-    }
-
-    */
-    
-    
-}
-export const tableAssign2 = (state, cell, value) => {
-
     // console.log('setting the cell', cell)
     if(cell === null) {
         return state
@@ -292,6 +255,7 @@ export const tableAssignJsObject2 = (state, cell, value) => {
 
 export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
 
+    // console.log({parentStateName, targetVar})
     // targetVar is a variable name
    if(typeof dependencyVars !== 'object') {
        return tableAssign(
@@ -306,38 +270,12 @@ export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
         cb(...dependencyVars.map(variable => getVariable(state, parentStateName, variable).value))
     )
 }
-export const set2 = (state, parentStateName, targetVar, dependencyVars, cb) => {
 
-    // console.log({parentStateName, targetVar})
-    // targetVar is a variable name
-   if(typeof dependencyVars !== 'object') {
-       return tableAssign2(
-        state,
-        getVariable(state, parentStateName, targetVar),
-        dependencyVars
-       )
-   }
-    return tableAssign2(
-        state,
-        getVariable(state, parentStateName, targetVar),
-        cb(...dependencyVars.map(variable => getVariable(state, parentStateName, variable).value))
-    )
-}
 
 export const setArray = (state, parentStateName, targetVar, array) => {
 
     // array is an object
     return tableAssign(
-        state,
-        getVariable(state, parentStateName, targetVar),
-        array
-    )
-}
-
-export const setArray2 = (state, parentStateName, targetVar, array) => {
-
-    // array is an object
-    return tableAssign2(
         state,
         getVariable(state, parentStateName, targetVar),
         array

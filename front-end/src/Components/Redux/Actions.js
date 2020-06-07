@@ -128,7 +128,7 @@ export const getProblemSets = () => dispatch => {
         })
 }
 
-// what does this do?
+//setProblemSetSelector for viewing the result
 export const setProblemSetSelector = (problemSetId) => dispatch => {
 
     // assume we have loaded the data from the backend into a jsObject state
