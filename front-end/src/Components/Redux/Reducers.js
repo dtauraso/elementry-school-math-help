@@ -1,6 +1,5 @@
 import { makeQuantity } from '../../utility'
-import {    makeCell,
-            makeSet,
+import {    makeSet,
             getVariable,
             getJsObject,
             tableAssign,
@@ -12,7 +11,6 @@ import {    makeCell,
             getChildren,
             treeVisualizer,
 
-            makeCell2,
             getCell2,
             tableAssign2,
             tableAssignJsObject2,
