@@ -1,18 +1,12 @@
 import { makeQuantity } from '../../utility'
 import {    getVariable,
-            getJsObject,
-            tableAssignJsObject,
             breathFirstTraversal, 
             getCell,
             getChildren,
-            treeVisualizer,
 
-            tableAssign2,
             tableAssignJsObject2,
             set,
             setArray,
-            hasSubstates2,
-            treeVisualizer2,
             printTreeInteractive,
             getChild
         
@@ -269,6 +263,7 @@ const makeAnswerForm = (    offsetString,
     let isIntegerName = `${offsetString} isInteger ${ijk}`
     let isNotIntegerName = `${offsetString} isNotInteger ${ijk}`
     let submitValueName = `${offsetString} submitValue ${ijk}`
+    let terminateProcessEarly = `${offsetString} terminateProcessEarly ${ijk}`
 
 
     let problem_i_submission_updateTypedAnswer = `${problem_i_submission} updateTypedAnswer`
@@ -402,19 +397,22 @@ const makeAnswerForm = (    offsetString,
                 [noValueName]: {
                     parents: problem_i_submission,
                     name: noValueName,
-                    functionCode: noValue
+                    functionCode: noValue,
+                    nextStates: [terminateProcessEarly]
                     // []
                 },
                 [isNotIntegerName]: {
                     parents: problem_i_submission,
                     name: isNotIntegerName,
                     functionCode: isNotInteger,
+                    nextStates: [terminateProcessEarly]
                     // []
                 },
-                // ['terminateProcessEarly']: {
-                //     parents: problem_i_submission,
-                //     name: 'terminateProcessEarly'
-                // }
+                [terminateProcessEarly]: {
+                    parents: problem_i_submission,
+                    name: terminateProcessEarly,
+                    functionCode: returnStateFalse
+                },
                 // returnStateFalse
                 [isIntegerName]: {
                     parents: problem_i_submission,
@@ -922,7 +920,7 @@ const isInteger = (state, action) => {
 
     // console.log(getVariable(state, parentStateName, 'value').value,
             // parseInt(getVariable(state, parentStateName, 'value').value))
-    console.log(!isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true)
+    // console.log(!isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true)
     return [state, !isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true]
 }
 const isNotInteger = (state, action) => {
@@ -932,11 +930,11 @@ const isNotInteger = (state, action) => {
     // console.log(getVariable(state, parentStateName, 'value').value,
             // parseInt(getVariable(state, parentStateName, 'value').value))
     // console.log(isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true)
-    if(isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true) {
-        return [state, false]
+    // if(isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true) {
+    //     return [state, false]
 
-    }
-    return [state, true]
+    // }
+    return [state, isNaN(parseInt(getVariable(state, submissionStateName, 'value').value)) === true]
 
 
 }
@@ -1559,7 +1557,8 @@ const [temporaryState, success] = breathFirstTraversal(
     Root2,
     action,
     [action.type],
-    0)
+    0,
+    {})
 // console.log('done with machine')
 // let elementarySchoolName = 'elementarySchool'
 // let x = treeVisualizer2(temporaryState, elementarySchoolName)

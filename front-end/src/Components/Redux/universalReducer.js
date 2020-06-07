@@ -3,7 +3,6 @@ import { Root } from './Reducers'
 import {
     getCell,
     breathFirstTraversal,
-    treeVisualizer2,
     printTreeInteractive } from '../../reducerHelpers'
 
 // import { BreakApp } from './reducers/breakAppReducer'
@@ -36,7 +35,8 @@ const universalReducer = (state = initialState, action) => {
     } else {
 
         // type is the start state
-        const [temporaryState, success] = breathFirstTraversal(state, action, type, 0)
+        // {} is stateChartHistory
+        const [temporaryState, success, stateChartHistory] = breathFirstTraversal(state, action, type, 0, {})
         if(success) {
             console.log('all reducers are done', temporaryState)
             printTreeInteractive(temporaryState)

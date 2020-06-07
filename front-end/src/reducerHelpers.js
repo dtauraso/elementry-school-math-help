@@ -154,22 +154,6 @@ export const getJsObject = (state, parentStateName, variableName) => {
     return variable
 }
 
-export const findListInNestedList = (nestedList, list) => {
-
-    let isFound = false
-    nestedList.forEach(listItem => {
-        let count = 0
-        listItem.forEach((string, i) =>{
-            if(string === list[i]) {
-                count ++
-            }
-        })
-        if(count === listItem.length) {
-            isFound = true
-        }
-    })
-    return isFound
-}
 export const getChild = (state, cell, childName) => {
 
     if(!cell) {
@@ -222,21 +206,6 @@ export const tableAssign = (state, cell, value) => {
     }    
 }
 
-export const tableAssignJsObject = (state, cell, value) => {
-
-    if(cell === null) {
-        return state
-    }
-    // console.log(cell, Object.keys(cell))
-    let cellName = cell.name[cell.name.length - 1]
-    return {
-        ...state,
-        [cellName]: {
-            ...state[cellName],
-            jsObject: value
-        }
-    }
-}
 export const tableAssignJsObject2 = (state, cell, value) => {
 
     if(cell === null) {
@@ -267,7 +236,8 @@ export const set = (state, parentStateName, targetVar, dependencyVars, cb) => {
     return tableAssign(
         state,
         getVariable(state, parentStateName, targetVar),
-        cb(...dependencyVars.map(variable => getVariable(state, parentStateName, variable).value))
+        // apply cb to list of variables
+        cb(...dependencyVars.map(variableName => getVariable(state, parentStateName, variableName).value))
     )
 }
 
@@ -283,17 +253,6 @@ export const setArray = (state, parentStateName, targetVar, array) => {
 }
 
 const hasSubstates = (cell) => {
-    if(!Object.keys(cell).includes('nextParts')) {
-        return false
-    }
-    else if(Object.keys(cell.nextParts).length === 0) {
-        return false
-    }
-    else {
-        return true
-    }
-}
-const hasSubstates2 = (cell) => {
     if(!Object.keys(cell).includes('substates')) {
         return false
     }
@@ -327,7 +286,7 @@ const hasAttribute = (cell, attributeName) => {
 }
 export const treeVisualizer = (table, currentState) => {
 
-    // have to treat each cell as if only 1 function call maps to 1 cell
+    // treat each cell as if only 1 function call maps to 1 cell
     /*
     cell(full name here)
     children
@@ -341,16 +300,18 @@ export const treeVisualizer = (table, currentState) => {
         }
     ]
     */
+//    console.log('current state name', currentState)
+    // if any child state has more than 1 parent this will return misleading information
     let cell = getCell(table, currentState)
     if(!cell) {
         return {}
     }
-   
     if(hasAttribute(cell, 'jsObject')) {
         return {jsObject: cell.jsObject}
     }
+    // this is why a child state with a value gets messed up
     else if(hasAttribute(cell, 'value')) {
-        return {value: cell.value}
+        return {name: cell.name, value: cell.value}
     }
 
     let variables = {}
@@ -362,7 +323,7 @@ export const treeVisualizer = (table, currentState) => {
 
                 // should return a tree of states
                 [variableStateName]: {...treeVisualizer(table,
-                                                [variableStateName])}
+                                                variableStateName)}
             }
         })
     }
@@ -383,160 +344,66 @@ export const treeVisualizer = (table, currentState) => {
     if(hasSubstates(cell)) {
 
         // visit subtrees here
-        Object.keys(cell.nextParts).forEach(nextPart => {
-
-            // get the next nested granular state within currentState
-            substates = [
-                ...substates,
-                treeVisualizer(table,
-                        [...currentState, nextPart])
-                ]
-        })
-    }
-
-    return {
-            // a, b, and c parts are so this is the order they show up in the inspector
-            a_name: cell.name,
-            ...(cell.function === undefined? {} : {b_function: cell.function.name}),
-            // missing next states
-            ...(cell.nextStates === undefined? {} : {c_nextStates: cell.nextStates}),
-            d_children: children,
-            e_variables: variables,
-            ...(cell.jsObject === undefined? {} : {jsObject: cell.jsObject}),
-            substates: substates  
-    }
-}
-export const treeVisualizer2 = (table, currentState) => {
-
-    // have to treat each cell as if only 1 function call maps to 1 cell
-    /*
-    cell(full name here)
-    children
-    variables
-    substates: [
-        {
-        cell(full name here)
-        children
-        variables
-        substates: []
-        }
-    ]
-    */
-//    console.log('current state name', currentState)
-
-    let cell = getCell(table, currentState)
-    if(!cell) {
-        return {}
-    }
-    if(hasAttribute(cell, 'jsObject')) {
-        return {jsObject: cell.jsObject}
-    }
-    // this is why a child state with a value gets messed up
-    else if(hasAttribute(cell, 'value')) {
-        let mainPart = {name: cell.name, value: cell.value}
-        if(Object.keys(cell).includes('hashTable')) {
-            mainPart = {
-                ...mainPart,
-                hashTable: cell.hashTable
-            }
-        }
-        return mainPart
-    }
-    else if(hasAttribute(cell, 'hashTable')) {
-        return {name: cell.name, hashTable: cell.hashTable}
-    }
-
-    let variables = {}
-    if(hasAttributeOfCollection(cell, 'variableNames')) {
-
-        cell.variableNames.forEach(variableStateName => {
-            variables = {
-                ...variables,
-
-                // should return a tree of states
-                [variableStateName]: {...treeVisualizer2(table,
-                                                variableStateName)}
-            }
-        })
-    }
-
-    let children = []
-    if(hasAttributeOfCollection(cell, 'children')) {
-
-        cell.children.forEach(childStateName => {
-
-            // should return a tree of states
-            children = [...children,
-                        treeVisualizer2(table,
-                                childStateName)]
-        })
-    }
-
-    let substates = []
-    if(hasSubstates2(cell)) {
-
-        // visit subtrees here
         // console.log('current state', currentState, 'substates', cell.substates)
         cell.substates.forEach(substate => {
             // console.log('substate name', currentState + ' ' + substate)
             // get the next nested granular state within currentState
             substates = [
                 ...substates,
-                treeVisualizer2(table,
+                treeVisualizer(table,
                         currentState + ' ' + substate)
                 ]
         })
     }
-    // console.log(cell.name, Object.keys(cell))
-    // if(Object.keys(cell).includes('hashTable')) {
-    //     console.log({f_hashTable: cell.hashTable})
-    // }
     
     return {
-            // a, b, and c parts are so this is the order they show up in the inspector
+            // 'a', 'b', and 'c' parts are so this is the order they show up in the inspector
             a_name: cell.name,
             ...(cell.functionCode === undefined? {} : {b_function: cell.functionCode.name}),
             // missing next states
             ...(cell.nextStates === undefined? {} : {c_nextStates: cell.nextStates}),
             d_children: children,
             e_variables: variables,
-            // ...(!Object.keys(cell).includes('hashTable')? {} : {f_hashTable: cell.hashTable}),
             ...(cell.jsObject === undefined? {} : {jsObject: cell.jsObject}),
             substates: substates  
     }
 }
 export const printTreeInteractive = (state) => {
     let elementarySchoolName = 'elementarySchool'
-    let x = treeVisualizer2(state, elementarySchoolName)
+    let x = treeVisualizer(state, elementarySchoolName)
     console.log('tree', x)
 
 }
-export const breathFirstTraversal = (state, action, startStateName, levelId) => {
-    // startStateName, endStateName are lists of strings
+export const breathFirstTraversal = (state, action, startStateName, levelId, stateChartHistory) => {
+    // startStateName is a string
+
     // we can use the payload from the user for the entire traversal
-    // from start state to end state
-    // bft
+    // traverse from start state to end state
+
+    // dft for each level with bft for each node in the level
     // try all the options
     // for each one
         // return the state then the stateSuceded flag
+        // if it passes try it's children
+
     // return the state once endState is reached
     // assume each occurrence of this function on the callstack represents the outcome of the state machine
     // [state, pass/fail status]
+
     // This function will create a stack overflow if the state chart tree has any cycles
-    // let currentState = getValue(state, stateStateName)
+
+    
     // this will cumulatively hold the state copies untill we are done with the machine
     let temporaryState = state
-    // console.log('breathFirstTraversal', startStateName)
-    // take out cropChildreaname
-    // let [ baseStateName, childStateName ] = cropChildName(startStateName)
-    console.log("level", levelId)
+    // console.log("level", levelId)
     let nextStates = startStateName
-    // console.log('next states', nextStates, 'parent', action.type)
     let currentStateName = startStateName
-    let keepGoing = true
-    // console.log(baseStateName, childStateName)
-    // have a list of end states and make sure the current state is not in the set
+
     while(true) {
+        // record each state as it passes
+        //  [{treeBefore: temporaryState, stateName, functionName, treeAfter: temporaryStateAfter, submachine: [path of states]}]
+        // pass the tree down the call stack to save each state after it's run
+        // return the tree up the call stack to replace the old version above it
         // console.log(nextStates)
         let passes = false
         let winningStateName = ''
@@ -556,7 +423,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             }
             // console.log("getting state", temporaryState, nextState) 
             let cell = getCell(temporaryState, nextState)
-            console.log('cell found', cell.name)
+            // console.log('cell found', cell.name)
             // ignore the state if it doesn't have a function to run
             if(!Object.keys(cell).includes('functionCode')) {
                 console.log(cell, "doesn't have a function")
@@ -569,6 +436,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             // action's current state is .type
             // action.meta.currentState = nextState // bad idea
             // console.log("function to run", getValue(temporaryState, nextState), action)
+            // save tree here
             const result = cell['functionCode'](temporaryState, action)
             const success = result[1]
             // console.log("finished function")
@@ -576,6 +444,18 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             if(!success) {
                 return null
             }
+            // save the state and function name here
+            // console.log(cell['functionCode'].name)
+            stateChartHistory = {   ...stateChartHistory,
+                                    [Object.keys(stateChartHistory).length] : {
+                                                                stateName: nextState,
+                                                                functionName: cell['functionCode'].name}}
+            console.log({stateChartHistory})
+            // append the state we just ran here
+            // if debug is active
+                // print the history
+                // how do we know if a state will crash or halt the machine prematurely?
+                    // we don't
             // must keep the success value as we go up and down the call stack
             temporaryState = result[0]
 
@@ -595,76 +475,78 @@ export const breathFirstTraversal = (state, action, startStateName, levelId) => 
             if(childrenStates.length === 0) {
                 return null
             }
-            console.log("we have children", childrenStates)
+            // console.log("we have children", childrenStates)
             action.meta.parentStateName = action.type
             // call the routing agin with next states holding the children
-            
-            const nestedResult = breathFirstTraversal(temporaryState, action, childrenStates, levelId + 1)
-            // const submachineSuccess = nestedResult[1]
+            // pass the current list here
+            const nestedResult = breathFirstTraversal(  temporaryState,
+                                                        action,
+                                                        childrenStates,
+                                                        levelId + 1,
+                                                        stateChartHistory)
+            // update the state hierarchy history here using nestedResult[2]
+            let keys = Object.keys(stateChartHistory)
+            let lastKey = keys[keys.length - 1]
+            stateChartHistory = {   ...stateChartHistory,
+                                    [lastKey] : {
+                                       ...stateChartHistory[lastKey],
+                                        submachine: nestedResult[2]}}
+            console.log({stateChartHistory})
+            // stateChartHistory = nestedResult[2]
+
             passes = nestedResult[1]
             if(!passes) {
                 return null
             }
-            // console.log('done with submachine', nestedResult)
-            // if(!submachineSuccess) {
 
-            //     // if the submachine is false then this state is also false 
-            //     passes = false
-            //     return null
-            // }
             temporaryState = nestedResult[0]
-            // console.log('submachine passes', temporaryState)
 
         })
-        // if state is not end state
-            // if passes
-                // move on to next state
-            // else
-                // return false for entire machine(early exit)
-        // end state
-            // return [temporaryState, pass]
+        // 3 parameter return as opposed to the [stateChart, didPass] the reducers return
+        // current state is an end state
+        if(nextStates.length === 0) {
+            // return whatever value we have in passes and the stateChartHistory build up so far from top to bottom back to top
+            return [temporaryState, passes, stateChartHistory]
+        }
+        // current state is not an end state
 
-        if(passes) {
-            console.log("we have a winner", winningStateName, winningFunctionName)
+        else if(passes) {
+            // console.log("we have a winner", winningStateName, winningFunctionName)
 
             currentStateName = winningStateName
             
             const currentStateObject = getCell(temporaryState, currentStateName)
             // putting this in would force all states to have it as an attribute even if they have no edges
             if(!Object.keys(currentStateObject).includes('nextStates')) {
-                console.log('The next states doesn\'t exist')
+                // console.log('The next states doesn\'t exist')
                 // printTreeInteractive(temporaryState)
 
-                return [temporaryState, true]
+                return [temporaryState, true, stateChartHistory] // return stateChartHistory too
             }
             if(currentStateObject.nextStates.length === 0) {
-                console.log(`machine is done 1 ${levelId}`)
+                // console.log(`machine is done 1 ${levelId}`)
                 // keepGoing = false
-                return [temporaryState, true]
+                return [temporaryState, true, stateChartHistory]
             }
             nextStates = currentStateObject.nextStates
 
-            console.log("next set of edges", nextStates)
-        // we are at an end state
-        // what is the difference between a dead state(machine will return false) and an end state(
-        // machine will return true after finishing all state)
-        // assumes any end state means the machine will return true
-        } else if(!passes && nextStates.length === 0) {
-            console.log('machine is done 2')
-            // return temporaryState
-            return [temporaryState, true]
-
-        } else {
-            console.log(currentStateName,
-                        "failed",
-                        "attempted next states",
-                        nextStates)
-            // return temporaryState
-            return [temporaryState, true]
-
+            // console.log("next set of edges", nextStates)
         }
-    
+        else {
+            // we still can't tell the difference between a purposefull failure and unpurposefull failure
+            let keys = Object.keys(stateChartHistory)
+            let lastKey = keys[keys.length - 1]
+            stateChartHistory = {   ...stateChartHistory,
+                                    [lastKey] : {
+                                       ...stateChartHistory[lastKey],
+                                        nextStates: nextStates}}
+            console.log('failed', {stateChartHistory})
+
+            // console.log(currentStateName,
+            //     "failed",
+            //     "attempted next states",
+            //     nextStates)
+            return [temporaryState, false, stateChartHistory]
+        }
     }
-    // machine is finished
-    // return [temporaryState, true]
 }

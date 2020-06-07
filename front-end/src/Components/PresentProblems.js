@@ -8,8 +8,6 @@ import {
     getCell,
     getVariable,
     getChild,
-    treeVisualizer,
-    treeVisualizer2,
     printTreeInteractive } from '../reducerHelpers'
 import AddTwoValues from './AddTwoValues'
 
