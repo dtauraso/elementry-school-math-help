@@ -222,7 +222,66 @@ export const tableAssignJsObject2 = (state, cell, value) => {
     }
 }
 
-// 'currentState' is an illegal state name
+const initCurrentState = (  temporaryState,
+                            currentState,
+                            iterationCount,
+                            newValue) => {
+    return {
+        ...temporaryState,
+        'currentStateVariableChanges': {
+            'currentStateName': currentState,
+            'iterationCount': iterationCount,
+            'firstBefore': {
+                'parents' : newValue
+            },
+            'lastAfter': {
+                'parents' : {
+                    
+                }
+            }
+        }
+    }
+}
+
+const updateParents = ( temporaryState,
+                        timeLabel,
+                        parentStateName,
+                        newValue) => {
+
+    return {
+        ...temporaryState,
+        'currentStateVariableChanges': {
+            ...temporaryState['currentStateVariableChanges'],
+            [timeLabel] : {
+                ...temporaryState['currentStateVariableChanges'][timeLabel],
+                'parents' : {
+                    ...temporaryState['currentStateVariableChanges'][timeLabel]['parents'],
+                    [parentStateName]: newValue
+                }
+            }
+        }
+    }
+}
+
+const  resetCurrentState = (    temporaryState,
+                                currentState,
+                                timeLabel,
+                                iterationCount,
+                                newValue) => {
+
+    return {
+        ...temporaryState,
+        'currentStateVariableChanges': {
+            'currentStateName': currentState,
+            'iterationCount': iterationCount,
+            [timeLabel]: {
+                'parents' : newValue
+            }
+        }
+    }
+    
+}
+// 'currentStateVariableChanges' is an illegal state name as it's needed to track variable changes
 export const set = (state, action, parentStateName, targetVar, dependencyVars, cb) => {
 
     // save the data and track changes made to the vars as each set call is run from a reducer function
@@ -242,45 +301,21 @@ export const set = (state, action, parentStateName, targetVar, dependencyVars, c
     let iterationCount = state[action.type].iterationCount
     let temporaryState = state
     // let variable = {targetVar}
-    if(temporaryState['currentState'] === undefined) {
+    if(temporaryState['currentStateVariableChanges'] === undefined) {
         // we are at the first call to set in entire machine
         let variable = getVariable(state, parentStateName, targetVar)
         // console.log(targetVar, temporaryState[targetVar])
-        console.log('here', {variable})
-        /*
-        initCurrentState(   temporaryState,
-                                action.type,
-                                temporaryState[action.type].iterationCount,
-                                {
-                                    [targetVar]: variable.value
+        // console.log('here', {variable})
 
-                                }
-                                )
-        */
-        temporaryState = {
-            ...temporaryState,
-            'currentState': {
-                'currentStateName': action.type,
-                'iterationCount': temporaryState[action.type].iterationCount,
-                'firstBefore': {
-                    'parents' : {
-                        [parentStateName]: {
-                            [targetVar]: variable.value
+        temporaryState = initCurrentState(  temporaryState,
+                                            action.type,
+                                            temporaryState[action.type].iterationCount,
+                                            {[targetVar]: variable.value})
+        // console.log({myDiff: temporaryState['currentStateVariableChanges']})
 
-                        }
-                    }
-                },
-                'lastAfter': {
-                    'parents' : {
-                        
-                    }
-                }
-
-            }
-        }
     }
     else {
-        let currentProgressReport = temporaryState['currentState']
+        let currentProgressReport = temporaryState['currentStateVariableChanges']
         // console.log(currentProgressReport)
         // let searchKeys = Object.keys(currentProgressReport)
         if(currentProgressReport.currentStateName === currentStateName && currentProgressReport.iterationCount === iterationCount) {
@@ -288,67 +323,29 @@ export const set = (state, action, parentStateName, targetVar, dependencyVars, c
             // update old stuff
             let variable = getVariable(state, parentStateName, targetVar)
             // console.log(targetVar, temporaryState[targetVar])
-            /*
-            updateParents(  temporaryState,
-                            'firstBefore',
-                            parentStateName,
-                            {
-                                ...(temporaryState['currentState']['firstBefore']['parents'][parentStateName] !== undefined?
-                                    temporaryState['currentState']['firstBefore']['parents'][parentStateName]:
-                                    {}),
-                                [targetVar]: variable.value
-                            })
-            */
-            temporaryState = {
-                ...temporaryState,
-                'currentState': {
-                    ...temporaryState['currentState'],
-                    'firstBefore' : {
-                        ...temporaryState['currentState']['firstBefore'],
-                        'parents' : {
-                            ...temporaryState['currentState']['firstBefore']['parents'],
-                            [parentStateName]: {
-                            
-                                ...(temporaryState['currentState']['firstBefore']['parents'][parentStateName] !== undefined?
-                                    temporaryState['currentState']['firstBefore']['parents'][parentStateName]:
-                                    {}),
-                                [targetVar]: variable.value
-                            }
-                        }
-                    }
-                }
-            }
+
+           const timeLabel = 'firstBefore'
+           temporaryState = updateParents(  temporaryState,
+                                            timeLabel,
+                                            parentStateName,
+                                            {...(temporaryState['currentStateVariableChanges'][timeLabel]['parents'][parentStateName] !== undefined?
+                                                    temporaryState['currentStateVariableChanges'][timeLabel]['parents'][parentStateName]:
+                                                    {}),
+                                                [targetVar]: variable.value
+                                            })
+
         }
         else {
             // we are at the first set call for our current state and iteration count
             // reset old data and start with new stuff
             let variable = getVariable(state, parentStateName, targetVar)
             // console.log(targetVar, temporaryState[targetVar])
-            /*
-            resetCurrentState(  temporaryState,
-                                action.type,
-                                'firstBefore',
-                                temporaryState[action.type].iterationCount,
-                                {
-                                    [parentStateName]: {
-                                        [targetVar]: variable.value
-                                    }
-                                })
-            */
-            temporaryState = {
-                ...temporaryState,
-                'currentState': {
-                    'currentStateName': action.type,
-                    'iterationCount': temporaryState[action.type].iterationCount,
-                    'firstBefore': {
-                        'parents' : {
-                            [parentStateName]: {
-                                [targetVar]: variable.value
-                            }
-                        }
-                    }
-                }
-            }
+
+           temporaryState = resetCurrentState( temporaryState,
+                                                action.type,
+                                                'firstBefore',
+                                                temporaryState[action.type].iterationCount,
+                                                {[parentStateName]: { [targetVar]: variable.value}})
         }
     
     }
@@ -377,81 +374,40 @@ export const set = (state, action, parentStateName, targetVar, dependencyVars, c
                                                                                             variableName).value)))
     }
 
-    let currentProgressReport = temporaryState['currentState']
-    console.log({currentProgressReport})
+    let currentProgressReport = temporaryState['currentStateVariableChanges']
+    // console.log({currentProgressReport})
     if(currentProgressReport.currentStateName === currentStateName && currentProgressReport.iterationCount === iterationCount) {
         // we are at the second or nth set call 
         // update old stuff
         let variable = getVariable(state, parentStateName, targetVar)
         // console.log(targetVar, temporaryState[targetVar])
-         /*
-            updateParents(  temporaryState,
-                            'lastAfter',
-                            parentStateName,
-                            {
-                        
-                            ...(temporaryState['currentState']['lastAfter']['parents'][parentStateName] !== undefined?
-                                temporaryState['currentState']['lastAfter']['parents'][parentStateName]:
-                                {}),
-                            [targetVar]: typeof dependencyVars !== 'object'?
-                                            dependencyVars:
-                                        cb(...dependencyVars.map(variableName => getVariable(state, parentStateName, variableName).value))
-                            })
-        */
-        temporaryState = {
-            ...temporaryState,
-            'currentState': {
-                ...temporaryState['currentState'],
-                'lastAfter' : {
-                    ...temporaryState['currentState']['lastAfter'],
-                    'parents' : {
-                        ...temporaryState['currentState']['lastAfter']['parents'],
-                        [parentStateName]: {
-                        
-                            ...(temporaryState['currentState']['lastAfter']['parents'][parentStateName] !== undefined?
-                                temporaryState['currentState']['lastAfter']['parents'][parentStateName]:
-                                {}),
-                            [targetVar]: typeof dependencyVars !== 'object'?
-                                            dependencyVars:
-                                        cb(...dependencyVars.map(variableName => getVariable(state, parentStateName, variableName).value))
-                        }
-                    }
-                }
-            }
-        }
+ 
+       const timeLabel = 'lastAfter'
+       temporaryState = updateParents(  temporaryState,
+                                        timeLabel,
+                                        parentStateName,
+                                        {...(temporaryState['currentStateVariableChanges'][timeLabel]['parents'][parentStateName] !== undefined?
+                                            temporaryState['currentStateVariableChanges'][timeLabel]['parents'][parentStateName]:
+                                            {}),
+                                            [targetVar]: typeof dependencyVars !== 'object'?
+                                                        dependencyVars:
+                                                    cb(...dependencyVars.map(variableName => getVariable(state, parentStateName, variableName).value))
+                                        })
+
     }
     else {
         // we are at the first set call for our current state and iteration count
         // reset old data and start with new stuff
         let variable = getVariable(state, parentStateName, targetVar)
         // console.log(targetVar, temporaryState[targetVar])
-        /*
-        resetCurrentState(  temporaryState,
-                            action.type,
-                            'lastAfter'
-                            temporaryState[action.type].iterationCount,
-                            {
-                                [parentStateName]: {
-                                    [targetVar]: variable.value
-                                }
-                            })
-        */
-        temporaryState = {
-            ...temporaryState,
-            'currentState': {
-                'currentStateName': action.type,
-                'iterationCount': temporaryState[action.type].iterationCount,
-                'lastAfter': {
-                    'parents' : {
-                        [parentStateName]: {
-                            [targetVar]: typeof dependencyVars !== 'object'?
-                                            dependencyVars:
-                                        cb(...dependencyVars.map(variableName => getVariable(state, parentStateName, variableName).value))
-                        }
-                    }
-                }
-            }
-        }
+
+
+       temporaryState = resetCurrentState(  temporaryState,
+                                            action.type,
+                                            'lastAfter',
+                                            temporaryState[action.type].iterationCount,
+                                            {[parentStateName]: { [targetVar]: variable.value}})
+
     }
     return temporaryState
 
@@ -577,7 +533,7 @@ export const treeVisualizer = (table, currentState) => {
     }
     
     return {
-            // 'a', 'b', and 'c' parts are so this is the order they show up in the inspector
+            // 'a', 'b', and 'c' parts are so this is the order they show up in the console
             a_name: cell.name,
             ...(cell.functionCode === undefined? {} : {b_function: cell.functionCode.name}),
             ...(cell.iterationCount === undefined? {} : {c_iterationCount: cell.iterationCount}),
@@ -683,14 +639,14 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
 
             let before = null
             let after = null
-            console.log({ourDiff: temporaryState['currentState']})
-            if(temporaryState['currentState'] !== undefined) {
-                if(temporaryState['currentState']['firstBefore'] !== undefined) {
-                    before = {...temporaryState['currentState']['firstBefore']}
+            // console.log({ourDiff: temporaryState['currentState']})
+            if(temporaryState['currentStateVariableChanges'] !== undefined) {
+                if(temporaryState['currentStateVariableChanges']['firstBefore'] !== undefined) {
+                    before = {...temporaryState['currentStateVariableChanges']['firstBefore']}
             
                 }
-                if(temporaryState['currentState']['lastAfter'] !== undefined) {
-                    after = {...temporaryState['currentState']['lastAfter']}
+                if(temporaryState['currentStateVariableChanges']['lastAfter'] !== undefined) {
+                    after = {...temporaryState['currentStateVariableChanges']['lastAfter']}
                 }
             }
             // reset currentState here as we now know all the set functions have been run
@@ -700,21 +656,17 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
             stateChartHistory = {   ...stateChartHistory,
                                     [Object.keys(stateChartHistory).length] : {
                                                                 a_before: before,
-                                                            
-                                                                // temporaryState['currentState']['firstBefore'],
                                                                 stateName: nextState,
                                                                 functionName: cell['functionCode'].name,
                                                                 z_after: after
                                                             }
-
-
-                                                            
                                                                 // a_before
                                                                 // z_after
                                                                 // so order in the console will be
                                                                 // a_before, stateName, functionName, z_after
                                                             }
-            delete temporaryState['currentState']
+            // erase currentStateVariableChanges so set will init a new one the first time it runs in a function
+            delete temporaryState['currentStateVariableChanges']
 
             temporaryState = {
                 ...temporaryState,
