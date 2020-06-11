@@ -37,7 +37,7 @@ export const autoSolve = (pathToState) => dispatch => {
     let x = store.getState()['payload']
     console.log('submit this', x)
     axios
-        .post(`http://localhost:3001/api`, x.jsObject)
+        .post(`http://localhost:3001/api`, x.value)
         .then(res => {
             if(res.status === 200) {
                 console.log('added the data')
@@ -131,7 +131,7 @@ export const getProblemSets = () => dispatch => {
 //setProblemSetSelector for viewing the result
 export const setProblemSetSelector = (problemSetId) => dispatch => {
 
-    // assume we have loaded the data from the backend into a jsObject state
+    // assume we have loaded the data from the backend into a value state
     dispatch({
         type: ['saveProblemSetSelectedForDisplay'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
         payload: problemSetId,

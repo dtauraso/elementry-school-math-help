@@ -45,14 +45,14 @@ const Results = (props) => {
     console.log('print tree')
     // treeVisualizer(Root, elementarySchoolName, 1)
 
-    // .jsObject already existed when the state chart was initialized
-    let stuff = getCell(Root, 'resultsFromBackend').jsObject['problemSets']
-    // let problemSets = getCell(Root, ['resultsFromBackend']).jsObject['problemSets']
+    // .value already existed when the state chart was initialized
+    let stuff = getCell(Root, 'resultsFromBackend').value['problemSets']
+    // let problemSets = getCell(Root, ['resultsFromBackend']).value['problemSets']
     const clearResults = () => {
         props.clearResults()
     }
     if(stuff) {
-        // console.log('stuff', stuff.jsObject)
+        // console.log('stuff', stuff.value)
         return (
             <div>
                 <ShowProblems>

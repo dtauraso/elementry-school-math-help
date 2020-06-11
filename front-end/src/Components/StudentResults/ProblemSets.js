@@ -14,7 +14,7 @@ const ProblemSets = (props) => {
     let x = getCell(Root, 'resultsFromBackend')
 
     // console.log(x)
-    let problemSets = getCell(Root, 'resultsFromBackend').jsObject['problemSets']
+    let problemSets = getCell(Root, 'resultsFromBackend').value['problemSets']
     console.log('my problem sets', problemSets)
     return (
         <div>

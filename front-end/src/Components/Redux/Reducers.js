@@ -4,7 +4,7 @@ import {    getVariable,
             getCell,
             getChildren,
 
-            tableAssignJsObject2,
+            tableAssign,
             set,
             setArray,
             printTreeInteractive,
@@ -83,7 +83,7 @@ const setJSObject2 = (state, parentStateName, variableName, newValue) => {
         
         [variable.name]: {
             ...variable,
-            jsObject: newValue
+            value: newValue
         }
     }
 }
@@ -1167,11 +1167,11 @@ const collectProblems = (state, action, i, j, k) => {
 
     let myProblemTable = getCell(state, 'payload')
     // console.log('my promblem table', myProblemTable)
-    temporaryState = tableAssignJsObject2(
+    temporaryState = tableAssign(
         state,
         myProblemTable, 
-        {   ...myProblemTable.jsObject,
-            'problem set table': [...myProblemTable.jsObject['problem set table'], row]
+        {   ...myProblemTable.value,
+            'problem set table': [...myProblemTable.value['problem set table'], row]
 
         }
         )
@@ -1199,17 +1199,17 @@ const setupForBackend = (state, action) => {
     // let x = getCell(temporaryState, ['payload'])
     let myCompletedProblems = getCell(temporaryState, 'payload')
     // console.log('completed problems', myCompletedProblems)
-    const correctProblems = myCompletedProblems.jsObject['problem set table'].filter(problem => problem.gotItRightTheFirstTime).length
+    const correctProblems = myCompletedProblems.value['problem set table'].filter(problem => problem.gotItRightTheFirstTime).length
     // console.log('correctProblems', correctProblems)
     // calculate % of correct problems
     // round to largest whole number
-    temporaryState = tableAssignJsObject2(
+    temporaryState = tableAssign(
         temporaryState,
         myCompletedProblems, 
-        {   ...myCompletedProblems.jsObject,
+        {   ...myCompletedProblems.value,
             'problem sets table': {nameOfProblemSet: `${offsetString} problem set 0`,
                                 numberCorrect: correctProblems,
-                                totalProblems: myCompletedProblems.jsObject['problem set table'].length
+                                totalProblems: myCompletedProblems.value['problem set table'].length
                             }
         }
         )
@@ -1252,7 +1252,7 @@ const storeResults = (state, action) => {
     // console.log('store resulst', payload)
 
     let parentStateName = 'elementarySchool storeResults'
-    temporaryState = setJSObject2(temporaryState, parentStateName, 'resultsFromBackend', payload)
+    temporaryState = setVariable(temporaryState, parentStateName, 'resultsFromBackend', payload)
     // console.log('saved payload')
     // console.log(temporaryState)
     return [temporaryState, true]
@@ -1264,7 +1264,7 @@ const setupSubmachineForDisplay = (state, action) => {
     const payload = action.payload
     let temporaryState = state
 
-    let problemSets = getCell(temporaryState, 'resultsFromBackend').jsObject['problems']
+    let problemSets = getCell(temporaryState, 'resultsFromBackend').value['problems']
     // console.log({problemSets})
     // problemSetId is too large(the sql id table isn't getting reset)
     let problemSetId = getCell(temporaryState, 'selectedProblemSetFromBackend').value
@@ -1332,11 +1332,11 @@ const setupSubmachineForDisplay = (state, action) => {
     //     'problemSetIdMapToAppendedProblemId': {
     //         parent: 'elementarySchool displayResults', // same parent as selectedProblemSetFromBackend
     //         name: 'problemSetIdMapToAppendedProblemId',
-    //         jsObject: {[problemSetId]: appendedProblemId}
+    //         value: {[problemSetId]: appendedProblemId}
     //     }
     // }
     // 'problemSetIdMapToAppendedProblemId'
-    // one state varable with jsObject = {problemSetId: appendedProblemId}
+    // one state varable with value = {problemSetId: appendedProblemId}
     console.log('set dict up', temporaryState)
 
 
@@ -1470,13 +1470,13 @@ let Root2 = {
                 'resultsFromBackend': {
                     parent: 'elementarySchool storeResults',
                     name: 'resultsFromBackend',
-                    jsObject: -1
+                    value: -1
                 },
                 // from the backend response
                 'payload': {
                     parent: 'elementarySchool storeResults',
                     name: 'payload',
-                    jsObject: {'problem set table': []}
+                    value: {'problem set table': []}
                 },
 
             // for displaying results only
@@ -1495,7 +1495,7 @@ let Root2 = {
                 'problemSetIdMapToAppendedProblemId': {
                     parent: 'elementarySchool displayResults',
                     name: 'problemSetIdMapToAppendedProblemId',
-                    value: {}  // so I don't have to spend more time doing 'value' vs 'jsObject' attribute juggling while setting
+                    value: {}  // so I don't have to spend more time doing 'value' vs 'value' attribute juggling while setting
                     // a state to a value
                 },
                 'displayResults problemCount': {

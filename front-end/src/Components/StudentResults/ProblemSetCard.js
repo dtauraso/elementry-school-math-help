@@ -28,7 +28,7 @@ const ProblemSetCard = (props) => {
         b,
         theirAnswer,
         actualAnswer,
-        gotItRightTheFirstTime} = getCell(Root, 'resultsFromBackend').jsObject['problems'][problemSet][problemId]
+        gotItRightTheFirstTime} = getCell(Root, 'resultsFromBackend').value['problems'][problemSet][problemId]
     // console.log('myProblem', myProblem)
     // run AddTwoValues on each problem
     // stateCoordinates.offsetString}problem ${stateCoordinates.problemId

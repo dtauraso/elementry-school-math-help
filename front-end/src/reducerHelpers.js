@@ -19,7 +19,7 @@
 limitations
 a function state cannot have a value
 you should always access a variable state using the parent state name
-a variable state can't have children attributes(a nested jsObject doesn't count as a child)
+a variable state can't have children attributes(a nested value doesn't count as a child)
 
 alowances(not currently imlemented)
 children can be variables
@@ -55,7 +55,7 @@ export const getCell = (table, name) => {
     if(Object.keys(table).includes(name)) {
         return table[name]
     }
-    return {"error": 'no state'}
+    return {'error': 'no state'}
 }
 
 
@@ -110,84 +110,21 @@ export const getVariable = (state, parentStateName, variableName) => {
     return variable
 }
 
-export const getJsObject = (state, parentStateName, variableName) => {
-
-    // The parent state should only be linked to one variable name at a time
-    // in the below example:
-    // You can say 'quantity 2' then call it 'quantity' when using it in the reducers
-    // as long as the same parent doesn't also have a variable name called 'quantity 3'.
-    // This is to allow the user to use variable names with this contextual state chart
-    // at a simular level of detail they would use in a programming lnagugae
-
-    let cell = getCell(state, parentStateName)
-    if(!cell) {
-        return null
-    }
-    if(!Object.keys(cell).includes('jsObject')) {
-        return null
-    }
-    let variable = null
-
-    let variableNameIsInCellVariableNamesCount = 0
-    let found = false
-    cell.variableNames.forEach(cellVariableName => {
-        if(cellVariableName.search(variableName) === -1) {
-            return null
-        }
-        variableNameIsInCellVariableNamesCount ++
-        found = true
-        variable = state[cellVariableName]
-    })
-    if(variableNameIsInCellVariableNamesCount > 1) {
-        console.log(`You cannot have more than 1 js object name that contains |${variableName}|`)
-        return null
-    }
-    if(!found) {
-        console.log(`A variable similarly called ${variableName} may exist but there is no link from |${parentStateName}| to |${variableName}|`)
-        return null
-
-    }
-    if(variable === null) {
-        console.log(variableName, 'doesn\'t exist')
-        return null
-    }
-    return variable
-}
-
 export const getChild = (state, cell, childName) => {
 
     if(!cell) {
         return null
     }
-    // console.log('getting child', cell)
-    // console.log(Object.keys(cell))
     if(!Object.keys(cell).includes('children')) {
         return null
     }
     let child = null
-    // console.log(cell.children, childName, cell.children.includes(childName))
+
     if(cell.children.includes(childName)) {
         child = getCell(state, childName)
     }
     
-    return child//state[childName]
-}
-
-// not being used anymore
-export const getChildren = (state, stateName) => {
-
-    let cell = getCell(state, stateName)
-    // console.log('cell with children', cell)
-    // console.log(Object.keys(cell))
-    if(!cell) {
-        return []
-    }
-    if(!Object.keys(cell).includes('children')) {
-        return []
-    }
-    // the children are 1 dimentional
-    // we want the children to return like this [['one'], ['three'], ['four']]
-    return cell.children//Object.keys(cell.children)//.map(nextStateString => [nextStateString])
+    return child
 }
 
 export const tableAssign = (state, cell, value) => {
@@ -204,22 +141,6 @@ export const tableAssign = (state, cell, value) => {
             value: value
         }
     }    
-}
-
-export const tableAssignJsObject2 = (state, cell, value) => {
-
-    if(cell === null) {
-        return state
-    }
-    // console.log(cell, Object.keys(cell))
-    let cellName = cell.name
-    return {
-        ...state,
-        [cellName]: {
-            ...state[cellName],
-            jsObject: value
-        }
-    }
 }
 
 const initCurrentState = (  temporaryState,
@@ -318,7 +239,8 @@ export const set = (state, action, parentStateName, targetVar, dependencyVars, c
         let currentProgressReport = temporaryState['currentStateVariableChanges']
         // console.log(currentProgressReport)
         // let searchKeys = Object.keys(currentProgressReport)
-        if(currentProgressReport.currentStateName === currentStateName && currentProgressReport.iterationCount === iterationCount) {
+        if( currentProgressReport.currentStateName === currentStateName &&
+            currentProgressReport.iterationCount === iterationCount) {
             // we are at the second or nth set call 
             // update old stuff
             let variable = getVariable(state, parentStateName, targetVar)
@@ -375,13 +297,14 @@ export const set = (state, action, parentStateName, targetVar, dependencyVars, c
     }
 
     let currentProgressReport = temporaryState['currentStateVariableChanges']
-    // console.log({currentProgressReport})
-    if(currentProgressReport.currentStateName === currentStateName && currentProgressReport.iterationCount === iterationCount) {
+
+    if( currentProgressReport.currentStateName === currentStateName &&
+        currentProgressReport.iterationCount === iterationCount) {
         // we are at the second or nth set call 
         // update old stuff
         let variable = getVariable(state, parentStateName, targetVar)
-        // console.log(targetVar, temporaryState[targetVar])
- 
+
+        
        const timeLabel = 'lastAfter'
        temporaryState = updateParents(  temporaryState,
                                         timeLabel,
@@ -389,6 +312,7 @@ export const set = (state, action, parentStateName, targetVar, dependencyVars, c
                                         {...(temporaryState['currentStateVariableChanges'][timeLabel]['parents'][parentStateName] !== undefined?
                                             temporaryState['currentStateVariableChanges'][timeLabel]['parents'][parentStateName]:
                                             {}),
+                                            // targetVar is a variable name
                                             [targetVar]: typeof dependencyVars !== 'object'?
                                                         dependencyVars:
                                                     cb(...dependencyVars.map(variableName => getVariable(state, parentStateName, variableName).value))
@@ -482,9 +406,9 @@ export const treeVisualizer = (table, currentState) => {
     if(!cell) {
         return {}
     }
-    if(hasAttribute(cell, 'jsObject')) {
-        return {jsObject: cell.jsObject}
-    }
+    // if(hasAttribute(cell, 'value')) {
+    //     return {value: cell.value}
+    // }
     // this is why a child state with a value gets messed up
     else if(hasAttribute(cell, 'value')) {
         return {name: cell.name, value: cell.value}
@@ -542,7 +466,6 @@ export const treeVisualizer = (table, currentState) => {
             ...(cell.nextStates === undefined? {} : {d_nextStates: cell.nextStates}),
             e_children: children,
             f_variables: variables,
-            ...(cell.jsObject === undefined? {} : {jsObject: cell.jsObject}),
             substates: substates  
     }
 }

@@ -5,6 +5,9 @@ const ourCrud = require('../../common-db-operations/crud')
 function compareFunction(item_i, item_j){
     return item_i.orderId - item_j.orderId 
 }
+
+// fix using:
+// https://blog.grossman.io/how-to-write-async-await-without-try-catch-blocks-in-javascript/
 // console.log('here')
 router.get('/', async (req, res, next) => {
     console.log('in our get')
