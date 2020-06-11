@@ -38,12 +38,9 @@ const universalReducer = (state = initialState, action) => {
         // {} is stateChartHistory
         const [temporaryState, success, stateChartHistory] = breathFirstTraversal(state, action, type, 0, {})
         if(success) {
-            console.log('all reducers are done', temporaryState)
-            printTreeInteractive(temporaryState)
-            // let elementarySchoolName = 'elementarySchool'
-            // let x = treeVisualizer2(state, elementarySchoolName)
-            // console.log('tree', x)
-        
+            console.log('all reducers are done')
+            console.log({stateChartHistory})
+            printTreeInteractive(temporaryState)        
 
             return temporaryState
         } else {
