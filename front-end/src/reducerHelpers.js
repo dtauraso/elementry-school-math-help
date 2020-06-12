@@ -40,18 +40,9 @@ export const setCell = (value) => {
     return value
 }
 
-
-// getVariable(tree, getCell(tree, stateName), 'value').value => value from key 'value 0'
-// tableAssign(tree,
-                // getVariable(getCell(tree, stateName), 'value').name,
-                // aValue,
-                // setCell)
-// have an assignment routine that updates a set of rows at once
-// ...(cb(cells, value).cells) // cb should always return a js object stateName: {stuff}
-
 export const getCell = (table, name) => {
 
-    // console.log('path', name)
+
     if(Object.keys(table).includes(name)) {
         return table[name]
     }
@@ -67,9 +58,9 @@ export const getVariable = (state, parentStateName, variableName) => {
     // as long as the same parent doesn't also have a variable name called 'quantity 3'.
     // This is to allow the user to use variable names with this contextual state chart
     // at a simular level of detail they would use in a programming lnagugae
-    // console.log("here", parentStateName, state)
+
     let cell = getCell(state, parentStateName)
-    // console.log({cell})
+
     if(!cell) {
         return null
     }
@@ -80,18 +71,17 @@ export const getVariable = (state, parentStateName, variableName) => {
 
     let variableNameIsInCellVariableNamesCount = 0
     let found = false
-    // console.log(cell.variableNames, variableName)
+
     cell.variableNames.forEach(cellVariableName => {
         if(cellVariableName.search(variableName) === -1) {
             return null
         }
-        // console.log(cellVariableName.search(variableName))
 
-        variableNameIsInCellVariableNamesCount ++
+        variableNameIsInCellVariableNamesCount += 1
         found = true
         variable = state[cellVariableName]
     })
-    // console.log(found)
+
     if(variableNameIsInCellVariableNamesCount > 1) {
         console.log(`You cannot have more than 1 variable name that contains |${variableName}|`)
         return null
@@ -105,7 +95,6 @@ export const getVariable = (state, parentStateName, variableName) => {
         console.log(variableName, 'doesn\'t exist')
         return null
     }
-    // console.log('found it', variable)
 
     return variable
 }
@@ -127,9 +116,22 @@ export const getChild = (state, cell, childName) => {
     return child
 }
 
+export const getChildren = (state, stateName) => {
+
+    let cell = getCell(state, stateName)
+
+    if(!cell) {
+        return []
+    }
+    if(!Object.keys(cell).includes('children')) {
+        return []
+    }
+    return cell.children
+}
+
 export const tableAssign = (state, cell, value) => {
 
-    // console.log('setting the cell', cell)
+
     if(cell === null) {
         return state
     }
@@ -221,18 +223,15 @@ export const set = (state, action, parentStateName, targetVar, dependencyVars, c
     let currentStateName = action.type
     let iterationCount = state[action.type].iterationCount
     let temporaryState = state
-    // let variable = {targetVar}
+
     if(temporaryState['currentStateVariableChanges'] === undefined) {
         // we are at the first call to set in entire machine
         let variable = getVariable(state, parentStateName, targetVar)
-        // console.log(targetVar, temporaryState[targetVar])
-        // console.log('here', {variable})
 
         temporaryState = initCurrentState(  temporaryState,
                                             action.type,
                                             temporaryState[action.type].iterationCount,
                                             {[targetVar]: variable.value})
-        // console.log({myDiff: temporaryState['currentStateVariableChanges']})
 
     }
     else {
@@ -461,8 +460,6 @@ export const treeVisualizer = (table, currentState) => {
             a_name: cell.name,
             ...(cell.functionCode === undefined? {} : {b_function: cell.functionCode.name}),
             ...(cell.iterationCount === undefined? {} : {c_iterationCount: cell.iterationCount}),
-
-            // missing next states
             ...(cell.nextStates === undefined? {} : {d_nextStates: cell.nextStates}),
             e_children: children,
             f_variables: variables,
@@ -532,7 +529,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
             }
             // make sure the set call knows what state we are on even if it's a loop with a single state
             if(!Object.keys(cell).includes('iterationCount')) {
-                // put in iteration #
+                // put in iterationCount
                 temporaryState = {
                     ...temporaryState,
                     [cell.name] : {
@@ -558,6 +555,8 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
                 stateFunctionPair = [...stateFunctionPair, {state: cell.name, functionCode: cell['functionCode'].name}]
                 return null
             }
+
+            // must keep the success value as we go up and down the call stack
             temporaryState = result[0]
 
             let before = null
@@ -587,7 +586,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
                                                                 // z_after
                                                                 // so order in the console will be
                                                                 // a_before, stateName, functionName, z_after
-                                                            }
+                                }
             // erase currentStateVariableChanges so set will init a new one the first time it runs in a function
             delete temporaryState['currentStateVariableChanges']
 
@@ -600,12 +599,8 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
             }
             if(isDebug) {
                 console.log({stateChartHistory})
-
             }
 
-            // relocate?
-            // must keep the success value as we go up and down the call stack
-            // temporaryState = result[0]
 
             passes = true
             winningStateName = nextState
@@ -639,10 +634,6 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
                                     [lastKey] : {
                                        ...stateChartHistory[lastKey],
                                         submachine: nestedResult[2]}}
-            if(isDebug) {
-                console.log({stateChartHistory})
-
-            }
 
             passes = nestedResult[1]
             if(!passes) {
@@ -683,7 +674,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
             // console.log("next set of edges", nextStates)
         }
         else {
-            // we still can't tell the difference between a purposefull failure and unpurposefull failure
+            // What is the difference between a purposefull failure and unpurposefull failure?
             let keys = Object.keys(stateChartHistory)
             let lastKey = keys[keys.length - 1]
             stateChartHistory = {   ...stateChartHistory,

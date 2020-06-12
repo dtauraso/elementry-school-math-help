@@ -73,20 +73,6 @@ const appendStates = (temporaryState, states) => {
 }
 
 
-const setJSObject2 = (state, parentStateName, variableName, newValue) => {
-
-    // parentStateName is an array of strings
-    let variable = getVariable(state, parentStateName, variableName)
-
-    return {
-        ...state,
-        
-        [variable.name]: {
-            ...variable,
-            value: newValue
-        }
-    }
-}
 
 const setVariable = (state, parentStateName, variableName, newValue) => {
 
@@ -103,20 +89,6 @@ const setVariable = (state, parentStateName, variableName, newValue) => {
     }
 }
 
-const setValueForChild = (state, parentStateName, childName, newValue) => {
-
-    // console.log({parentStateName, childName})
-    let cell = getChild(state, getCell(state, parentStateName), childName)
-    // console.log(cell)
-    return {
-        ...state,
-        
-        [cell.name]: {
-            ...cell,
-            value: newValue
-        }
-    }
-}
 
 const makeProblemPartNumber = (  offsetString,
                                 i,

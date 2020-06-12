@@ -12,6 +12,8 @@ import {
 import AddTwoValues from './AddTwoValues'
 
 
+// this component uses redux memoizing as an experiment
+// the other components don't use it
 const getMyProblems = ( state, location ) => {
 
     let Root = state
@@ -51,7 +53,7 @@ const getTheProblemSetId = (Root, location) => {
 
     let elementarySchool = getCell(Root, elementarySchoolName)
     let problemSets = getChild(Root, elementarySchool, `${location}`)
-    console.log({location, problemSets})
+    // console.log({location, problemSets})
 
     let ithProblemSet = problemSets.children.length - 1
 

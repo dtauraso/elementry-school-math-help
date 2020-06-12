@@ -100,6 +100,14 @@ const OneValue = (props) => {
             isValue
             isDisplayResult
             react will read these flags and display the correct sequence of components
+            if(isForm) {
+                return <div>
+                        component sequence only if isForm is true
+                        </div>
+            else if(isValue) {
+                same as last case
+            }
+            }
             */}
             {isForm? 
                 <SubmitAnswer
