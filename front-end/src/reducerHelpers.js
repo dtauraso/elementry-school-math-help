@@ -36,6 +36,31 @@ make special functions to assume different properties of the states and print ou
 // can I work with them?
 // can they do the job?
 var isDebug = true
+
+export const appendStates = (temporaryState, states) => {
+    return {
+        ...temporaryState,
+        ...states
+    }
+}
+
+
+
+export const setVariable = (state, parentStateName, variableName, newValue) => {
+
+    // parentStateName is an array of strings
+    let variable = getVariable(state, parentStateName, variableName)
+    // console.log({variable, newValue})
+    return {
+        ...state,
+        
+        [variable.name]: {
+            ...variable,
+            value: newValue
+        }
+    }
+}
+
 export const setCell = (value) => {
     return value
 }
@@ -204,6 +229,7 @@ const  resetCurrentState = (    temporaryState,
     }
     
 }
+
 // 'currentStateVariableChanges' is an illegal state name as it's needed to track variable changes
 export const set = (state, action, parentStateName, targetVar, dependencyVars, cb) => {
 

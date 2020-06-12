@@ -25,7 +25,7 @@ const universalReducer = (state = initialState, action) => {
     console.log(state, action)
     // action.type always holds the start state
     // console.log(action.type, state, Root)
-    const { type, payload, meta} = action
+    const { type, payload, meta } = action
     if(typeof(type) === 'string') {
         console.log('caught', type)
         return state

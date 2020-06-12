@@ -1,5 +1,8 @@
 import { makeQuantity } from '../../utility'
-import {    getVariable,
+import {    
+            appendStates,
+            setVariable,
+            getVariable,
             breathFirstTraversal, 
             getCell,
             getChildren,
@@ -65,29 +68,6 @@ current state name form (i0. i1, i2)
 new state name form (i0 + j. i1, i2)
 
 */
-const appendStates = (temporaryState, states) => {
-    return {
-        ...temporaryState,
-        ...states
-    }
-}
-
-
-
-const setVariable = (state, parentStateName, variableName, newValue) => {
-
-    // parentStateName is an array of strings
-    let variable = getVariable(state, parentStateName, variableName)
-    // console.log({variable, newValue})
-    return {
-        ...state,
-        
-        [variable.name]: {
-            ...variable,
-            value: newValue
-        }
-    }
-}
 
 
 const makeProblemPartNumber = (  offsetString,
