@@ -4,10 +4,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const server = express();
 
-// const userRouter = require('../users/user-router');
-// const authRouter = require('../auth/auth-router');
-// const ticketRouter = require('../tickets/ticket-router');
-// const reactionRouter = require('../reactions/reaction-router')
 const problemSetRouter = require('./records/record-router')
 server.use(express.json());
 server.use(logger);
@@ -17,14 +13,8 @@ server.use(helmet());
 // for register and login
 // console.log('here')
 server.use('/api', problemSetRouter)
-// server.use('/api', authRouter);
 
-// // for users
-// server.use('/api/users', userRouter);
-// // for tickets
-// server.use('/api/tickets', ticketRouter);
 
-// server.use('/api/reactions', reactionRouter);
 // middleware for all status 500 errors
 
 server.use((err, req, res, next) => {

@@ -17,6 +17,7 @@ function App() {
           Results
         </Link>
       </nav>
+      
       <Route path="/plusProblems"
         render={(props) => <PresentProblems myPath={'plusProblems'}/>}
         />

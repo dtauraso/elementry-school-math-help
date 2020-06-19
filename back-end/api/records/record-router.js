@@ -9,45 +9,36 @@ function compareFunction(item_i, item_j){
 // fix using:
 // https://blog.grossman.io/how-to-write-async-await-without-try-catch-blocks-in-javascript/
 // console.log('here')
+// gets problems to diplay them to the user so they can see their results for all the attempts of all the problem sets
+// it could be the same problem set reattempted if they didn't get enough right
 router.get('/', async (req, res, next) => {
-    console.log('in our get')
+
     let problemSets = await ourCrud.getAll('problemSets').catch((err) => { res.status(500).json({}) });
 
     console.log(problemSets)
     if(problemSets.length === 0) {
         res.status(500).json({})
-        // next()
     } else {
         let myProblems = problemSets.map(async (problemSetSummary) => {
-            // console.log(problemSetSummary.id)
+
             let problems = await ourCrud.getAllByFilter({problemSetId: problemSetSummary.id}, 'problemSet')
                                         .catch((err) => { res.status(500).json({}) })
-            // console.log('problems from tables', problems)
             problems = problems.sort(compareFunction)
-            // console.log('problems from tables sorted', problems)
-
             return problems
     
         })
 
-
         let problems = await Promise.all(myProblems).then(problems => problems)
-        // console.log('problems retreived', problems)
-        // console.log('problem sets', problemSets)
         
         res.status(200).json({
             problemSets: problemSets,
             problems: problems
         })
-    
     }
-
-    
-
 })
 
 // router.get('/:problemSetId')
-
+// for posting the problems the user answered
 router.post('/', async (req, res) => {
     // console.log(req.body)
     let problemSet = req.body['problem sets table']
@@ -79,6 +70,7 @@ router.post('/', async (req, res) => {
 
 })
 
+// this is for cleaning out the database (dev only)
 router.delete('/', async (req, res) => {
     let tables = ['problemSet', 'problemSets']
     // let deleteData = await ourCrud.clearTable('problemSet')

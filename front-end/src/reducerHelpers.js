@@ -534,10 +534,24 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
         let winningStateName = ''
         let stateFunctionPair = []
         nextStates.forEach(nextState => {
+
+            /* {
+                didFunctionFail,   // Did we hit any (return null)'s ?
+                passes,
+                winningStateName,
+                temporaryState,
+                stateFunctionPair,
+                stateChartHistory} = visitNode( temporaryState, 
+                                                nextState,
+                                                action,
+                                                stateFunctionPair,
+                                                stateChartHistory,
+                                                isDebug,
+                                                levelId)
+            */
             // console.log('trying', nextState)
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
-                // keepGoing = false
                 return null
 
             }
@@ -545,7 +559,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
             if(passes) {
                 return null
             }
-            // console.log("getting state", temporaryState, nextState) 
+            // console.log("getting state", temporaryState, nextState, stateChartHistory) 
             let cell = getCell(temporaryState, nextState)
             // console.log('cell found', cell.name)
             // ignore the state if it doesn't have a function to run
@@ -701,6 +715,7 @@ export const breathFirstTraversal = (state, action, startStateName, levelId, sta
         }
         else {
             // What is the difference between a purposefull failure and unpurposefull failure?
+            // if we don't have a pass but there are next states then we have a feature failure
             let keys = Object.keys(stateChartHistory)
             let lastKey = keys[keys.length - 1]
             stateChartHistory = {   ...stateChartHistory,
