@@ -27,7 +27,9 @@ exports.up = function(knex) {
         // })
         // problem sets
         .createTable('problemSets', tbl => {
+            // primary key
             tbl.increments();
+            
             tbl.string('nameOfProblemSet', 255)
                 .notNullable();
             tbl
@@ -42,7 +44,11 @@ exports.up = function(knex) {
         })
         // probem set
         .createTable('problemSet', tbl => {
+
+            // primary key
             tbl.increments();
+
+            // foreign key
             tbl
             .integer('problemSetId')
             .unsigned()
@@ -64,6 +70,10 @@ exports.up = function(knex) {
                 .notNullable()
             tbl
                 .boolean('gotItRightTheFirstTime')
+                .notNullable()
+            // makes sure the probles for that problem set are displayed to the user in order
+            tbl
+                .integer('orderId')
                 .notNullable()
             // they have to have gotten it right on their first attempt for this to say true
             // tbl

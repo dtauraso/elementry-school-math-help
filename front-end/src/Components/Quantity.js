@@ -1,11 +1,10 @@
-import React, {useState} from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
 import {
     getCell,
     getVariable } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
 
 const Box = styled.p`
 
@@ -40,7 +39,7 @@ const EndBox = styled(Box/*, props */)`
 const Boxes = styled.div`
 
     // what if this was dependent on the expected total number of @ symbols?
-    width: 50%;
+    width: ${props => props.quantityLength * 27}px;//50%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -60,13 +59,13 @@ const Quantity = (props) => {
         // get it from problem, problem part(2 0, submission 0) quntity call
     // else
         // get it from problem, problem part(1 0) quntity call
-    let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
-    let x = getCell(Root, problemPartName)
+    let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    // let x = getCell(Root, problemPartName)
     let quantity = []
     // console.log('problem for quantity', x)
     if(stateCoordinates.isForm) {
         quantity = getVariable(Root,
-            [...problemPartName, `submission ${stateCoordinates.problemId}`],
+            `${problemPartName} submission`,
             'quantity'
             ).value
     } else {
@@ -85,7 +84,7 @@ const Quantity = (props) => {
     // const [difference, setDifference] = useState(total - quantity)
     // console.log('in quantity', getValue(Root, statePath))
     return (
-            <Boxes>
+            <Boxes quantityLength={quantity.length}>
                 {/* i : [0, total] quantity: [0, < total] */}
                 {quantity.map((item, i) => {
                     // const truthFlag = (value - 1) < i

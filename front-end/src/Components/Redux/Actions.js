@@ -28,7 +28,8 @@ export const autoSolve = (pathToState) => dispatch => {
     dispatch({
         type: [pathToState],
         meta: {
-            parentStateName: pathToState
+            parentStateName: pathToState,
+            offsetString: 'plusProblems'
         }
     })
     // let myProblemTable = getCell(state, ['payload'])
@@ -36,9 +37,9 @@ export const autoSolve = (pathToState) => dispatch => {
     let x = store.getState()['payload']
     console.log('submit this', x)
     axios
-        .post(`http://localhost:3001/api`, x.jsObject)
+        .post(`http://localhost:3001/api`, x.value)
         .then(res => {
-            if(res.status == 200) {
+            if(res.status === 200) {
                 console.log('added the data')
 
             }
@@ -50,12 +51,14 @@ export const autoSolve = (pathToState) => dispatch => {
 export const addToAnswer = (lotsOfThings, pathToState) => dispatch => {
 
     // have a custom state that just lets you save to the field variable
+    console.log(lotsOfThings, pathToState)
     dispatch({
         type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
         payload: lotsOfThings,
         meta: {
                 basePath: pathToState, // base state(for the object data)
                 parentStateName: pathToState,
+                offsetString: 'plusProblems'
             }
     });
 
@@ -70,12 +73,15 @@ export const submitAnswer = (pathToState) => dispatch => {
     // runs a graph of connected nodes
     // use the action meta property
     console.log(store.getState())
+    console.log('we are going to submit answer')
     dispatch({
             type: [pathToState], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
             // payload: lotsOfThings,
             meta: {
+                // how did the parentStateName become an aray of strings?
                     basePath: pathToState, // base state(for the object data)
                     parentStateName: pathToState,
+                    offsetString: 'plusProblems'
                     // testPayload: store.getState()
                 }
         });
@@ -90,4 +96,58 @@ export const submitAnswer = (pathToState) => dispatch => {
     //                 // testPayload: store.getState()
     //             }
     //     });
+}
+
+export const getProblemSets = () => dispatch => {
+
+    console.log('inside the action')
+    axios
+        .get(`http://localhost:3001/api`)
+        .then(res => {
+            console.log('returned')
+            if(res.status === 200) {
+                console.log('got the data', res.data)
+                dispatch({
+                    type: ['elementarySchool storeResults'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+                    payload: res.data,
+                    meta: {
+                            offsetString: 'plusProblems'
+                            // basePath: pathToState, // base state(for the object data)
+                            // parentStateName: pathToState,
+                            // testPayload: store.getState()
+                        }
+                });
+        
+            }
+            else {
+                console.log('res is not ok')
+            }
+        })
+        .catch(error => {
+            console.log('error', error)
+        })
+}
+
+//setProblemSetSelector for viewing the result
+export const setProblemSetSelector = (problemSetId) => dispatch => {
+
+    // assume we have loaded the data from the backend into a value state
+    dispatch({
+        type: ['saveProblemSetSelectedForDisplay'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+        payload: problemSetId,
+        meta: {
+                offsetString: 'plusProblems',
+                // basePath: pathToState, // base state(for the object data)
+                parentStateName: 'elementarySchool displayResults'//pathToState,
+            }
+    });
+
+}
+
+export const clearResults = () => dispatch => {
+    axios
+        .delete(`http://localhost:3001/api`)
+        .catch(error => {
+            console.log('error', error)
+        })
 }

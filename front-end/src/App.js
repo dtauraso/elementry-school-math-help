@@ -1,12 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Route, Link } from 'react-router-dom'
+import styled from 'styled-components'
 import './App.css';
-// import { AddTwoValues } from './Components/AddTwoValues'
 import PresentProblems from './Components/PresentProblems'
+import Results from './Components/StudentResults/Results'
+
+
 function App() {
   return (
     <div className="App">
-      <PresentProblems />
+      <nav className="NavBar">
+        <Link to="/plusProblems">
+          Problems
+        </Link>
+        <Link to='/results'>
+          Results
+        </Link>
+      </nav>
+      
+      <Route path="/plusProblems"
+        render={(props) => <PresentProblems myPath={'plusProblems'}/>}
+        />
+      <Route path="/results"
+        render={(props) => <Results />}
+        />
       {/* <AddTwoValues a={4} b={3}/> */}
     </div>
   );

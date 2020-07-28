@@ -2,7 +2,8 @@
 import { Root } from './Reducers'
 import {
     getCell,
-    breathFirstTraversal } from '../../reducerHelpers'
+    breathFirstTraversal,
+    printTreeInteractive } from '../../reducerHelpers'
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
@@ -24,7 +25,7 @@ const universalReducer = (state = initialState, action) => {
     console.log(state, action)
     // action.type always holds the start state
     // console.log(action.type, state, Root)
-    const { type, payload, meta} = action
+    const { type, payload, meta } = action
     if(typeof(type) === 'string') {
         console.log('caught', type)
         return state
@@ -34,9 +35,13 @@ const universalReducer = (state = initialState, action) => {
     } else {
 
         // type is the start state
-        const [temporaryState, success] = breathFirstTraversal(state, action, type, 0)
+        // {} is stateChartHistory
+        const [temporaryState, success, stateChartHistory] = breathFirstTraversal(state, action, type, 0, {})
         if(success) {
-            console.log('all reducers are done', temporaryState)
+            console.log('all reducers are done')
+            console.log({stateChartHistory})
+            printTreeInteractive(temporaryState)        
+
             return temporaryState
         } else {
             return state

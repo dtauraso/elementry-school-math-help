@@ -1,19 +1,24 @@
-import React, { useState } from 'react'
+import React from 'react'
 import OneValue from './OneValue';
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from './Redux/Actions'
+
 import {
     getCell,
-    getChildren } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
+    getChildren,
+    getVariable,
+    printTreeInteractive } from '../reducerHelpers'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
+
+
+  
 const Container = styled.div`
 
     // @media(max-width: 400px) {
-        width: 50%;//vw;
+        width: ${props => (props.quantityLength * 27) + 150}px;//75%;//vw;
         background-color: ${props => props.backgroundColor};
         border: 1px solid #BADA55;
         display: flex;
@@ -40,9 +45,57 @@ export const AddTwoValues = (props) => {
     // getValue(Root).table['AddTwoValues'][stateCoordinates.problemId] => #
     // problem #
     // console.log('our key', stateCoordinates)
-    let x = getCell(Root, [`problem ${stateCoordinates.problemId}`])
+    // console.log(stateCoordinates)
+    console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
+    // printTreeInteractive(Root)
+    // get problem parts
+    let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
     // console.log("our state", x)
     let problemParts = getChildren(Root, x.name)
+
+    console.log({problemParts})
+    // get the quantity size
+     // 3rd coordinate point in the name [offsetString, x, y, z]
+    let problemPart = problemParts[0].split(' ')[3]
+    // console.log({item})
+
+    let stateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${problemPart}`
+    // console.log({stateName})
+    // printTreeInteractive(Root)
+    // console.log(Root)
+    let state = getCell(Root, stateName)
+    // let isForm = getVariable(Root,
+    //     stateName,
+    //     'isForm').value
+    
+    // if(!isForm) {
+
+    // }
+    // console.log('state', state)
+    // the submission context is only with the 3rd number in each problem
+    // this state only exists for the problem set
+    let isForm = getVariable(Root,
+        stateName,
+        'isForm').value
+    // console.log({isForm, problemParts})
+    // printTreeInteractive(Root)
+    let myQuantity = null
+    let sizeOfQuantity = 0
+    // ${offsetString} ${i} ${j} ${k}
+    if(stateCoordinates.offsetString === 'plusProblems') {
+        myQuantity = getVariable(Root,
+            `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} 2 submission`,
+            'quantity'
+            ).value
+        sizeOfQuantity = myQuantity.length
+    }
+    else {
+        // may want to visit all quantities and get the largest one
+        sizeOfQuantity = 10
+    }
+   
+    // console.log({problemParts})
+    // console.log('quantity for the add 2 values', myQuantity)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
 
     // console.log('problem parts', problemParts, stateCoordinates)
@@ -58,12 +111,14 @@ export const AddTwoValues = (props) => {
     return (
         // <div></div>
         // needs a form and both values with the solution
-        <Container>
+        <Container quantityLength={sizeOfQuantity}>
             {/* <h1>testing</h1> */}
             {problemParts.map((problemKey, i) => (
                 <OneValue
                     key={i}
-                    stateCoordinates={{...stateCoordinates, problemPart: problemKey[0].split(' ')[0]}}
+                    stateCoordinates={{...stateCoordinates,
+                                        problemPart: problemKey.split(' ')[3], // 3rd coordinate point in the name [offsetString, x, y, z]
+                                        offsetString: stateCoordinates.offsetString}}
                     />
             ))}
             
@@ -71,7 +126,11 @@ export const AddTwoValues = (props) => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+    // console.log('my props in adding 2 values', ownProps)
+    // find the base state name for the selector
+    // have the input selector return [...problemParts, myQuantity.length]
+    // decuple the cache from the algorithm
     return {
         Root: state
     }

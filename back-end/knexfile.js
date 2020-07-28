@@ -13,8 +13,9 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
+    // don't use node v 14
     migrations: {
       directory: './migrations'
     },

@@ -6,10 +6,9 @@ import { getCat, submitAnswer, addToAnswer } from './Redux/Actions'
 import {
     getCell,
     getVariable } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
 const Form = styled.form`
 
-    width: 40%;
+    width: 80px;//40%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -17,7 +16,7 @@ const Form = styled.form`
 
 `
 const InputField = styled.input`
-    width: 40%;
+    width: 40px;//40%;
     border: 1px solid black;
 
 `
@@ -32,23 +31,31 @@ const SubmitAnswer = (props) => {
         // statePath,
         stateCoordinates,
         Root} = props
-
+    // console.log("submit answer", stateCoordinates)
     // should assume the coordinates for the answer form were passed in
-    let answerFormStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    let answerFormStateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     let answer = getCell(Root, answerFormStateName)
     // console.log('answer', answer)
-    let submissionStateName = [...answerFormStateName, `submission ${stateCoordinates.problemId}`]
+//     `${offsetString}${i} ${j}`
+//  submission`
+
+    // console.log('submission name', "|" + `${answerFormStateName} submission ${stateCoordinates.problemId}` + "|")
+    let submissionStateName = `${answerFormStateName} submission`
+    // the submission doesn't exist
     let submission = getCell(Root, submissionStateName)
+    // console.log({submissionStateName})
+    // console.log(Root)
     // console.log("submission context", submission)
     
     // let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
     //                             `submission ${stateCoordinates.problemId}`]
+    // let dataSetName = ''
     let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
     // console.log("submission's value", y)
     let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
     let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value
 
-    let updateTypedAnswerStateName = [...submissionStateName, `update typed answer ${stateCoordinates.problemId}`]
+    let updateTypedAnswerStateName = `${submissionStateName} updateTypedAnswer`
     // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     // const answerForm = getValue(Root, statePath)
@@ -70,7 +77,7 @@ const SubmitAnswer = (props) => {
         // call submit answer here
         // get the answer from Root
         // getVariable(Root, submissionStateName, 'value')
-
+        // submitting the answer multiple times causes duplicate results
         props.submitAnswer(submissionStateName)
         // console.log(event)
         // const data = new FormData(event.target);

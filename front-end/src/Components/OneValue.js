@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import Quantity from './Quantity'
 import SubmitAnswer from './SubmitAnswer'
 import styled from 'styled-components'
@@ -7,8 +7,7 @@ import { getCat, submitAnswer } from './Redux/Actions'
 import {
     getCell,
     getVariable,
-    getChild } from '../reducerHelpers'
-import { makeQuantity } from '../utility'
+    printTreeInteractive } from '../reducerHelpers'
 
 // convert to formik idea? https://stackoverflow.com/questions/47420358/how-to-connect-simple-formik-form-with-redux-store-and-dispatch-an-action
 // https://codesandbox.io/s/wizardly-waterfall-w3vf2
@@ -28,10 +27,12 @@ const Container = styled.div`
         // align-items: center;
 // }
 `
-
+// calc(10px + 31px)
 const Value = styled.p`
-    margin-left: 10px;
-    margin-right: 10px;
+
+    width: 40px;
+    // margin-left: 10px;
+    // margin-right: 10px;
     // padding-bottom: 20px;
     border-bottom: ${props => props.operationType === '+'? '2px solid black': ''} ;
 
@@ -46,13 +47,15 @@ const OneValue = (props) => {
         stateCoordinates,
         Root} = props
     // console.log('redux tree', Root)
-    let problemPartName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`]
+    // console.log('one value state name|', `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${stateCoordinates.problemPart}`)
+    let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     // console.log(stateCoordinates)
     let x = getCell(Root, problemPartName)
     // console.log('problem part', x)
     let isForm = getVariable(Root,
                             problemPartName,
                             'isForm').value
+    
     // console.log('isForm', isForm)
     let operationType = getVariable(Root,
         problemPartName,
@@ -64,6 +67,7 @@ const OneValue = (props) => {
             problemPartName,
             'value').value
     }
+    // printTreeInteractive(Root)
     // we cannot assume there is a form right now
     // const oneValue = getValue(Root, statePath)
     // let { isForm, operationType } = oneValue.variables
@@ -88,10 +92,28 @@ const OneValue = (props) => {
     return (
         <Container>
             {/* {formOrValue(isForm, operationType)} */}
+            {/* use the flags to control terms in the sequence
+            a group of flags for controlling whether a sequence of components will exist or not
+            
+            should be mututally exclusive flags inside redux
+            isForm
+            isValue
+            isDisplayResult
+            react will read these flags and display the correct sequence of components
+            if(isForm) {
+                return <div>
+                        component sequence only if isForm is true
+                        </div>
+            else if(isValue) {
+                same as last case
+            }
+            }
+            */}
             {isForm? 
                 <SubmitAnswer
                 // statePath={formPath}
-                stateCoordinates={stateCoordinates}
+                stateCoordinates={{...stateCoordinates,
+                                    offsetString: stateCoordinates.offsetString}}
                 />:
                 <Value operationType={operationType}>
                     {(`${operationType}              ${oneValue}`)}
@@ -102,7 +124,9 @@ const OneValue = (props) => {
                 // statePath={isForm?
                 //     [...statePath, 'submission', 'variables', 'quantity']:
                 //     [...statePath, 'variables', 'quantity']}
-                stateCoordinates={{...stateCoordinates, isForm: isForm}}
+                stateCoordinates={{...stateCoordinates,
+                                    isForm: isForm,
+                                    offsetString: stateCoordinates.offsetString}}
 
                 />
 
