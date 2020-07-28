@@ -1,11 +1,29 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a solo project, bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+It runs locally.
+
+To get the front end running
+
+1) cd to front-end.
+
+2) Run "yarn" to download dependencies for the front end.
+
+3) Run "yarn start" to run it.
+
+To get the back end running
+
+1) cd to back-end.
+
+2) Run "npm i" to download dependencies for the back end.
+
+3) Run "npm run server" to start the server.
 
 What does this app do?
     This app helps elementary school students learn basic arithmatic. The currently allowed operations will be + and - for now.
 
 Why did I use Redux?
-    I can control the components that get updated by connecting them to redux.  I don't have to worry about wether or not a related component will always change. 
-    To keep the presendation components separate from the business logic.
+    I can control the components that get updated by connecting them to redux.  I don't have to worry about whether or not a related component will always change. 
+    To keep the presentation components separate from the business logic.
     To have a single place for the complex logic.
     To allow for a recordable timeline of immutable state updates.
 
