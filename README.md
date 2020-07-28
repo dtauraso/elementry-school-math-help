@@ -1,12 +1,12 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a solo project, bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 What does this app do?
     This app helps elementary school students learn basic arithmatic. The currently allowed operations will be + and - for now.
 
 Why did I use Redux?
-    I can control the components that get updated by connecting them to redux.  I don't have to worry about wether or not a related component will always change. 
+    I can control the components that get updated by connecting them to redux.  I don't have to worry about whether or not a related component will always change. 
     
-    To keep the presendation components separate from the business logic.
+    To keep the presentation components separate from the business logic.
     
     To have a single place for the complex logic.
     
