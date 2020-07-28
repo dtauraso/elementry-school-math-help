@@ -1,5 +1,7 @@
 This project is a solo project, bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+It runs locally.
+
 What does this app do?
     This app helps elementary school students learn basic arithmatic. The currently allowed operations will be + and - for now.
 
