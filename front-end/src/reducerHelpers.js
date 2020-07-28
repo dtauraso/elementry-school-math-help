@@ -29,12 +29,6 @@ use flags to keep track of things
 make special functions to assume different properties of the states and print out error messages when they fail
 */
 
-// state chart selling point is I made the is from the ground up
-
-// if they ask about xstate say I wanted to make something similar to prove I could do it
-
-// can I work with them?
-// can they do the job?
 var isDebug = true
 
 export const appendStates = (temporaryState, states) => {
