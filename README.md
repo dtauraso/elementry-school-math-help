@@ -1,6 +1,6 @@
 This project is a solo project, bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-It runs locally.
+It runs locally. Use "yarn" to download dependencies for the front end and "yarn start" to run it. Use "npm i" to download dependencies for the back end and use "npm run server" to start the server.
 
 What does this app do?
     This app helps elementary school students learn basic arithmatic. The currently allowed operations will be + and - for now.
