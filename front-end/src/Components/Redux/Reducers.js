@@ -70,19 +70,36 @@ new state name form (i0 + j. i1, i2)
 */
 
 /*
+i : {
+    j: {
+        k: {                    phrase(very short phrase)
+            value,
+            quantity,
+            isForm,
+            operationType,
 
-value,
-quantity,
-isForm,
-operationType,
+            description: {        do special things if we consider the phrase in a different context
+                displayResultsOnly: {
 
-suffixes: {
-    displayResultsOnly: {
+                    isCorrect,
+                    isActualAnswer,
+                    isResult
+                }
 
-        isCorrect,
-        isActualAnswer,
-        isResult
+            }
+            paragraph: [        you are describing the behavor k does
+            
+            ]
+            nextPhrase: [       list of phrases of what to read next after k is done
+
+            ]
+            values: [           variables
+
+            ]
+        }
+
     }
+
 }
 
 
