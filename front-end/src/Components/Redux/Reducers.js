@@ -78,7 +78,7 @@ i : {
             isForm,
             operationType,
 
-            description: {        do special things if we consider the phrase in a different context
+            specialConditions: {
                 displayResultsOnly: {
 
                     isCorrect,
