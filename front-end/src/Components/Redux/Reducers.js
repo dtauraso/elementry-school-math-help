@@ -69,7 +69,41 @@ new state name form (i0 + j. i1, i2)
 
 */
 
+/*
 
+value,
+quantity,
+isForm,
+operationType,
+
+suffixes: {
+    displayResultsOnly: {
+
+        isCorrect,
+        isActualAnswer,
+        isResult
+    }
+}
+
+
+->
+parent: get this from prev state name,
+name: state name,
+suffix: what name do we give our slight modification to the state,
+variableNames: [valueName,
+                quantityName,
+                isFormName,
+                operationTypeName]
+sentence: [
+    words to describe the state
+]
+
+Tell them what's exciting about it
+put words to things
+contextually sensitive hierarchical tree graph
+    will need a good example for telling apart the substates from the chldren(word suffix vs descriptive phrase)
+don't apologize
+*/
 const makeProblemPartNumber = (  offsetString,
                                 i,
                                 j,
@@ -1254,6 +1288,7 @@ const setupSubmachineForDisplay = (state, action) => {
 
         // "displayResults problemSet 0" is the problem set name genrated but the '0' doesn't refer to the ith problem set
         // when this runs it's overriting previous correctly calculated results for a different problem set
+        // this problem set is for display purposes
         let result = makeProblemSet(temporaryState, action)
         temporaryState = result[0]
         let myDisplayResults = getCell(temporaryState, 'displayResults')
@@ -1496,6 +1531,7 @@ let Root2 = {
 // machine2 = setupProblem(machine2[0])
 // get the list of problems from action
 
+// converts the problems to the contextual state chart structure
 let action = {
     type: 'elementarySchool utilities createProblem',
     meta: {
