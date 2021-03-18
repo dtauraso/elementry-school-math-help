@@ -145,8 +145,7 @@ elementarySchool : {
         },
         variables: {
             selectedProblemSetFromBackend: -1,
-            problemSetIdMapToAppendedProblemId: {},// so I don't have to spend more time doing 'value' vs 'value' attribute juggling while setting
-                    // a state to a value
+            problemSetIdMapToAppendedProblemId: {},
             problemCount: 0
         }
 
