@@ -71,33 +71,34 @@ new state name form (i0 + j. i1, i2)
 
 /*
 i : {
-    j: {
-        k: {                        phrase(very short phrase)
-            value,
-            quantity,
-            isForm,
-            operationType,
-            displayResultsOnly: {   special conditions
-                values: [
-                    isCorrect,
-                    isActualAnswer,
-                    isResult
+    children: [
+        j: {
+            k: {                        phrase(very short phrase)
+                value,
+                quantity,
+                isForm,
+                operationType,
+                displayResultsOnly: {   special conditions
+                    values: [
+                        isCorrect,
+                        isActualAnswer,
+                        isResult
+                    ]
+                }
+
+                paragraph: [            you are describing the behavor k does
+                
+                ]
+                nextPhrase: [           list of phrases of what to read next after k is done
+
+                ]
+                values: [               variables
+
                 ]
             }
-
-            paragraph: [            you are describing the behavor k does
-            
-            ]
-            nextPhrase: [           list of phrases of what to read next after k is done
-
-            ]
-            values: [               variables
-
-            ]
         }
-
-    }
-
+    ]
+    
 }
 
 
