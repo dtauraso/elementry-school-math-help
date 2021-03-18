@@ -80,10 +80,11 @@ i : {
 
             specialConditions: {
                 displayResultsOnly: {
-
-                    isCorrect,
-                    isActualAnswer,
-                    isResult
+                    values: [
+                        isCorrect,
+                        isActualAnswer,
+                        isResult
+                    ]
                 }
 
             }
