@@ -160,45 +160,6 @@ elementarySchool : {
     }
 }
 
-'elementarySchool displayResults' : {
-                parent: 'root',
-                name: 'elementarySchool displayResults',
-                children: ['saveProblemSetSelectedForDisplay', 'displayResults problemSet 0'],
-                variableNames: ['selectedProblemSetFromBackend', 'problemSetIdMapToAppendedProblemId', 'displayResults problemCount']
-            },
-                'selectedProblemSetFromBackend': {
-                    parent: 'elementarySchool storeResults',
-                    name: 'selectedProblemSetFromBackend',
-                    value: -1,
-                },
-                // maps the ith problem set to the jth appended problem set for display
-                'problemSetIdMapToAppendedProblemId': {
-                    parent: 'elementarySchool displayResults',
-                    name: 'problemSetIdMapToAppendedProblemId',
-                    value: {}  // so I don't have to spend more time doing 'value' vs 'value' attribute juggling while setting
-                    // a state to a value
-                },
-                'displayResults problemCount': {
-                    parent: 'elementarySchool displayResults',
-                    name: 'displayResults problemCount',
-                    value: 0
-                },
-
-
-                'saveProblemSetSelectedForDisplay': {
-                    parent: 'elementarySchool storeResults',
-                    name: 'getProblemsFromBackend',
-                    functionCode: saveProblemSetSelectedForDisplay,
-                    nextStates: ['setupSubmachineForDisplay']
-                },
-
-                // get the data from resultsFromBackend and selectedProblemSetFromBackend
-                // and use it to identify the right js object to make the submachine out of
-                'setupSubmachineForDisplay': {
-                    parent: 'elementarySchool storeResults',
-                    name: 'setupSubmachineForDisplay',
-                    functionCode: setupSubmachineForDisplay
-                }
 ->
 state names are syllables
 the extra context information is like a suffix, or ajective
