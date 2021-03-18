@@ -103,6 +103,8 @@ i : {
 
 
 ->
+state names are syllables
+the extra context information is like a suffix, or ajective
 parent: get this from prev state name,
 name: state name,
 suffix: what name do we give our slight modification to the state,
