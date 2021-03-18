@@ -71,37 +71,70 @@ new state name form (i0 + j. i1, i2)
 
 /*
 i : {
-    children: [
+    paragraph: {
         j: {
-            k: {                        phrase(very short phrase)
-                value,
-                quantity,
-                isForm,
-                operationType,
-                displayResultsOnly: {   special conditions
-                    values: [
-                        isCorrect,
-                        isActualAnswer,
-                        isResult
+            paragraph: {
+                k: {                        1 word
+                    value,
+                    quantity,
+                    isForm,
+                    operationType,
+                    displayResultsOnly: {   special conditions
+                        values: [
+                            isCorrect,
+                            isActualAnswer,
+                            isResult
+                        ]
+                    }
+
+                    paragraph: [            you are describing the behavor k does
+                    
+                    ]
+                    nextPhrase: [           list of phrases of what to read next after k is done
+
+                    ]
+                    values: [               variables
+
                     ]
                 }
-
-                paragraph: [            you are describing the behavor k does
-                
-                ]
-                nextPhrase: [           list of phrases of what to read next after k is done
-
-                ]
-                values: [               variables
-
-                ]
             }
         }
-    ]
-    
+    }
 }
 
+'elementarySchool': {
+        parent: 'root',
+        name: 'elementarySchool',
+        substates: ['utilities', 'testing', 'storeResults', 'displayResults'],
+        children: ['plusProblems', 'displayResults'],
+    },
 
+    'elementarySchool utilities': {
+                    parent: 'root',
+                    name: 'elementarySchool utilities',
+                    substates: ['create problem']
+                },
+    
+                        'elementarySchool utilities createProblem': {
+                            parent: 'root',
+                            name: 'elementarySchool utilities createProblem',
+    
+                            functionCode: makeProblemSet,
+                        },
+elementarySchool : {
+    utilities: {
+        createProblem: {
+            functionCode:
+        }
+    }
+    testing: {},
+    storeResults: {},
+    displayresults: {},
+    paragraph: {
+        plusProblems: {},
+        dpslayResults: {}
+    }
+}
 ->
 state names are syllables
 the extra context information is like a suffix, or ajective
@@ -120,6 +153,8 @@ Tell them what's exciting about it
 put words to things
 contextually sensitive hierarchical tree graph
     will need a good example for telling apart the substates from the chldren(word suffix vs descriptive phrase)
+    it makes it easier to add features when the code is organized in a way that's easier for humans to process
+
 don't apologize
 */
 const makeProblemPartNumber = (  offsetString,
