@@ -227,7 +227,8 @@ let newContextualStateChart = {
             paragraph: setupSubmachineForDisplay
         },
         displayResults: {
-            paragraph: {
+            firstSentenceOfEachParagraph: ['saveProblemSetSelectedForDisplay'],
+            pageOfParagraphs: {
                 saveProblemSetSelectedForDisplay: {
                     functionCode: saveProblemSetSelectedForDisplay,
                     nextPhrase: ['setupSubmachineForDisplay']
