@@ -181,6 +181,21 @@ contextually sensitive hierarchical tree graph
     it makes it easier to add features when the code is organized in a way that's easier for humans to process
 
 don't apologize
+blockers
+    first time making state machine engine with redux
+        the graph was hardcoded
+    second attenpt
+        the graph had generation functions for the problems
+    3rd attempt
+        because the problems had the same structure on the different routes an extra coordinate name was used to tell them
+        apart
+        the benefit was it allowed me to use the same functional component for proving the problems to be solved and displaying
+        the results, despite the fact that the routes had different things on them and the data sources for the problem set
+        were different
+    4th attempt
+        the js code for the generation functions was well engineered js, but there was a readability problem. The engineer would be expected to 
+        hunt around and find the hierarchy. Switching the flat hash table to a json object made the hierarchy easier to understand.
+
 */
 let newContextualStateChart = {
     elementarySchool : {
