@@ -206,7 +206,8 @@ let newContextualStateChart = {
         },
         testing: {
             functionCode: returnState,
-            paragraph: {
+            firstSentenceOfEachParagraph: ['autosolve'],
+            pageOfParagraphs: {
                 autosolve: {
                     functionCode: autoSolve,
                     nextPhrase: [
@@ -224,7 +225,7 @@ let newContextualStateChart = {
                 resultsFromBackend: -1,
                 payload: {'problem set tale': []}
             },
-            paragraph: setupSubmachineForDisplay
+            functionCode: setupSubmachineForDisplay
         },
         displayResults: {
             firstSentenceOfEachParagraph: ['saveProblemSetSelectedForDisplay'],
