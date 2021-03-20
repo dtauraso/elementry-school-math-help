@@ -105,20 +105,20 @@ i : {
 elementarySchool : {
     utilities: {
         createProblem: {
-            functionCode:
+            functionCode: makeProblemSet
         }
     }
     testing: {
         functionCode:
         paragraph: {
             autosolve: {
-                functionCode:
+                functionCode: autoSolve
                 nextPhrase: [
                     'setupForBackEnd'
                 ]
             }
             setupForBackEnd: {
-                functionCode:
+                functionCode: setupForBackend
             }
         }
     },
@@ -182,6 +182,66 @@ contextually sensitive hierarchical tree graph
 
 don't apologize
 */
+let newContextualStateChart = {
+    elementarySchool : {
+        utilities: {
+            createProblem: {
+                functionCode: makeProblemSet
+            }
+        }
+        testing: {
+            functionCode:
+            paragraph: {
+                autosolve: {
+                    functionCode: autoSolve
+                    nextPhrase: [
+                        'setupForBackEnd'
+                    ]
+                }
+                setupForBackEnd: {
+                    functionCode: setupForBackend
+                }
+            }
+        },
+        storeResults: {
+            functionCode: storeResults,
+            variables: {
+                resultsFromBackend: -1,
+                payload: {'problem set tale': []}
+            }
+            paragraph: setupSubmachineForDisplay
+        },
+        displayResults: {
+            paragraph: {
+                saveProblemSetSelectedForDisplay: {
+                    functionCode: saveProblemSetSelectedForDisplay,
+                    nextPhrase: ['setupSubmachineForDisplay']
+                },
+                setupSubmachineForDisplay: {
+                    functionCode: setupSubmachineForDisplayF
+                }
+                problemSet: {
+                    0:{}
+                }
+            },
+            variables: {
+                selectedProblemSetFromBackend: -1,
+                problemSetIdMapToAppendedProblemId: {},
+                problemCount: 0
+            }
+    
+        },
+        paragraph: {
+            plusProblems: {
+                paragraph: {}
+            },
+            dpslayResults: {
+                paragraph: {}
+            }
+        }
+    }
+    
+}
 const makeProblemPartNumber = (  offsetString,
                                 i,
                                 j,
