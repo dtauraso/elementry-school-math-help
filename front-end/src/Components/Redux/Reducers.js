@@ -188,16 +188,16 @@ let newContextualStateChart = {
             createProblem: {
                 functionCode: makeProblemSet
             }
-        }
+        },
         testing: {
-            functionCode:
+            functionCode: returnState,
             paragraph: {
                 autosolve: {
-                    functionCode: autoSolve
+                    functionCode: autoSolve,
                     nextPhrase: [
                         'setupForBackEnd'
                     ]
-                }
+                },
                 setupForBackEnd: {
                     functionCode: setupForBackend
                 }
@@ -208,7 +208,7 @@ let newContextualStateChart = {
             variables: {
                 resultsFromBackend: -1,
                 payload: {'problem set tale': []}
-            }
+            },
             paragraph: setupSubmachineForDisplay
         },
         displayResults: {
@@ -219,7 +219,7 @@ let newContextualStateChart = {
                 },
                 setupSubmachineForDisplay: {
                     functionCode: setupSubmachineForDisplayF
-                }
+                },
                 problemSet: {
                     0:{}
                 }
