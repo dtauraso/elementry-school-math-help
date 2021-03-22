@@ -226,34 +226,31 @@ let newContextualStateChart = {
                 payload: {'problem set tale': []}
             },
         },
-        displayResults: {
-            functionCode: returnState,
-            start: ['saveProblemSetSelectedForDisplay'],
-            recipe: {
-                saveProblemSetSelectedForDisplay: {
-                    functionCode: saveProblemSetSelectedForDisplay,
-                    next: ['setupSubmachineForDisplay']
-                },
-                setupSubmachineForDisplay: {
-                    functionCode: setupSubmachineForDisplay
-                },
-                problemSet: {
-                    0:{}
-                }
-            },
-            ingredients: {
-                selectedProblemSetFromBackend: -1,
-                problemSetIdMapToAppendedProblemId: {},
-                problemCount: 0
-            }
-    
-        },
+
         recipe: {
             plusProblems: {
                 recipe: {}
             },
             dpslayResults: {
-                recipe: {}
+                functionCode: returnState,
+                start: ['saveProblemSetSelectedForDisplay'],
+                recipe: {
+                    saveProblemSetSelectedForDisplay: {
+                        functionCode: saveProblemSetSelectedForDisplay,
+                        next: ['setupSubmachineForDisplay']
+                    },
+                    setupSubmachineForDisplay: {
+                        functionCode: setupSubmachineForDisplay
+                    },
+                    problemSet: {
+                        0:{}
+                    }
+                },
+                ingredients: {
+                    selectedProblemSetFromBackend: -1,
+                    problemSetIdMapToAppendedProblemId: {},
+                    problemCount: 0
+                }
             }
         }
     }
