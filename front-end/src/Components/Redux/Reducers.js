@@ -206,8 +206,8 @@ let newContextualStateChart = {
         },
         testing: {
             functionCode: returnState,
-            firstSentenceOfEachParagraph: ['autosolve'],
-            pageOfParagraphs: {
+            start: ['autosolve'],
+            recipe: {
                 autosolve: {
                     functionCode: autoSolve,
                     nextPhrase: [
@@ -225,17 +225,17 @@ let newContextualStateChart = {
                 resultsFromBackend: -1,
                 payload: {'problem set tale': []}
             },
-            functionCode: setupSubmachineForDisplay
         },
         displayResults: {
-            firstChoice: ['saveProblemSetSelectedForDisplay'],
-            pageOfParagraphs: {
+            functionCode: returnState,
+            start: ['saveProblemSetSelectedForDisplay'],
+            recipe: {
                 saveProblemSetSelectedForDisplay: {
                     functionCode: saveProblemSetSelectedForDisplay,
-                    nextPhrase: ['setupSubmachineForDisplay']
+                    next: ['setupSubmachineForDisplay']
                 },
                 setupSubmachineForDisplay: {
-                    functionCode: setupSubmachineForDisplayF
+                    functionCode: setupSubmachineForDisplay
                 },
                 problemSet: {
                     0:{}
@@ -250,10 +250,10 @@ let newContextualStateChart = {
         },
         paragraph: {
             plusProblems: {
-                paragraph: {}
+                recipe: {}
             },
             dpslayResults: {
-                paragraph: {}
+                recipe: {}
             }
         }
     }
