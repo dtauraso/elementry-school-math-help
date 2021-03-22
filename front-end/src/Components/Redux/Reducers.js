@@ -221,7 +221,7 @@ let newContextualStateChart = {
         },
         storeResults: {
             functionCode: storeResults,
-            variables: {
+            ingredients: {
                 resultsFromBackend: -1,
                 payload: {'problem set tale': []}
             },
@@ -241,14 +241,14 @@ let newContextualStateChart = {
                     0:{}
                 }
             },
-            variables: {
+            ingredients: {
                 selectedProblemSetFromBackend: -1,
                 problemSetIdMapToAppendedProblemId: {},
                 problemCount: 0
             }
     
         },
-        paragraph: {
+        recipe: {
             plusProblems: {
                 recipe: {}
             },
