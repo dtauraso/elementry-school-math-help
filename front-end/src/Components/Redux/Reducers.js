@@ -200,7 +200,7 @@ blockers
 let newContextualStateChart = {
     elementarySchool : {
         utilities: {
-            createProblem: {
+            createProblems: {
                 functionCode: makeProblemSet
             }
         },
@@ -226,7 +226,6 @@ let newContextualStateChart = {
                 payload: {'problem set tale': []}
             },
         },
-
         recipe: {
             plusProblems: {
                 recipe: {}
@@ -254,7 +253,6 @@ let newContextualStateChart = {
             }
         }
     }
-    
 }
 const makeProblemPartNumber = (  offsetString,
                                 i,
