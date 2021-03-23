@@ -199,7 +199,11 @@ blockers
 */
 
 // const makeNumber = ()
-let displayResultComponents = {isCorrect: true, isActualAnswer: 5, isResult: true}
+let displayResultComponents = [ {isCorrect: true, isActualAnswer: 5, isResult: true},
+                                {isCorrect: true, isActualAnswer: 5, isResult: true},
+                                {isCorrect: true, isActualAnswer: 5, isResult: true},
+                                {isCorrect: true, isActualAnswer: 5, isResult: true},
+                                {isCorrect: true, isActualAnswer: 5, isResult: true}]
 const makeProblemComponents = ( problems,
                                 displayResultComponents) => {
 
@@ -225,13 +229,6 @@ const makeProblemComponents = ( problems,
     })
     return problemSet
 }
-const makeProblemSetx = (problems) => {
-
-    let myProblemSet = {}
-    problems.forEach((problem, i) => {
-        myProblemSet[i] = problem
-    })
-    return myProblemSet
 }
 let newContextualStateChart = {
     elementarySchool : {
@@ -264,10 +261,10 @@ let newContextualStateChart = {
         },
         recipe: {
             plusProblems: {
-                'problemSet 0': makeProblemSetx(makeProblemComponents(problems))
+                'problemSet 0': makeProblemComponents(problems)
             },
             dpslayResults: {
-                'problemSet 0': makeProblemSetx(makeProblemComponents(problems, displayResultComponents)),
+                'problemSet 0': makeProblemComponents(problems, displayResultComponents),
                 // functionCode: returnState,
                 start: ['saveProblemSetSelectedForDisplay'],
                 recipe: {
