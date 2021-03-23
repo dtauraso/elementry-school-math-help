@@ -197,11 +197,9 @@ blockers
         hunt around and find the hierarchy. Switching the flat hash table to a json object made the hierarchy easier to understand.
 
 */
-let problemSetComponents = {value: null, quantity: null, isForm: null, operationType: null}
 
 // const makeNumber = ()
 let displayResultComponents = {isCorrect: true, isActualAnswer: 5, isResult: true}
-console.log("here", problemSetComponents, displayResultComponents)
 const makeProblemComponents = ( problems,
                                 displayResultComponents) => {
 
@@ -212,28 +210,27 @@ const makeProblemComponents = ( problems,
         problemSet[i] = {
             a: {value: a, quantity: a, isForm: false, operationType: null},
             b: {value: b, quantity: b, isForm: false, operationType: null},
-            answerForm: {value: a + b, quantity: a + b, isForm: true, operationType: 'add'},
-            ...(displayResultComponents) ? {
-                isCorrect: displayResultComponents.isCorrect,
-                isActualAnswer: displayResultComponents.isActualAnswer,
-                isResult: displayResultComponents.isResult
-            } : {}
-            // put in problemSetComponents
-            // ...problemSetComponents,
-            // ...(displayResultComponents) ? (displayResultComponents) : {}
-            // if displayResultComponents !== null
-                // put in displayResultComponents
-    
+            answerForm: {value: a + b, quantity: a + b, isForm: true, operationType: 'add'}
         }
+        if(!displayResultComponents) {
+            return
+        }
+        let {isCorrect, isActualAnswer, isResult} = displayResultComponents[i]
+        problemSet[i] = {
+            ...problemSet[i],
+            isCorrect: isCorrect,
+            isActualAnswer: isActualAnswer,
+            isResult: isResult
+        }    
     })
-
+    return problemSet
 }
 const makeProblemSetx = (problems) => {
 
     let myProblemSet = {}
-    // problems.forEach((problem, i) => {
-    //     myProblemSet[i] = problem
-    // })
+    problems.forEach((problem, i) => {
+        myProblemSet[i] = problem
+    })
     return myProblemSet
 }
 let newContextualStateChart = {
@@ -270,7 +267,7 @@ let newContextualStateChart = {
                 'problemSet 0': makeProblemSetx(makeProblemComponents(problems))
             },
             dpslayResults: {
-                'problemSet 0': makeProblemSetx(makeProblemComponents(problems)),
+                'problemSet 0': makeProblemSetx(makeProblemComponents(problems, displayResultComponents)),
                 // functionCode: returnState,
                 start: ['saveProblemSetSelectedForDisplay'],
                 recipe: {
