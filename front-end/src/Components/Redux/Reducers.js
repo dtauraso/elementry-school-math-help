@@ -197,6 +197,14 @@ blockers
         hunt around and find the hierarchy. Switching the flat hash table to a json object made the hierarchy easier to understand.
 
 */
+const makeProblemSet = (problems) => {
+
+    let myProblemSet = {}
+    problems.forEach((problem, i) => {
+        myProblemSet[i] = problem
+    })
+    return myProblemSet
+}
 let newContextualStateChart = {
     elementarySchool : {
         utilities: {
@@ -228,9 +236,9 @@ let newContextualStateChart = {
         },
         recipe: {
             plusProblems: {
-                recipe: {}
             },
             dpslayResults: {
+                'problemSet 0': makeProblemSet(problems),
                 functionCode: returnState,
                 start: ['saveProblemSetSelectedForDisplay'],
                 recipe: {
