@@ -236,6 +236,7 @@ let newContextualStateChart = {
         },
         recipe: {
             plusProblems: {
+                'problemSet 0': makeProblemSet(problems)
             },
             dpslayResults: {
                 'problemSet 0': makeProblemSet(problems),
