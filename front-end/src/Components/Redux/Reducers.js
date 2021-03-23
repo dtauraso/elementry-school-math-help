@@ -197,57 +197,69 @@ blockers
         hunt around and find the hierarchy. Switching the flat hash table to a json object made the hierarchy easier to understand.
 
 */
-let problemSetComponents = {value, quantity, isForm, operationType}
+let problemSetComponents = {value: null, quantity: null, isForm: null, operationType: null}
 
-let displayResultComponents = {isCorrect, isActualAnswer, isResult}
+// const makeNumber = ()
+let displayResultComponents = {isCorrect: true, isActualAnswer: 5, isResult: true}
 console.log("here", problemSetComponents, displayResultComponents)
 const makeProblemComponents = ( problems,
-                                {value, quantity, isForm, operationType},
-                                {isCorrect, isActualAnswer, isResult}) => {
+                                displayResultComponents) => {
 
     let problemSet = {}
-    
     problems.forEach((problem, i) => {
 
+        let {a, b} = problem
         problemSet[i] = {
-            
+            a: {value: a, quantity: a, isForm: false, operationType: null},
+            b: {value: b, quantity: b, isForm: false, operationType: null},
+            answerForm: {value: a + b, quantity: a + b, isForm: true, operationType: 'add'},
+            ...(displayResultComponents) ? {
+                isCorrect: displayResultComponents.isCorrect,
+                isActualAnswer: displayResultComponents.isActualAnswer,
+                isResult: displayResultComponents.isResult
+            } : {}
+            // put in problemSetComponents
+            // ...problemSetComponents,
+            // ...(displayResultComponents) ? (displayResultComponents) : {}
+            // if displayResultComponents !== null
+                // put in displayResultComponents
     
         }
     })
 
 }
-const makeProblemSet = (problems) => {
+const makeProblemSetx = (problems) => {
 
     let myProblemSet = {}
-    problems.forEach((problem, i) => {
-        myProblemSet[i] = problem
-    })
+    // problems.forEach((problem, i) => {
+    //     myProblemSet[i] = problem
+    // })
     return myProblemSet
 }
 let newContextualStateChart = {
     elementarySchool : {
         utilities: {
             createProblems: {
-                functionCode: makeProblemSet
+                // functionCode: makeProblemSet
             }
         },
         testing: {
-            functionCode: returnState,
+            // functionCode: returnState,
             start: ['autosolve'],
             recipe: {
                 autosolve: {
-                    functionCode: autoSolve,
+                    // functionCode: autoSolve,
                     nextPhrase: [
                         'setupForBackEnd'
                     ]
                 },
                 setupForBackEnd: {
-                    functionCode: setupForBackend
+                    // functionCode: setupForBackend
                 }
             }
         },
         storeResults: {
-            functionCode: storeResults,
+            // functionCode: storeResults,
             ingredients: {
                 resultsFromBackend: -1,
                 payload: {'problem set tale': []}
@@ -255,19 +267,19 @@ let newContextualStateChart = {
         },
         recipe: {
             plusProblems: {
-                'problemSet 0': makeProblemSet(makeProblemComponents(problems))
+                'problemSet 0': makeProblemSetx(makeProblemComponents(problems))
             },
             dpslayResults: {
-                'problemSet 0': makeProblemSet(makeProblemComponents(problems)),
-                functionCode: returnState,
+                'problemSet 0': makeProblemSetx(makeProblemComponents(problems)),
+                // functionCode: returnState,
                 start: ['saveProblemSetSelectedForDisplay'],
                 recipe: {
                     saveProblemSetSelectedForDisplay: {
-                        functionCode: saveProblemSetSelectedForDisplay,
+                        // functionCode: saveProblemSetSelectedForDisplay,
                         next: ['setupSubmachineForDisplay']
                     },
                     setupSubmachineForDisplay: {
-                        functionCode: setupSubmachineForDisplay
+                        // functionCode: setupSubmachineForDisplay
                     },
                     problemSet: {
                         0:{}
