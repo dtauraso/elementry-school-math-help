@@ -229,7 +229,7 @@ const makeProblemComponents = ( problems,
     })
     return problemSet
 }
-}
+
 let newContextualStateChart = {
     elementarySchool : {
         utilities: {
