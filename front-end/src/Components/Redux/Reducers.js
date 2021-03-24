@@ -212,20 +212,29 @@ const makeProblemComponents = ( problems,
 
         let {a, b} = problem
         problemSet[i] = {
-            a: {value: a, quantity: a, isForm: false, operationType: null},
-            b: {value: b, quantity: b, isForm: false, operationType: null},
-            answerForm: {value: a + b, quantity: a + b, isForm: true, operationType: 'add'}
+            children: {
+                a: {variables: {value: a, quantity: a, isForm: false, operationType: null}},
+                b: {variables: {value: b, quantity: b, isForm: false, operationType: null}},
+                answerForm: {variables: {value: a + b, quantity: a + b, isForm: true, operationType: 'add'},
+                            submission: {},
+                            progressMeter: {}}
+            }
         }
         if(!displayResultComponents) {
             return
         }
-        let {isCorrect, isActualAnswer, isResult} = displayResultComponents[i]
-        problemSet[i] = {
-            ...problemSet[i],
-            isCorrect: isCorrect,
-            isActualAnswer: isActualAnswer,
-            isResult: isResult
-        }    
+        // let {isCorrect, isActualAnswer, isResult} = displayResultComponents[i]
+        // {
+        //     theirAnswer: {isCorrect: isCorrect, }
+        //     actualAnswer:
+        // }
+        problemSet[i][a]['displayResults'] = {
+            variables: {
+                isCorrect: isCorrect,
+                isActualAnswer: isActualAnswer,
+                isResult: isResult
+            }
+        }
     })
     return problemSet
 }
@@ -240,10 +249,10 @@ let newContextualStateChart = {
         testing: {
             // functionCode: returnState,
             start: ['autosolve'],
-            recipe: {
+            children: {
                 autosolve: {
                     // functionCode: autoSolve,
-                    nextPhrase: [
+                    next: [
                         'setupForBackEnd'
                     ]
                 },
@@ -254,12 +263,12 @@ let newContextualStateChart = {
         },
         storeResults: {
             // functionCode: storeResults,
-            ingredients: {
+            variables: {
                 resultsFromBackend: -1,
                 payload: {'problem set tale': []}
             },
         },
-        recipe: {
+        children: {
             plusProblems: {
                 'problemSet 0': makeProblemComponents(problems)
             },
@@ -267,7 +276,7 @@ let newContextualStateChart = {
                 'problemSet 0': makeProblemComponents(problems, displayResultComponents),
                 // functionCode: returnState,
                 start: ['saveProblemSetSelectedForDisplay'],
-                recipe: {
+                children: {
                     saveProblemSetSelectedForDisplay: {
                         // functionCode: saveProblemSetSelectedForDisplay,
                         next: ['setupSubmachineForDisplay']
@@ -279,7 +288,7 @@ let newContextualStateChart = {
                         0:{}
                     }
                 },
-                ingredients: {
+                variables: {
                     selectedProblemSetFromBackend: -1,
                     problemSetIdMapToAppendedProblemId: {},
                     problemCount: 0
