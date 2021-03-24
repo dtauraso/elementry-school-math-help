@@ -213,9 +213,9 @@ const makeProblemComponents = ( problems,
         let {a, b} = problem
         problemSet[i] = {
             children: {
-                a: {variables: {value: a, quantity: a, isForm: false, operationType: null}},
-                b: {variables: {value: b, quantity: b, isForm: false, operationType: null}},
-                answerForm: {variables: {value: a + b, quantity: a + b, isForm: true, operationType: 'add'},
+                a: {variables: {value: a, quantity: a}},
+                b: {variables: {value: b, quantity: b}},
+                answerForm: {variables: {value: a + b, quantity: a + b, operationType: 'add'},
                             submission: {},
                             progressMeter: {}}
             }
@@ -223,16 +223,17 @@ const makeProblemComponents = ( problems,
         if(!displayResultComponents) {
             return
         }
-        // let {isCorrect, isActualAnswer, isResult} = displayResultComponents[i]
-        // {
-        //     theirAnswer: {isCorrect: isCorrect, }
-        //     actualAnswer:
-        // }
-        problemSet[i][a]['displayResults'] = {
+        problemSet[i][children]['theirAnswer'] = {
             variables: {
-                isCorrect: isCorrect,
-                isActualAnswer: isActualAnswer,
-                isResult: isResult
+                value: 5,
+                quantity: 5,
+                isCorrect: true
+            }
+        }
+        problemSet[i][children]['actualAnswer'] = {
+            variables: {
+                value: 5,
+                quantity: 5,
             }
         }
     })
