@@ -144,25 +144,26 @@ const makeProblemComponents = ( problems,
             children: {
                 a: {variables: {value: a, quantity: a}},
                 b: {variables: {value: b, quantity: b}},
-                answerForm: {variables: {value: a + b, quantity: a + b, operationType: 'add'},
-                    submission: {
-                        value: null,
-                        quantity: null,
-                        correct: null,
-                        firstAnswer: null,
-                        actualAnswer: null,
-                        submitCount: null,
-                        feedbackMessage: null,
-                        backgroundColor: null
-                    },
-                    progressMeter: {
-                        correctFirstTime: null,
-                        testingWithoutForm: null
-                    }
-                }
             }
         }
         if(!displayResultComponents) {
+            problemSet[i]['children']['answerForm'] = {
+                variables: {value: a + b, quantity: a + b, operationType: 'add'},
+                submission: {
+                    value: null,
+                    quantity: null,
+                    correct: null,
+                    firstAnswer: null,
+                    actualAnswer: null,
+                    submitCount: null,
+                    feedbackMessage: null,
+                    backgroundColor: null
+                },
+                progressMeter: {
+                    correctFirstTime: null,
+                    testingWithoutForm: null
+                }
+            }
             return
         }
         problemSet[i][children]['theirAnswer'] = {
