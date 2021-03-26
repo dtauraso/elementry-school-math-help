@@ -178,15 +178,15 @@ const makeProblemComponents = ( problems,
         }
         problemSet[i][children]['theirAnswer'] = {
             variables: {
-            value: 5,
-            quantity: 5,
-            isCorrect: true
+                value: 5,
+                quantity: 5,
+                isCorrect: true
             }
         }
         problemSet[i][children]['actualAnswer'] = {
             variables: {
-            value: 5,
-            quantity: 5,
+                value: 5,
+                quantity: 5,
             }
         }
     })
