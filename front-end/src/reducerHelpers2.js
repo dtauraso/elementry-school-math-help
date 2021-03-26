@@ -17,6 +17,11 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
     parentKey iteraion count
     
     stateName could match parentDataState1 or not
+    reference to rootObject, 
+    stateNameAbsolutePath,
+    parentDataStateAbsolutePath,
+    varName,
+    newValue
     stateName: {
         Set2StateFunctionCallCount: 0,
         timeLine: {
