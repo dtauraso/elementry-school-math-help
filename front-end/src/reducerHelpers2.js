@@ -18,10 +18,16 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
     
     stateName could match parentDataState1 or not
     reference to rootObject, 
-    stateNameAbsolutePath,
+    parentstateNameAbsolutePath,
+    stateWeWillRunName,
     parentDataStateAbsolutePath,
     varName,
     newValue
+    the form state machine should hold a collection of timelines
+    store the data into the parent state
+    after the child state is done running
+    take the last piece of data from the child state in the parent state
+    and store it into the child state. use the refernce
     stateName: {
         Set2StateFunctionCallCount: 0,
         timeLine: {
