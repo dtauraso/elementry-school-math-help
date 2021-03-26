@@ -130,11 +130,22 @@ blockers
 import { makeQuantity } from "../../utility"
 
 // const makeNumber = ()
-let displayResultComponents = [ {isCorrect: true, isActualAnswer: 5, isResult: true},
-    {isCorrect: true, isActualAnswer: 5, isResult: true},
-    {isCorrect: true, isActualAnswer: 5, isResult: true},
-    {isCorrect: true, isActualAnswer: 5, isResult: true},
-    {isCorrect: true, isActualAnswer: 5, isResult: true}]
+let displayResultComponents = [ 
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}}
+]
 const makeProblemComponents = ( problems,
                                 displayResultComponents,
                                 operationType) => {
@@ -176,19 +187,9 @@ const makeProblemComponents = ( problems,
         if(!displayResultComponents) {
             return
         }
-        problemSet[i][children]['theirAnswer'] = {
-            variables: {
-                value: 5,
-                quantity: 5,
-                isCorrect: true
-            }
-        }
-        problemSet[i][children]['actualAnswer'] = {
-            variables: {
-                value: 5,
-                quantity: 5,
-            }
-        }
+        problemSet[i][children]['theirAnswer'] = displayResultComponents[i]['theirAnswer']
+        problemSet[i][children]['actualAnswer'] = displayResultComponents[i]['actualAnswer']
+
     })
     return problemSet
 }
