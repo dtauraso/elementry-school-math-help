@@ -127,6 +127,8 @@ blockers
 
 */
 
+import { makeQuantity } from "../../utility"
+
 // const makeNumber = ()
 let displayResultComponents = [ {isCorrect: true, isActualAnswer: 5, isResult: true},
     {isCorrect: true, isActualAnswer: 5, isResult: true},
@@ -134,36 +136,40 @@ let displayResultComponents = [ {isCorrect: true, isActualAnswer: 5, isResult: t
     {isCorrect: true, isActualAnswer: 5, isResult: true},
     {isCorrect: true, isActualAnswer: 5, isResult: true}]
 const makeProblemComponents = ( problems,
-    displayResultComponents) => {
+                                displayResultComponents,
+                                operationType) => {
 
     let problemSet = {}
     problems.forEach((problem, i) => {
 
         let {a, b} = problem
+        const mySum = a + b
         problemSet[i] = {
             children: {
-                a: {variables: {value: a, quantity: a}},
-                b: {variables: {value: b, quantity: b}},
+                a: {variables: {value: a, quantity: makeQuantity(a, mySum)}},
+                b: {variables: {value: b, quantity: makeQuantity(b, mySum)}},
+            }
+        }
+        if(operationType === 'add' || operationType === 'subtract') {
+            problemSet[i]['children']['answerForm'] = {
+                variables: {value: mySum, quantity: makeQuantity(mySum, mySum), operationType: operationType},
+                submission: {
+                    value: '',
+                    quantity: makeQuantity(0, mySum),
+                    correct: false,
+                    firstAnswer: null,
+                    actualAnswer: mySum,
+                    submitCount: 0,
+                    feedbackMessage: 'O',
+                    backgroundColor: 'white'
+                },
+                progressMeter: {
+                    correctFirstTime: false,
+                    testingWithoutForm: false
+                }
             }
         }
         if(!displayResultComponents) {
-            problemSet[i]['children']['answerForm'] = {
-                variables: {value: a + b, quantity: a + b, operationType: 'add'},
-                submission: {
-                    value: null,
-                    quantity: null,
-                    correct: null,
-                    firstAnswer: null,
-                    actualAnswer: null,
-                    submitCount: null,
-                    feedbackMessage: null,
-                    backgroundColor: null
-                },
-                progressMeter: {
-                    correctFirstTime: null,
-                    testingWithoutForm: null
-                }
-            }
             return
         }
         problemSet[i][children]['theirAnswer'] = {
@@ -212,7 +218,7 @@ let newContextualStateChart = {
         },
         children: {
             plusProblems: {
-                'problemSet 0': makeProblemComponents(problems)
+                'problemSet 0': makeProblemComponents(problems, false, 'add')
             },
             dislayResults: {
                 'problemSet 0': makeProblemComponents(problems, displayResultComponents),
