@@ -19,8 +19,8 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
     stateName could match parentDataState1 or not
     stateName: {
         Set2StateFunctionCallCount: 0,
-        timeLine: [
-            {
+        timeLine: {
+            0: {
                 parentDataStateAbsolutePath: {
                     // is assigned 1 time
                     before: {
@@ -34,7 +34,7 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
                     }
                 }
             },
-            {
+            1: {
                 parentDataState2: {
                     before: {
                         var1: 
@@ -46,7 +46,7 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
                     }
                 }
             }
-        ] 
+        }
     }
     
     */
