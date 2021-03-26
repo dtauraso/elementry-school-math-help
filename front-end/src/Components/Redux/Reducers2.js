@@ -154,18 +154,22 @@ const makeProblemComponents = ( problems,
             problemSet[i]['children']['answerForm'] = {
                 variables: {value: mySum, quantity: makeQuantity(mySum, mySum)},
                 submission: {
-                    value: '',
-                    quantity: makeQuantity(0, mySum),
-                    correct: false,
-                    firstAnswer: null,
-                    actualAnswer: mySum,
-                    submitCount: 0,
-                    feedbackMessage: 'O',
-                    backgroundColor: 'white'
+                    variables: {
+                        value: '',
+                        quantity: makeQuantity(0, mySum),
+                        correct: false,
+                        firstAnswer: null,
+                        actualAnswer: mySum,
+                        submitCount: 0,
+                        feedbackMessage: 'O',
+                        backgroundColor: 'white'
+                    }
                 },
                 progressMeter: {
-                    correctFirstTime: false,
-                    testingWithoutForm: false
+                    variables: {
+                        correctFirstTime: false,
+                        testingWithoutForm: false
+                    }
                 }
             }
         }
