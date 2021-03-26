@@ -147,12 +147,12 @@ const makeProblemComponents = ( problems,
         problemSet[i] = {
             children: {
                 a: {variables: {value: a, quantity: makeQuantity(a, mySum)}},
-                b: {variables: {value: b, quantity: makeQuantity(b, mySum)}},
+                b: {variables: {value: b, quantity: makeQuantity(b, mySum), operationType: operationType}},
             }
         }
         if(operationType === 'add' || operationType === 'subtract') {
             problemSet[i]['children']['answerForm'] = {
-                variables: {value: mySum, quantity: makeQuantity(mySum, mySum), operationType: operationType},
+                variables: {value: mySum, quantity: makeQuantity(mySum, mySum)},
                 submission: {
                     value: '',
                     quantity: makeQuantity(0, mySum),
