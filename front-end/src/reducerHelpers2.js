@@ -2,19 +2,39 @@
 export const setVariable2 = () => {
 
 }
-export const getVariable2 = () => {
+export const getVariable2 = (root, absolutePath) => {
+
+    // assume absolute path is name1 name2 name3 - name4 name5 - name6
+    let listOfStrings = absolutePath.split(' - ')
+    let pathList = listOfStrings.map(string => string.split(' '))
+
+    let tracker = root
+    pathList.forEach(stateNameParts => {
+        stateNameParts.forEach(stateNamePart => {
+            if(stateNamePart in tracker) {
+                tracker = tracker[stateNamePart]
+            }
+        })
+        if('children' in tracker) {
+            tracker = tracker['children']
+        }
+    })
 
 }
 
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
 }
-export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) => {
+export const set2 = (root,
+                    parentstateNameAbsolutePath,
+                    stateWeWillRunName,
+                    parentDataStateAbsolutePath,
+                    varName,
+                    newValue) => {
     // the react components will travel down the state chart
     // when loading components
 
     /*
-    parentKey iteraion count
     
     stateName could match parentDataState1 or not
     reference to rootObject, 
@@ -31,11 +51,14 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
 
     if childStateName is the start child and Set2SFromtateFunctionCallCount === 0
         start the new timeline
-    how can a child state tell the difference between the entire submachine
-    being run multiple times and it being run multipe times in a single run
-    of the submachine and separate it's timelines
+
+    if Set2SFromtateFunctionCallCount === 0 and stateRunCount === 0
+        start the new timeline for the childStateName 
+    reset Set2SFromtateFunctionCallCount after the state passed
+    reset stateRunCount right before the recursive call(breathFirstTraversal2) unwinds
     parentstateName: {
         Set2SFromtateFunctionCallCount: 0,
+        stateRunCount: 0
         timeLines: [ {
             0: {
                 childStateName1: {
