@@ -28,9 +28,12 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
     after the child state is done running
     take the last piece of data from the child state in the parent state
     and store it into the child state. use the refernce
+
+    if parentStateName is the start child and Set2SFromtateFunctionCallCount === 0
+        start the new timeline
     parentStateName: {
-        Set2StateFunctionCallCount: 0,
-        timeLine: {
+        Set2SFromtateFunctionCallCount: 0,
+        timeLines: [ {
             0: {
                 childStateName1: {
                     parentDataStateAbsolutePath1: {
@@ -61,7 +64,7 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
                     }
                 }
             }
-        }
+        }]
     }
     
     */
