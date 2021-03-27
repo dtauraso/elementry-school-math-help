@@ -31,7 +31,7 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
 
     if parentStateName is the start child and Set2SFromtateFunctionCallCount === 0
         start the new timeline
-    parentStateName: {
+    childStateName: {
         Set2SFromtateFunctionCallCount: 0,
         timeLines: [ {
             0: {
