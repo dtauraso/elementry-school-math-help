@@ -46,11 +46,17 @@ export const set2 = (root,
     let stateRunCount = childState['stateRunCount']
 
     let startChildren = parentState['start']
+
+
     if(childState in startChildren && set2CallCount === 0) {
         // start the new timeline for the parent
+        parentState['timeLines'].push([])
     }
     if(set2CallCount === 0 && stateRunCount === 0) {
         // start the new timeline for the child
+        let timeLinesLen = parentState['timeLines'].length
+        let timeLineLen = arentState['timeLines'][timeLinesLen - 1].length
+        childState['timeLines'].push(parentState['timeLines'][timeLinesLen - 1][timeLineLen])
     }
 
     /*
