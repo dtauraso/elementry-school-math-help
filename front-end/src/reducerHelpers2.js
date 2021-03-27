@@ -31,6 +31,9 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
 
     if childStateName is the start child and Set2SFromtateFunctionCallCount === 0
         start the new timeline
+    how can a child state tell the difference between the entire submachine
+    being run multiple times and it being run multipe times in a single run
+    of the submachine and separate it's timelines
     parentstateName: {
         Set2SFromtateFunctionCallCount: 0,
         timeLines: [ {
