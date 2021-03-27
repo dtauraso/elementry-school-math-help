@@ -19,6 +19,7 @@ export const getVariable2 = (root, absolutePath) => {
             tracker = tracker['children']
         }
     })
+    return tracker
 
 }
 
