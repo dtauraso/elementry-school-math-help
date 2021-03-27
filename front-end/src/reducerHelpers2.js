@@ -28,11 +28,11 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
     after the child state is done running
     take the last piece of data from the child state in the parent state
     and store it into the child state. use the refernce
-    stateName: {
+    parentStateName: {
         Set2StateFunctionCallCount: 0,
         timeLine: {
             0: {
-                parentDataStateAbsolutePath: {
+                parentDataStateAbsolutePath1: {
                     // is assigned 1 time
                     before: {
                         var1: 
@@ -46,7 +46,7 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
                 }
             },
             1: {
-                parentDataState2: {
+                parentDataStateAbsolutePath2: {
                     before: {
                         var1: 
                         var2:
