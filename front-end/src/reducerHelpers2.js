@@ -60,6 +60,15 @@ export const set2 = (root,
         let len = childState['timeLines'].length
         childState['timeLines'][len - 1].push(parentState['timeLines'][timeLinesLen - 1][timeLineLen - 1])
     }
+    if(set2CallCount === 0 && stateRunCount > 0) {
+        // append entry to parent timeline
+        // append entry reference to child timeline
+    }
+    if(set2CallCount > 0) {
+        // update last entry in parent timeline
+    }
+    
+
 
     /*
     
