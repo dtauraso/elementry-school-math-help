@@ -4,6 +4,9 @@ export const setVariable2 = () => {
 }
 export const getVariable2 = (root, absolutePath) => {
 
+}
+
+export const getState2 = (root, absolutePath) => {
     // assume absolute path is name1 name2 name3 - name4 name5 - name6
     let listOfStrings = absolutePath.split(' - ')
     let pathList = listOfStrings.map(string => string.split(' '))
@@ -22,7 +25,6 @@ export const getVariable2 = (root, absolutePath) => {
     return tracker
 
 }
-
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
 }
@@ -34,6 +36,22 @@ export const set2 = (root,
                     newValue) => {
     // the react components will travel down the state chart
     // when loading components
+
+    let parentState = getState2(root, parentstateNameAbsolutePath)
+    let childState = getState2(root, stateWeWillRunName)
+    let parentDataState = getState2(root, parentDataStateAbsolutePath)
+    let variable = parentState['variables'][varName]
+
+    let set2CallCount = childState['Set2SFromtateFunctionCallCount']
+    let stateRunCount = childState['stateRunCount']
+
+    let startChildren = parentState['start']
+    if(childState in startChildren && set2CallCount === 0) {
+        // start the new timeline for the parent
+    }
+    if(set2CallCount === 0 && stateRunCount === 0) {
+        // start the new timeline for the child
+    }
 
     /*
     
