@@ -56,7 +56,9 @@ export const set2 = (root,
         // start the new timeline for the child
         let timeLinesLen = parentState['timeLines'].length
         let timeLineLen = arentState['timeLines'][timeLinesLen - 1].length
-        childState['timeLines'].push(parentState['timeLines'][timeLinesLen - 1][timeLineLen])
+        childState['timeLines'].push([])
+        let len = childState['timeLines'].length
+        childState['timeLines'][len - 1].push(parentState['timeLines'][timeLinesLen - 1][timeLineLen - 1])
     }
 
     /*
