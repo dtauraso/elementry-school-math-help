@@ -32,28 +32,32 @@ export const set2 = (parentDataKey, referenceToParentObject, varName, newValue) 
         Set2StateFunctionCallCount: 0,
         timeLine: {
             0: {
-                parentDataStateAbsolutePath1: {
-                    // is assigned 1 time
-                    before: {
-                        var1: 
-                        var2:
-                    }
-                    // is assigned the remaining times
-                    after: {
-                        var1:
-                        var2
+                childStateName1: {
+                    parentDataStateAbsolutePath1: {
+                        // is assigned 1 time
+                        before: {
+                            var1: 
+                            var2:
+                        }
+                        // is assigned the remaining times
+                        after: {
+                            var1:
+                            var2
+                        }
                     }
                 }
             },
             1: {
-                parentDataStateAbsolutePath2: {
-                    before: {
-                        var1: 
-                        var2:
-                    }
-                    after: {
-                        var1:
-                        var2
+                childStateName2: {
+                    parentDataStateAbsolutePath2: {
+                        before: {
+                            var1: 
+                            var2:
+                        }
+                        after: {
+                            var1:
+                            var2
+                        }
                     }
                 }
             }
