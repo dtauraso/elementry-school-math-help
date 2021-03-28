@@ -28,6 +28,28 @@ export const getState2 = (root, absolutePath) => {
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
 }
+export const makeEntry = (  stateWeWillRunName,
+                            parentDataStateAbsolutePath,
+                            parentDataState,
+                            varName,
+                            variable,
+                            newValue) => {
+    return {
+        [stateWeWillRunName]: {
+            [parentDataStateAbsolutePath]: {
+                reference: parentDataState,
+                // is set 1 time
+                before: {
+                    [varName]: variable
+                },
+                // is set 1 time and reset the remaining times
+                after: {
+                    [varName]: newValue
+                }
+            }
+        }
+    })  
+                            }
 export const set2 = (root,
                     parentstateNameAbsolutePath,
                     stateWeWillRunName,
@@ -47,31 +69,32 @@ export const set2 = (root,
 
     let startChildren = parentState['start']
 
-
+    let newParentTimeline = false
     if(childState in startChildren && set2CallCount === 0) {
         // the start of each cycle of entire submachine at the start state
         // start the new timeline for the parent
-        parentState['timeLines'].push([{
-            [stateWeWillRunName]: {
-                [parentDataStateAbsolutePath]: {
-                    reference: parentDataState,
-                    // is set 1 time
-                    before: {
-                        [varName]: variable
-                    },
-                    // is set 1 time and reset the remaining times
-                    after: {
-                        [varName]: newValue
-                    }
-                }
-            }
-        }])
+        parentState['timeLines'].push([makeEntry(
+                                            stateWeWillRunName,
+                                            parentDataStateAbsolutePath,
+                                            parentDataState,
+                                            varName,
+                                            variable,
+                                            newValue)])
+        newParentTimeline = true
     }
     childState['variables'][varName] = newValue
     if(set2CallCount === 0 && stateRunCount === 0) {
         // the start of each cycle of entire submachine at stateWeWillRunName
-        // assuming stateWeWillRunName is not the start state
         // start the new timeline for the child
+        if(!newParentTimeline) {
+            parentState['timeLines'].push([makeEntry(
+                                                stateWeWillRunName,
+                                                parentDataStateAbsolutePath,
+                                                parentDataState,
+                                                varName,
+                                                variable,
+                                                newValue)])    
+        }
         let timeLinesLen = parentState['timeLines'].length
         let timeLineLen = arentState['timeLines'][timeLinesLen - 1].length
         childState['timeLines'].push([])
