@@ -48,8 +48,8 @@ export const makeEntry = (  stateWeWillRunName,
                 }
             }
         }
-    })  
-                            }
+    }
+}
 export const set2 = (root,
                     parentstateNameAbsolutePath,
                     stateWeWillRunName,
@@ -70,7 +70,7 @@ export const set2 = (root,
     let startChildren = parentState['start']
 
     let newParentTimeline = false
-    if(childState in startChildren && set2CallCount === 0) {
+    if(childState in startChildren && set2CallCount === 0 && stateRunCount === 0) {
         // the start of each cycle of entire submachine at the start state
         // start the new timeline for the parent
         parentState['timeLines'].push([makeEntry(
@@ -102,6 +102,7 @@ export const set2 = (root,
         childState['timeLines'][len - 1].push(parentState['timeLines'][timeLinesLen - 1][timeLineLen - 1])
     }
     if(set2CallCount === 0 && stateRunCount > 0) {
+        // any state that has already successfully run once
         // append entry to parent timeline
         // append entry reference to child timeline
     }
