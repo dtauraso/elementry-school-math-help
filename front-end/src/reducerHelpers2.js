@@ -53,6 +53,7 @@ export const set2 = (root,
         parentState['timeLines'].push([{
             [stateWeWillRunName]: {
                 [parentDataStateAbsolutePath]: {
+                    reference: parentDataState,
                     // is set 1 time
                     before: {
                         [varName]: variable
@@ -79,6 +80,7 @@ export const set2 = (root,
     }
     if(set2CallCount > 0) {
         // update last entry in parent timeline
+        parentState['timeLines'][timeLinesLen - 1][timeLineLen - 1][stateWeWillRunName][parentDataStateAbsolutePath]['after'][varName] = newValue
     }
     
 
