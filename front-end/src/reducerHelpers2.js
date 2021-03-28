@@ -49,6 +49,7 @@ export const set2 = (root,
 
 
     if(childState in startChildren && set2CallCount === 0) {
+        // the start of each cycle of entire submachine at the start state
         // start the new timeline for the parent
         parentState['timeLines'].push([{
             [stateWeWillRunName]: {
@@ -66,7 +67,10 @@ export const set2 = (root,
             }
         }])
     }
-    if(set2CallCount === 0 && stateRunCount === 0) {
+    childState['variables'][varName] = newValue
+    if(!(childState in startChildren) && set2CallCount === 0 && stateRunCount === 0) {
+        // the start of each cycle of entire submachine at stateWeWillRunName
+        // assuming stateWeWillRunName is not the start state
         // start the new timeline for the child
         let timeLinesLen = parentState['timeLines'].length
         let timeLineLen = arentState['timeLines'][timeLinesLen - 1].length
