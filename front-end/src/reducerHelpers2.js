@@ -68,7 +68,7 @@ export const set2 = (root,
         }])
     }
     childState['variables'][varName] = newValue
-    if(!(childState in startChildren) && set2CallCount === 0 && stateRunCount === 0) {
+    if(set2CallCount === 0 && stateRunCount === 0) {
         // the start of each cycle of entire submachine at stateWeWillRunName
         // assuming stateWeWillRunName is not the start state
         // start the new timeline for the child
