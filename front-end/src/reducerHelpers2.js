@@ -42,7 +42,8 @@ export const makeEntry = (  stateWeWillRunName,
                 before: {
                     [varName]: variable
                 },
-                // is set 1 time and reset the remaining times
+                // is set 1 time and reset the remaining times set2 is called inside the
+                // function for stateWeWillRunName
                 after: {
                     [varName]: newValue
                 }
