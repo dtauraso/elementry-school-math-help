@@ -50,7 +50,20 @@ export const set2 = (root,
 
     if(childState in startChildren && set2CallCount === 0) {
         // start the new timeline for the parent
-        parentState['timeLines'].push([])
+        parentState['timeLines'].push([{
+            [stateWeWillRunName]: {
+                [parentDataStateAbsolutePath]: {
+                    // is set 1 time
+                    before: {
+                        [varName]: variable
+                    },
+                    // is set 1 time and reset the remaining times
+                    after: {
+                        [varName]: newValue
+                    }
+                }
+            }
+        }])
     }
     if(set2CallCount === 0 && stateRunCount === 0) {
         // start the new timeline for the child
