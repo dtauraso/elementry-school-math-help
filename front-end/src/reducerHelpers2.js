@@ -29,6 +29,7 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
     
 }
 export const makeEntry = (  stateWeWillRunName,
+                            functionName,
                             parentDataStateAbsolutePath,
                             parentDataState,
                             varName,
@@ -36,6 +37,7 @@ export const makeEntry = (  stateWeWillRunName,
                             newValue) => {
     return {
         [stateWeWillRunName]: {
+            functionName: functionName,
             [parentDataStateAbsolutePath]: {
                 reference: parentDataState,
                 // is set 1 time
@@ -62,6 +64,7 @@ export const set2 = (root,
 
     let parentState = getState2(root, parentstateNameAbsolutePath)
     let childState = getState2(root, stateWeWillRunName)
+    let functionName = childState.functionCode.toString()
     let parentDataState = getState2(root, parentDataStateAbsolutePath)
     let variable = parentState['variables'][varName]
 
@@ -76,6 +79,7 @@ export const set2 = (root,
         // start the new timeline for the parent
         parentState['timeLines'].push([makeEntry(
                                             stateWeWillRunName,
+                                            functionName,
                                             parentDataStateAbsolutePath,
                                             parentDataState,
                                             varName,
@@ -90,6 +94,7 @@ export const set2 = (root,
         if(!newParentTimeline) {
             parentState['timeLines'].push([makeEntry(
                                                 stateWeWillRunName,
+                                                functionName,
                                                 parentDataStateAbsolutePath,
                                                 parentDataState,
                                                 varName,
