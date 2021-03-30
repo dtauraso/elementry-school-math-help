@@ -110,14 +110,15 @@ export const set2 = (root,
     if(set2CallCount === 0 && stateRunCount > 0) {
         // any state that has already successfully run once
         // append entry to parent timeline
-        parentState['timeLines'].push([makeEntry(
+        let timeLinesLen = parentState['timeLines'].length
+        parentState['timeLines'][timeLinesLen - 1].push(makeEntry(
             stateWeWillRunName,
             functionName,
             parentDataStateAbsolutePath,
             parentDataState,
             varName,
             variable,
-            newValue)])
+            newValue))
 
         // append entry reference to child timeline
         let timeLinesLen = parentState['timeLines'].length
