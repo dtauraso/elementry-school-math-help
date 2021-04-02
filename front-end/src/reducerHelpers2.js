@@ -36,7 +36,8 @@ export const makeEntry = (  stateWeWillRunName,
                             parentDataState,
                             varName,
                             variable,
-                            newValue) => {
+                            newValue,
+                            childTimeLine) => {
     return {
         [stateWeWillRunName]: {
             functionName: functionName,
@@ -51,7 +52,8 @@ export const makeEntry = (  stateWeWillRunName,
                 after: {
                     [varName]: newValue
                 }
-            }
+            },
+            childTimeLine: childTimeLine
         }
     }
 }
@@ -98,7 +100,8 @@ export const set2 = (root,
                 parentDataState,
                 varName,
                 variable,
-                newValue))
+                newValue,
+                null))
 
             // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
 
