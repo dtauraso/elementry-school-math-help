@@ -57,6 +57,10 @@ export const makeEntry = (  stateWeWillRunName,
         }
     }
 }
+
+export const getParentObject = () => {
+
+}
 export const set2 = (root,
                     parentstateNameAbsolutePath,
                     stateWeWillRunName,
@@ -104,6 +108,10 @@ export const set2 = (root,
                 null))
 
             // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
+            const grandParentOjbect = getParentObject(parentState)
+            const grandparentTimeLinesLen = grandParentOjbect['E2ETimeLines'].length
+            const grandparentTimeLineLen = grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+            grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState
 
             // link the child's unit entry to the parent's end to end entry
             childState['unitTimeLines'].push([])
