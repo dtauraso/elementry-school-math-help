@@ -27,6 +27,8 @@ export const getState2 = (root, absolutePath) => {
 }
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
+    // add timeline keys to each state
+    // put in parent links
 }
 export const makeEntry = (  stateWeWillRunName,
                             functionName,
@@ -85,6 +87,8 @@ export const set2 = (root,
         
        if(childState in startChildren) {
            // the first state in the submachine
+
+           // make the end to end entry
            parentState['E2ETimeLines'].push([])
            const lenParent = parentState['E2ETimeLines'].length
            parentState['E2ETimeLines'][lenParent - 1].push(makeEntry(
@@ -95,6 +99,10 @@ export const set2 = (root,
                 varName,
                 variable,
                 newValue))
+
+            // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
+
+            // link the child's unit entry to the parent's end to end entry
             childState['unitTimeLines'].push([])
 
             const lenChild = childState['unitTimeLines'].length
