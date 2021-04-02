@@ -106,7 +106,7 @@ export const set2 = (root,
                 variable,
                 newValue,
                 null))
-
+            // what if there is no grandparent
             // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
             const grandParentOjbect = getParentObject(parentState)
             const grandparentTimeLinesLen = grandParentOjbect['E2ETimeLines'].length
@@ -118,7 +118,7 @@ export const set2 = (root,
 
             const lenChild = childState['unitTimeLines'].length
             const lenParentLastTimeLine = parentState['E2ETimeLines'][lenParent - 1].length
-            
+            // what if the end to end setting is turned off
             childState['unitTimeLines'][lenChild - 1].push(parentState['E2ETimeLines'][lenParent - 1][lenParentLastTimeLine - 1])
         }
        else {
