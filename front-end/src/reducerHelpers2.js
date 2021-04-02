@@ -73,11 +73,46 @@ export const set2 = (root,
 
     let startChildren = parentState['start']
 
+
+    /* 
+    unit test:
+        entry is saved at the state it was made in
+    end to end test:
+        entry is saved at the parent state
+    */
+    if(set2CallCount === 0 && stateRunCount === 0) {
+        // the start of each state
+        
+       if(childState in startChildren) {
+           // the first state in the submachine
+           parentState['E2ETimeLines'].push([])
+           const lenParent = parentState['E2ETimeLines'].length
+           parentState['E2ETimeLines'][lenParent - 1].push(makeEntry(
+                stateWeWillRunName,
+                functionName,
+                parentDataStateAbsolutePath,
+                parentDataState,
+                varName,
+                variable,
+                newValue))
+            childState['unitTimeLines'].push([])
+
+            const lenChild = childState['unitTimeLines'].length
+            const lenParentLastTimeLine = parentState['E2ETimeLines'][lenParent - 1].length
+            
+            childState['unitTimeLines'][lenChild - 1].push(parentState['E2ETimeLines'][lenParent - 1][lenParentLastTimeLine - 1])
+        }
+       else {
+
+       }
+
+    }
+
     let newParentTimeline = false
     if(childState in startChildren && set2CallCount === 0 && stateRunCount === 0) {
         // the start of each cycle of entire submachine at the start state
         // start the new timeline for the parent
-        parentState['timeLines'].push([makeEntry(
+        parentState['E2ETimeLines'].push([makeEntry(
                                             stateWeWillRunName,
                                             functionName,
                                             parentDataStateAbsolutePath,
