@@ -136,9 +136,9 @@ export const set2 = (root,
             const lenParent = parentState['E2ETimeLines'].length
             parentState['E2ETimeLines'][lenParent - 1].push(entry)
  
-           childState['unitTimeLines'].push([])
-           const lenChild = childState['unitTimeLines'].length
-           childState['unitTimeLines'][lenChild - 1].push(entry)
+            childState['unitTimeLines'].push([])
+            const lenChild = childState['unitTimeLines'].length
+            childState['unitTimeLines'][lenChild - 1].push(entry)
         }
 
 
