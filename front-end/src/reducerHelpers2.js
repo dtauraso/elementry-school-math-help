@@ -78,7 +78,6 @@ export const set2 = (root,
 
     let set2CallCount = childState['Set2SFromtateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
-
     let startChildren = parentState['start']
 
     root['entries'].push(makeEntry(
@@ -119,11 +118,35 @@ export const set2 = (root,
             const lenChild = childState['unitTimeLines'].length
             childState['unitTimeLines'][lenChild - 1].push(entry)
         }
-       else {
+        else {
+            // first set function called in all states that aren't start states
+            /*
+            make a new timeline for entries, because we need to keep the
+            new entries separate from the previous entries from prior
+            runs of the submachine
+            make a new timeline for the child state
+                the child state might be run more than 1 time in the same machine so we
+                need to keep the child runs separated from each submachine run
+            add entry to new timeline for the child state
+            append entry to end to end time line for the parent state
+            
+            */
 
-       }
+            parentState['E2ETimeLines'].push([])
+            const lenParent = parentState['E2ETimeLines'].length
+            parentState['E2ETimeLines'][lenParent - 1].push(entry)
+ 
+           childState['unitTimeLines'].push([])
+           const lenChild = childState['unitTimeLines'].length
+           childState['unitTimeLines'][lenChild - 1].push(entry)
+        }
+
 
     }
+    if(set2CallCount > 0) {
+        // all remaining set calls inside a single state
+    }
+    
 
     let newParentTimeline = false
     if(childState in startChildren && set2CallCount === 0 && stateRunCount === 0) {
