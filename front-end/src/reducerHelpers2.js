@@ -117,10 +117,7 @@ export const set2 = (root,
 
             // link the child's unit entry to the parent's end to end entry
             childState['unitTimeLines'].push([])
-
             const lenChild = childState['unitTimeLines'].length
-            const lenParentLastTimeLine = parentState['E2ETimeLines'][lenParent - 1].length
-            // what if the end to end setting is turned off
             childState['unitTimeLines'][lenChild - 1].push(entry)
         }
        else {
