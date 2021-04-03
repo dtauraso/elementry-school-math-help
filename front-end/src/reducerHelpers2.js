@@ -81,7 +81,17 @@ export const set2 = (root,
 
     let startChildren = parentState['start']
 
-
+    root['entries'].push(makeEntry(
+        stateWeWillRunName,
+        functionName,
+        parentDataStateAbsolutePath,
+        parentDataState,
+        varName,
+        variable,
+        newValue,
+        null))
+    const entriesLen = root['entries'].length
+    const entry = root['entries'][entriesLen - 1]
     /* 
     unit test:
         entry is saved at the state it was made in
@@ -97,15 +107,7 @@ export const set2 = (root,
            // make the end to end entry
            parentState['E2ETimeLines'].push([])
            const lenParent = parentState['E2ETimeLines'].length
-           parentState['E2ETimeLines'][lenParent - 1].push(makeEntry(
-                stateWeWillRunName,
-                functionName,
-                parentDataStateAbsolutePath,
-                parentDataState,
-                varName,
-                variable,
-                newValue,
-                null))
+           parentState['E2ETimeLines'][lenParent - 1].push(entry)
             // what if there is no grandparent
             // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
             const grandParentOjbect = getParentObject(parentState)
@@ -119,7 +121,7 @@ export const set2 = (root,
             const lenChild = childState['unitTimeLines'].length
             const lenParentLastTimeLine = parentState['E2ETimeLines'][lenParent - 1].length
             // what if the end to end setting is turned off
-            childState['unitTimeLines'][lenChild - 1].push(parentState['E2ETimeLines'][lenParent - 1][lenParentLastTimeLine - 1])
+            childState['unitTimeLines'][lenChild - 1].push(entry)
         }
        else {
 
