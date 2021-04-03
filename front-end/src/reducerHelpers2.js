@@ -115,7 +115,6 @@ export const set2 = (root,
             const grandparentTimeLineLen = grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1].length
             grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
 
-            // link the child's unit entry to the parent's end to end entry
             childState['unitTimeLines'].push([])
             const lenChild = childState['unitTimeLines'].length
             childState['unitTimeLines'][lenChild - 1].push(entry)
