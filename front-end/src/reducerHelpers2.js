@@ -186,8 +186,14 @@ export const set2 = (root,
             newValue)
     }
 
-
-
+    parentState['variables'][varName] = newValue
+    /*
+    resetting
+    childState['Set2SFromtateFunctionCallCount']
+    childState['stateRunCount']
+    will happen in breathFirstTraversal2
+    
+    */
     /*
     
     stateName could match parentDataState1 or not
