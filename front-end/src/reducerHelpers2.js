@@ -61,6 +61,65 @@ export const makeEntry = (  stateWeWillRunName,
 export const getParentObject = () => {
 
 }
+
+export const setupFirstState = (parentState, childState, entry) => {
+
+    // make the end to end entry
+    parentState['E2ETimeLines'].push([])
+    const lenParent = parentState['E2ETimeLines'].length
+    parentState['E2ETimeLines'][lenParent - 1].push(entry)
+    // what if there is no grandparent
+    // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
+    const grandParentOjbect = getParentObject(parentState)
+    const grandparentTimeLinesLen = grandParentOjbect['E2ETimeLines'].length
+    const grandparentTimeLineLen = grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+    grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+
+    childState['unitTimeLines'].push([])
+    const lenChild = childState['unitTimeLines'].length
+    childState['unitTimeLines'][lenChild - 1].push(entry)
+}
+
+export const setupSetInAllRemainingStates = (parentState, childState, entry) => {
+
+    /*
+        make a new timeline for entries, because we need to keep the
+        new entries separate from the previous entries from prior
+        runs of the submachine
+        make a new timeline for the child state
+            the child state might be run more than 1 time in the same machine so we
+            need to keep the child runs separated from each submachine run
+        add entry to new timeline for the child state
+        append entry to end to end time line for the parent state
+        
+    */
+    parentState['E2ETimeLines'].push([])
+    const lenParent = parentState['E2ETimeLines'].length
+    parentState['E2ETimeLines'][lenParent - 1].push(entry)
+
+    childState['unitTimeLines'].push([])
+    const lenChild = childState['unitTimeLines'].length
+    childState['unitTimeLines'][lenChild - 1].push(entry)
+
+}
+export const revisitingSuccessfullyRunStates = (parentState, childState, entry) => {
+
+    const lenParent = parentState['E2ETimeLines'].length
+    parentState['E2ETimeLines'][lenParent - 1].push(entry)
+
+    const lenChild = childState['unitTimeLines'].length
+    childState['unitTimeLines'][lenChild - 1].push(entry)
+
+}
+export const allRemainingSetCallsInState = (entry,
+                                            stateWeWillRunName,
+                                            parentDataStateAbsolutePath,
+                                            varName,
+                                            newValue) => {
+
+    entry[stateWeWillRunName][parentDataStateAbsolutePath]['after'][varName] = newValue
+
+}
 export const set2 = (root,
                     parentstateNameAbsolutePath,
                     stateWeWillRunName,
@@ -104,58 +163,27 @@ export const set2 = (root,
             
             if(childState in startChildren) {
                 // the first state in the submachine
-
-                // make the end to end entry
-                parentState['E2ETimeLines'].push([])
-                const lenParent = parentState['E2ETimeLines'].length
-                parentState['E2ETimeLines'][lenParent - 1].push(entry)
-                // what if there is no grandparent
-                // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
-                const grandParentOjbect = getParentObject(parentState)
-                const grandparentTimeLinesLen = grandParentOjbect['E2ETimeLines'].length
-                const grandparentTimeLineLen = grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1].length
-                grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
-
-                childState['unitTimeLines'].push([])
-                const lenChild = childState['unitTimeLines'].length
-                childState['unitTimeLines'][lenChild - 1].push(entry)
+                setupFirstState(parentState, childState, entry)
             }
             else {
                 // first set function called in all states that aren't start states
-                /*
-                make a new timeline for entries, because we need to keep the
-                new entries separate from the previous entries from prior
-                runs of the submachine
-                make a new timeline for the child state
-                    the child state might be run more than 1 time in the same machine so we
-                    need to keep the child runs separated from each submachine run
-                add entry to new timeline for the child state
-                append entry to end to end time line for the parent state
-                
-                */
+                setupSetInAllRemainingStates(parentState, childState, entry)                
 
-                parentState['E2ETimeLines'].push([])
-                const lenParent = parentState['E2ETimeLines'].length
-                parentState['E2ETimeLines'][lenParent - 1].push(entry)
-    
-                childState['unitTimeLines'].push([])
-                const lenChild = childState['unitTimeLines'].length
-                childState['unitTimeLines'][lenChild - 1].push(entry)
             }
         }
         else if(stateRunCount > 0) {
             // any state that has already been successfully run once
-            const lenParent = parentState['E2ETimeLines'].length
-            parentState['E2ETimeLines'][lenParent - 1].push(entry)
-
-            const lenChild = childState['unitTimeLines'].length
-            childState['unitTimeLines'][lenChild - 1].push(entry)
-
+            revisitingSuccessfullyRunStates(parentState, childState, entry)
         }
     }
     else if(set2CallCount > 0) {
         // all remaining set calls inside a single state
-        entry[stateWeWillRunName][parentDataStateAbsolutePath]['after'][varName] = newValue
+        allRemainingSetCallsInState(
+            entry,
+            stateWeWillRunName,
+            parentDataStateAbsolutePath,
+            varName,
+            newValue)
     }
 
 
