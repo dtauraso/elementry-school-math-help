@@ -187,6 +187,7 @@ export const set2 = (root,
     }
 
     parentState['variables'][varName] = newValue
+    childState['Set2SFromtateFunctionCallCount'] += 1
     /*
     resetting
     childState['Set2SFromtateFunctionCallCount']
