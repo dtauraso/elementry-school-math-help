@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { getCat } from './Redux/Actions'
+import { getCat } from '../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../reducerHelpers'
+    getVariable } from '../Redux/reducerHelpers'
 
 const Box = styled.p`
 

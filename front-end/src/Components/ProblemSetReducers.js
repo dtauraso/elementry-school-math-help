@@ -1,4 +1,4 @@
-import { makeQuantity } from '../../utility'
+import { makeQuantity } from '../utility'
 import {    
             appendStates,
             setVariable,
@@ -16,7 +16,7 @@ import {
         
         
         
-        } from '../../reducerHelpers'
+        } from '../Redux/reducerHelpers'
 
 // Only add states when they need to be initially created or enumaerated with a graph generator.
 // No singletone states should be created just cause they don't need to exist untill that reducer runs.

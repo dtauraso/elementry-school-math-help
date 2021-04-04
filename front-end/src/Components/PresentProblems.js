@@ -8,7 +8,7 @@ import {
     getCell,
     getVariable,
     getChild,
-    printTreeInteractive } from '../reducerHelpers'
+    printTreeInteractive } from '../Redux/reducerHelpers'
 import AddTwoValues from './AddTwoValues'
 
 

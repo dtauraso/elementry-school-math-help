@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { getProblemSets, setProblemSetSelector } from '../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../../reducerHelpers'
+    getVariable } from '../Redux/reducerHelpers'
 
 const ProblemSetStat = styled.p`
 

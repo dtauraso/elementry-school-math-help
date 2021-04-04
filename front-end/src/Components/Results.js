@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { getProblemSets, clearResults } from '../Redux/Actions'
 import {
     getCell,
-    treeVisualizer } from '../../reducerHelpers'
+    treeVisualizer } from '../Redux/reducerHelpers'
 
 
 // https://github.com/BW-Dev-Desk-Queue-1/Front-End/blob/master/dev-desk-queue/src/components/Student/StudentDashboard.js

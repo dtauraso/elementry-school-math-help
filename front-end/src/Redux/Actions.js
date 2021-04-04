@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { store } from '../../index'
+import { store } from '../index'
 // import univer
 // export const FETCH_CAT_START = 'FETCH_CAT_START'
 // export const FETCH_CAT_SUCCESS = 'FETCH_CAT_SUCCESS'
@@ -36,14 +36,14 @@ export const autoSolve = (pathToState) => dispatch => {
 
     let x = store.getState()['payload']
     console.log('submit this', x)
-    axios
-        .post(`http://localhost:3001/api`, x.value)
-        .then(res => {
-            if(res.status === 200) {
-                console.log('added the data')
+    // axios
+    //     .post(`http://localhost:3001/api`, x.value)
+    //     .then(res => {
+    //         if(res.status === 200) {
+    //             console.log('added the data')
 
-            }
-        })
+    //         }
+    //     })
     // x.name = ['testing']
     // console.log(x)
 
@@ -101,31 +101,31 @@ export const submitAnswer = (pathToState) => dispatch => {
 export const getProblemSets = () => dispatch => {
 
     console.log('inside the action')
-    axios
-        .get(`http://localhost:3001/api`)
-        .then(res => {
-            console.log('returned')
-            if(res.status === 200) {
-                console.log('got the data', res.data)
-                dispatch({
-                    type: ['elementarySchool storeResults'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
-                    payload: res.data,
-                    meta: {
-                            offsetString: 'plusProblems'
-                            // basePath: pathToState, // base state(for the object data)
-                            // parentStateName: pathToState,
-                            // testPayload: store.getState()
-                        }
-                });
+    // axios
+    //     .get(`http://localhost:3001/api`)
+    //     .then(res => {
+    //         console.log('returned')
+    //         if(res.status === 200) {
+    //             console.log('got the data', res.data)
+    //             dispatch({
+    //                 type: ['elementarySchool storeResults'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+    //                 payload: res.data,
+    //                 meta: {
+    //                         offsetString: 'plusProblems'
+    //                         // basePath: pathToState, // base state(for the object data)
+    //                         // parentStateName: pathToState,
+    //                         // testPayload: store.getState()
+    //                     }
+    //             });
         
-            }
-            else {
-                console.log('res is not ok')
-            }
-        })
-        .catch(error => {
-            console.log('error', error)
-        })
+    //         }
+    //         else {
+    //             console.log('res is not ok')
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.log('error', error)
+    //     })
 }
 
 //setProblemSetSelector for viewing the result
@@ -145,9 +145,9 @@ export const setProblemSetSelector = (problemSetId) => dispatch => {
 }
 
 export const clearResults = () => dispatch => {
-    axios
-        .delete(`http://localhost:3001/api`)
-        .catch(error => {
-            console.log('error', error)
-        })
+    // axios
+    //     .delete(`http://localhost:3001/api`)
+    //     .catch(error => {
+    //         console.log('error', error)
+    //     })
 }

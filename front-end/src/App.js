@@ -3,7 +3,7 @@ import { Route, Link } from 'react-router-dom'
 import styled from 'styled-components'
 import './App.css';
 import PresentProblems from './Components/PresentProblems'
-import Results from './Components/StudentResults/Results'
+import Results from './Components/Results'
 
 
 function App() {

@@ -129,7 +129,7 @@ blockers
 
 */
 
-import { makeQuantity } from "../../utility"
+import { makeQuantity } from "../utility"
 
 // const makeNumber = ()
 let displayResultComponents = [ 

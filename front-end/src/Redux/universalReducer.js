@@ -1,9 +1,9 @@
 
-import { Root } from './Reducers'
+import { Root } from '../Components/ProblemSetReducers'
 import {
     getCell,
     breathFirstTraversal,
-    printTreeInteractive } from '../../reducerHelpers'
+    printTreeInteractive } from './reducerHelpers'
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {

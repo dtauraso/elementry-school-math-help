@@ -6,7 +6,7 @@ import { getProblemSets } from '../Redux/Actions'
 import {
     getCell,
     getVariable,
-    printTreeInteractive } from '../../reducerHelpers'
+    printTreeInteractive } from '../Redux/reducerHelpers'
 
 const Problems = styled.p`
 

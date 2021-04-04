@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { getProblemSets } from '../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../../reducerHelpers'
+    getVariable } from '../../Redux/reducerHelpers'
 
 const ProblemSets = (props) => {
 
