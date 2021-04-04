@@ -98,6 +98,7 @@ export const set2 = (root,
         entry is saved at the parent state
     */
     if(set2CallCount === 0) {
+
         if(stateRunCount === 0) {
             // the start of each state
             
