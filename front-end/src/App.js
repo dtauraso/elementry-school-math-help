@@ -2,8 +2,8 @@ import React from 'react';
 import { Route, Link } from 'react-router-dom'
 import styled from 'styled-components'
 import './App.css';
-import PresentProblems from './Components/PresentProblems'
-import Results from './Components/Results'
+import PresentProblems from './Components/Problems/PresentProblems'
+import Results from './Components/ShowResults/Results'
 
 
 function App() {

@@ -2,7 +2,7 @@ import React, {useEffect} from 'react'
 import styled from 'styled-components'
 import ProblemSetsCard from './ProblemSetsCard'
 import { connect } from 'react-redux'
-import { getProblemSets } from '../Redux/Actions'
+import { getProblemSets } from '../../Redux/Actions'
 import {
     getCell,
     getVariable } from '../../Redux/reducerHelpers'

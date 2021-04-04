@@ -2,13 +2,13 @@ import React from 'react'
 import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 
 import { connect } from 'react-redux'
-import { autoSolve } from './Redux/Actions'
+import { autoSolve } from '../../Redux/Actions'
 
 import {
     getCell,
     getVariable,
     getChild,
-    printTreeInteractive } from '../Redux/reducerHelpers'
+    printTreeInteractive } from '../../Redux/reducerHelpers'
 import AddTwoValues from './AddTwoValues'
 
 

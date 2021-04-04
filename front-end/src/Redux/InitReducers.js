@@ -130,6 +130,19 @@ blockers
 */
 
 import { makeQuantity } from "../utility"
+const problems = [
+    {a: 4, b: 3},
+
+    {a: 5, b: 6},
+
+    {a: 2, b: 4},
+
+    {a: 9, b: 4},
+
+    {a: 5, b: 1}
+
+
+]
 
 // const makeNumber = ()
 let displayResultComponents = [ 
@@ -189,14 +202,14 @@ const makeProblemComponents = ( problems,
         if(!displayResultComponents) {
             return
         }
-        problemSet[i][children]['theirAnswer'] = displayResultComponents[i]['theirAnswer']
-        problemSet[i][children]['actualAnswer'] = displayResultComponents[i]['actualAnswer']
+        problemSet[i]['children']['theirAnswer'] = displayResultComponents[i]['theirAnswer']
+        problemSet[i]['children']['actualAnswer'] = displayResultComponents[i]['actualAnswer']
 
     })
     return problemSet
 }
 
-let newContextualStateChart = {
+export var newContextualStateChart = {
     elementarySchool : {
         utilities: {
             createProblems: {

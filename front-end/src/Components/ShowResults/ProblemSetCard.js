@@ -2,11 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { connect } from 'react-redux'
-import { getProblemSets } from '../Redux/Actions'
+import { getProblemSets } from '../../Redux/Actions'
 import {
     getCell,
     getVariable,
-    printTreeInteractive } from '../Redux/reducerHelpers'
+    printTreeInteractive } from '../../Redux/reducerHelpers'
 
 const Problems = styled.p`
 

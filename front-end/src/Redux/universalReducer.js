@@ -1,5 +1,5 @@
 
-import { Root } from '../Components/ProblemSetReducers'
+import { newContextualStateChart } from './InitReducers'
 import {
     getCell,
     breathFirstTraversal,
@@ -7,7 +7,7 @@ import {
 
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
-    ...Root,
+    ...newContextualStateChart,
     // breakAppTree: BreakApp
 }
 // vector state name

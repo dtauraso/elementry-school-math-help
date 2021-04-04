@@ -2,13 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 import Loader from 'react-loader-spinner';
 import ProblemSetCard from './ProblemSetCard'
-import AddTwoValues from './AddTwoValues'
+import AddTwoValues from '../Problems/AddTwoValues'
 import { connect } from 'react-redux'
-import { getCat, submitAnswer, addToAnswer } from '../Redux/Actions'
+import { getCat, submitAnswer, addToAnswer } from '../../Redux/Actions'
 import {
     getCell,
     getVariable,
-    getChild } from '../Redux/reducerHelpers'
+    getChild } from '../../Redux/reducerHelpers'
 
     
 const ProblemSet = (props) => {

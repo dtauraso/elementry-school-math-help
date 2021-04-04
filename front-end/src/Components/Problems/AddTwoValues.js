@@ -2,13 +2,13 @@ import React from 'react'
 import OneValue from './OneValue';
 import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { getCat } from '../Redux/Actions'
+import { getCat } from '../../Redux/Actions'
 
 import {
     getCell,
     getChildren,
     getVariable,
-    printTreeInteractive } from '../Redux/reducerHelpers'
+    printTreeInteractive } from '../../Redux/reducerHelpers'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"

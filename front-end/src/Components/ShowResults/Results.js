@@ -5,10 +5,10 @@ import ProblemSet from './ProblemSet'
 import Loader from 'react-loader-spinner';
 
 import { connect } from 'react-redux'
-import { getProblemSets, clearResults } from '../Redux/Actions'
+import { getProblemSets, clearResults } from '../../Redux/Actions'
 import {
     getCell,
-    treeVisualizer } from '../Redux/reducerHelpers'
+    treeVisualizer } from '../../Redux/reducerHelpers'
 
 
 // https://github.com/BW-Dev-Desk-Queue-1/Front-End/blob/master/dev-desk-queue/src/components/Student/StudentDashboard.js

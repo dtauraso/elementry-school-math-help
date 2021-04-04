@@ -1,6 +1,6 @@
 import React from 'react'
-import Quantity from '../Quantity'
-import SubmitAnswer from '../SubmitAnswer'
+import Quantity from './Quantity'
+import SubmitAnswer from './SubmitAnswer'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer } from '../../Redux/Actions'
