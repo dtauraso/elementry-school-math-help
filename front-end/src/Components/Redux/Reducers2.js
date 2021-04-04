@@ -125,6 +125,7 @@ blockers
     4th attempt
         the js code for the generation functions was well engineered js, but there was a readability problem. The engineer would be expected to 
         hunt around and find the hierarchy. Switching the flat hash table to a json object made the hierarchy easier to understand.
+        The entire frontend had to be redone. The entire file structure had to be redone also.
 
 */
 

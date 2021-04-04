@@ -354,9 +354,51 @@ export const breathFirstTraversal2 = (state, action, startStateName, levelId) =>
                     temporaryState,
                     nextStates,
                     currentStateName)
+                // rest counts for state
+                return null
             }
+            temporaryState = result[0]
 
+            passes = true
+            winningStateName = nextState
+            let childrenStates = getChildren(temporaryState, winningStateName)
+            if(childrenStates === null) {
+                return null
+            }
+            if(childrenStates.length === 0) {
+                return null
+            }
+            action.meta.parentStateName = action.type
+            const nestedResult = breathFirstTraversal2(
+                temporaryState,
+                action,
+                childrenStates,
+                levelId + 1
+            )
+            passes = nestedResult[1]
+            if(!pass) {
+                return null
+            }
+            temporaryState = nestedResult[0]
         })
+        if(nextStates.length === 0) {
+            return [temporaryState, passes]
+        }
+        else if(passes) {
+
+            currentStateName = winningStateName
+            const currentStateObject = getCell(temporaryState, currentStateName)
+            if(!Object.keys(currentStateObject).includes('next')) {
+                return [temporaryState, true]
+            }
+            if(currentStateObject.next.length === 0) {
+                return [temporaryState, true]
+            }
+            nextStates = currentStateObject.next
+        }
+        else {
+            return [temporaryState, false]
+        }
     }
 
 }
