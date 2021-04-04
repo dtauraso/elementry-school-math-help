@@ -1,4 +1,3 @@
-
 export const setVariable2 = () => {
 
 }
@@ -120,6 +119,50 @@ export const allRemainingSetCallsInState = (entry,
     entry[stateWeWillRunName][parentDataStateAbsolutePath]['after'][varName] = newValue
 
 }
+
+export const applyE2EAndUnitTimelineRules = (
+    set2CallCount,
+    stateRunCount,
+    childState,
+    startChildren,
+    parentState,
+    childState,
+    entry,
+    stateWeWillRunName,
+    parentDataStateAbsolutePath,
+    varName,
+    newValue
+) => {
+    if(set2CallCount === 0) {
+
+        if(stateRunCount === 0) {
+            // the start of each state
+            
+            if(childState in startChildren) {
+                // the first state in the submachine
+                setupFirstState(parentState, childState, entry)
+            }
+            else {
+                // first set function called in all states that aren't start states
+                setupSetInAllRemainingStates(parentState, childState, entry)                
+
+            }
+        }
+        else if(stateRunCount > 0) {
+            // any state that has already been successfully run once
+            revisitingSuccessfullyRunStates(parentState, childState, entry)
+        }
+    }
+    else if(set2CallCount > 0) {
+        // all remaining set calls inside a single state
+        allRemainingSetCallsInState(
+            entry,
+            stateWeWillRunName,
+            parentDataStateAbsolutePath,
+            varName,
+            newValue)
+    }
+}
 export const set2 = (root,
                     parentstateNameAbsolutePath,
                     stateWeWillRunName,
@@ -156,35 +199,19 @@ export const set2 = (root,
     end to end test:
         entry is saved at the parent state
     */
-    if(set2CallCount === 0) {
-
-        if(stateRunCount === 0) {
-            // the start of each state
-            
-            if(childState in startChildren) {
-                // the first state in the submachine
-                setupFirstState(parentState, childState, entry)
-            }
-            else {
-                // first set function called in all states that aren't start states
-                setupSetInAllRemainingStates(parentState, childState, entry)                
-
-            }
-        }
-        else if(stateRunCount > 0) {
-            // any state that has already been successfully run once
-            revisitingSuccessfullyRunStates(parentState, childState, entry)
-        }
-    }
-    else if(set2CallCount > 0) {
-        // all remaining set calls inside a single state
-        allRemainingSetCallsInState(
-            entry,
-            stateWeWillRunName,
-            parentDataStateAbsolutePath,
-            varName,
-            newValue)
-    }
+    applyE2EAndUnitTimelineRules(
+        set2CallCount,
+        stateRunCount,
+        childState,
+        startChildren,
+        parentState,
+        childState,
+        entry,
+        stateWeWillRunName,
+        parentDataStateAbsolutePath,
+        varName,
+        newValue
+    )
 
     parentState['variables'][varName] = newValue
     childState['Set2SFromtateFunctionCallCount'] += 1
@@ -260,7 +287,76 @@ export const set2 = (root,
 export const treeVisualizer2 = () => {
 
 }
+export const saveErrorEntry = (
+    temporaryState,
+    nextStates,
+    currentStateName) => {
+        let entry = {}
+        // let parentState = getState2(root, parentstateNameAbsolutePath)
+        // let childState = getState2(root, stateWeWillRunName)
+        // let functionName = childState.functionCode.toString()
+        // let parentDataState = getState2(root, parentDataStateAbsolutePath)
+        // let variable = parentState['variables'][varName]
+    
+        // let set2CallCount = childState['Set2SFromtateFunctionCallCount']
+        // let stateRunCount = childState['stateRunCount']
+        // let startChildren = parentState['start']
+    
+        // applyE2EAndUnitTimelineRules = (
+        //     set2CallCount,
+        //     stateRunCount,
+        //     childState,
+        //     startChildren,
+        //     parentState,
+        //     childState,
+        //     entry,
+        //     stateWeWillRunName,
+        //     parentDataStateAbsolutePath,
+        //     varName,
+        //     newValue
+        // )
 
-export const breathFirstTraversal2 = () => {
+}
+export const breathFirstTraversal2 = (state, action, startStateName, levelId) => {
+
+    let temporaryState = state
+    let nextStates = startStateName
+    let currentStateName = startStateName
+
+    while(true) {
+        let passes = false
+        let winningStateName = ''
+        
+        nextStates.forEach(nextState => {
+
+            if(nextState === undefined) {
+                console.log("the js syntax for the next states is wrong")
+                return null
+            }
+
+            if(passes) {
+                return null
+            }
+            let state = getState2(temporaryState, nextState)
+            if(!Object.keys(state).includes('functionCode')) {
+                console.log(state, "doesn't have a function")
+                return null
+            }
+
+            action.type = nextState
+
+            const result = state['functionCode'](temporaryState, action)
+            const success = result[1]
+
+            if(!success) {
+                // save error entry
+                saveErrorEntry(
+                    temporaryState,
+                    nextStates,
+                    currentStateName)
+            }
+
+        })
+    }
 
 }
