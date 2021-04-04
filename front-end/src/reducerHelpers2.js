@@ -143,70 +143,20 @@ export const set2 = (root,
 
 
     }
+    else if(set2CallCount === 0 && stateRunCount > 0) {
+        // any state that has already been successfully run once
+        const lenParent = parentState['E2ETimeLines'].length
+        parentState['E2ETimeLines'][lenParent - 1].push(entry)
+
+        const lenChild = childState['unitTimeLines'].length
+        childState['unitTimeLines'][lenChild - 1].push(entry)
+
+    }
     if(set2CallCount > 0) {
         // all remaining set calls inside a single state
+        entry[stateWeWillRunName][parentDataStateAbsolutePath]['after'][varName] = newValue
     }
     
-
-    let newParentTimeline = false
-    if(childState in startChildren && set2CallCount === 0 && stateRunCount === 0) {
-        // the start of each cycle of entire submachine at the start state
-        // start the new timeline for the parent
-        parentState['E2ETimeLines'].push([makeEntry(
-                                            stateWeWillRunName,
-                                            functionName,
-                                            parentDataStateAbsolutePath,
-                                            parentDataState,
-                                            varName,
-                                            variable,
-                                            newValue)])
-        newParentTimeline = true
-    }
-    childState['variables'][varName] = newValue
-    if(set2CallCount === 0 && stateRunCount === 0) {
-        // the start of each cycle of entire submachine at stateWeWillRunName
-        // start the new timeline for the child
-        if(!newParentTimeline) {
-            parentState['timeLines'].push([makeEntry(
-                                                stateWeWillRunName,
-                                                functionName,
-                                                parentDataStateAbsolutePath,
-                                                parentDataState,
-                                                varName,
-                                                variable,
-                                                newValue)])
-        }
-        let timeLinesLen = parentState['timeLines'].length
-        let timeLineLen = arentState['timeLines'][timeLinesLen - 1].length
-        childState['timeLines'].push([])
-        let len = childState['timeLines'].length
-        childState['timeLines'][len - 1].push(parentState['timeLines'][timeLinesLen - 1][timeLineLen - 1])
-    }
-    if(set2CallCount === 0 && stateRunCount > 0) {
-        // any state that has already successfully run once
-        // append entry to parent timeline
-        let timeLinesLen = parentState['timeLines'].length
-        parentState['timeLines'][timeLinesLen - 1].push(makeEntry(
-            stateWeWillRunName,
-            functionName,
-            parentDataStateAbsolutePath,
-            parentDataState,
-            varName,
-            variable,
-            newValue))
-
-        // append entry reference to child timeline
-        let timeLinesLen = parentState['timeLines'].length
-        let timeLineLen = arentState['timeLines'][timeLinesLen - 1].length
-
-        let len = childState['timeLines'].length
-        childState['timeLines'][len - 1].push(parentState['timeLines'][timeLinesLen - 1][timeLineLen - 1])
-
-    }
-    if(set2CallCount > 0) {
-        // update last entry in parent timeline
-        parentState['timeLines'][timeLinesLen - 1][timeLineLen - 1][stateWeWillRunName][parentDataStateAbsolutePath]['after'][varName] = newValue
-    }
     
 
 
