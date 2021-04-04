@@ -238,10 +238,10 @@ export var newContextualStateChart = {
         },
         children: {
             plusProblems: {
-                'problemSet 0': makeProblemComponents(problems, false, 'add')
+                'problemSet': makeProblemComponents(problems, false, 'add')
             },
             dislayResults: {
-                'problemSet 0': makeProblemComponents(problems, displayResultComponents),
+                'problemSets': [makeProblemComponents(problems, displayResultComponents)],
                 // functionCode: returnState,
                 start: ['saveProblemSetSelectedForDisplay'],
                 children: {
@@ -251,9 +251,6 @@ export var newContextualStateChart = {
                     },
                     setupSubmachineForDisplay: {
                         // functionCode: setupSubmachineForDisplay
-                    },
-                    problemSet: {
-                        0: {}
                     }
                 },
                 variables: {

@@ -38,10 +38,17 @@ const Container = styled.div`
 export const AddTwoValues = (props) => {
     // have useState here
     const {
+        stateCoordinates: {
+            problem,
+            offsetString
 
-        stateCoordinates,
-        Root
+        }
     } = props
+
+    console.log({
+        problem,
+        offsetString
+    })
     // getValue(Root).table['AddTwoValues'][stateCoordinates.problemId] => #
     // problem #
     // console.log('our key', stateCoordinates)
