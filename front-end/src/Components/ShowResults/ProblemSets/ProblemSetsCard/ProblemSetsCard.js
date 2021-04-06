@@ -2,10 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { connect } from 'react-redux'
-import { getProblemSets, setProblemSetSelector } from '../../Redux/Actions'
+import { setProblemSetSelector } from './ProblemSetsCardActions'
+// import { getProblemSets, setProblemSetSelector } from '../../../../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../../Redux/reducerHelpers'
+    getVariable } from '../../../../Redux/reducerHelpers'
 
 const ProblemSetStat = styled.p`
 
@@ -49,6 +50,6 @@ const mapStateToProps = state => {
 }
 export default connect(
     mapStateToProps,
-    { getProblemSets, setProblemSetSelector }
+    { setProblemSetSelector }
 
 )(ProblemSetCard)

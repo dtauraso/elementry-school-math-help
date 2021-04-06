@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react'
 import styled from 'styled-components'
-import ProblemSetsCard from './ProblemSetsCard'
+import ProblemSetsCard from './ProblemSetsCard/ProblemSetsCard'
 import { connect } from 'react-redux'
-import { getProblemSets } from '../../Redux/Actions'
+// import { getProblemSets } from '../../../Redux/Actions'
 import {
     getCell,
-    getVariable } from '../../Redux/reducerHelpers'
+    getVariable } from '../../../Redux/reducerHelpers'
 
 const ProblemSets = (props) => {
 
@@ -32,6 +32,6 @@ const mapStateToProps = state => {
 }
 export default connect(
     mapStateToProps,
-    { getProblemSets }
+    {  }
 
 )(ProblemSets)

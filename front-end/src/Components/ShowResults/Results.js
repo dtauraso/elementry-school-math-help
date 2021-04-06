@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
-import ProblemSets from './ProblemSets'
-import ProblemSet from './ProblemSet'
+import ProblemSets from './ProblemSets/ProblemSets'
+import ProblemSet from './ProblemSets/ProblemSet/ProblemSet'
 import Loader from 'react-loader-spinner';
 
 import { connect } from 'react-redux'
-import { getProblemSets, clearResults } from '../../Redux/Actions'
+import { getProblemSets, clearResults } from './ResultsActions'
 import {
     getCell,
     treeVisualizer } from '../../Redux/reducerHelpers'
@@ -46,7 +46,7 @@ const Results = (props) => {
     // treeVisualizer(Root, elementarySchoolName, 1)
 
     // .value already existed when the state chart was initialized
-    let stuff = getCell(Root, 'resultsFromBackend').value['problemSets']
+    let stuff = null///getCell(Root, 'resultsFromBackend').value['problemSets']
     // let problemSets = getCell(Root, ['resultsFromBackend']).value['problemSets']
     const clearResults = () => {
         props.clearResults()

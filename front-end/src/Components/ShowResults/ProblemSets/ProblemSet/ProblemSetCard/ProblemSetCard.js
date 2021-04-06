@@ -2,11 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { connect } from 'react-redux'
-import { getProblemSets } from '../../Redux/Actions'
+// import { getProblemSets } from '../../../../../Redux/Actions'
 import {
     getCell,
     getVariable,
-    printTreeInteractive } from '../../Redux/reducerHelpers'
+    printTreeInteractive } from '../../../../../Redux/reducerHelpers'
 
 const Problems = styled.p`
 
@@ -37,7 +37,7 @@ const ProblemSetCard = (props) => {
     return (
         <div>
             <Problems>
-                {a} + {b} = {actualAnswer}    your answer -> {theirAnswer} {gotItRightTheFirstTime? 'true': 'false'}
+                {a} + {b} = {actualAnswer}    your answer {'->'} {theirAnswer} {gotItRightTheFirstTime? 'true': 'false'}
             </Problems>
         </div>
     )
@@ -50,6 +50,6 @@ const mapStateToProps = state => {
 }
 export default connect(
     mapStateToProps,
-    { getProblemSets }
+    {  }
 
 )(ProblemSetCard)
