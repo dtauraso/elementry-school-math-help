@@ -146,20 +146,20 @@ const problems = [
 
 // const makeNumber = ()
 let displayResultComponents = [ 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}},
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5)}}}
+    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
+    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}}
 ]
 const makeProblemComponents = ( problems,
                                 displayResultComponents,
@@ -172,28 +172,29 @@ const makeProblemComponents = ( problems,
         const mySum = a + b
         problemSet[i] = {
             children: {
-                a: {variables: {value: a, quantity: makeQuantity(a, mySum)}},
+                a: {variables: {value: a, quantity: makeQuantity(a, mySum), operationType: null}},
                 b: {variables: {value: b, quantity: makeQuantity(b, mySum), operationType: operationType}},
             }
         }
         if(operationType === 'add' || operationType === 'subtract') {
             problemSet[i]['children']['answerForm'] = {
-                variables: {value: mySum, quantity: makeQuantity(mySum, mySum)},
+                variables: {
+                    value: '',
+                    quantity: makeQuantity(0, mySum),
+                    correct: false,
+                    firstAnswer: null,
+                    actualAnswer: mySum,
+                    correctFirstTime: false,
+                    feedbackMessage: 'O',
+                    backgroundColor: 'white'
+                },
                 submission: {
                     variables: {
-                        value: '',
-                        quantity: makeQuantity(0, mySum),
-                        correct: false,
-                        firstAnswer: null,
-                        actualAnswer: mySum,
                         submitCount: 0,
-                        feedbackMessage: 'O',
-                        backgroundColor: 'white'
                     }
                 },
                 progressMeter: {
                     variables: {
-                        correctFirstTime: false,
                         testingWithoutForm: false
                     }
                 }

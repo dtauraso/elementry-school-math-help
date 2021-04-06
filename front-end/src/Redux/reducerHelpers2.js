@@ -11,6 +11,7 @@ export const getState2 = (root, absolutePath) => {
     let pathList = listOfStrings.map(string => string.split(' '))
 
     let tracker = root
+    // console.log(root, pathList)
     pathList.forEach(stateNameParts => {
         stateNameParts.forEach(stateNamePart => {
             if(stateNamePart in tracker) {

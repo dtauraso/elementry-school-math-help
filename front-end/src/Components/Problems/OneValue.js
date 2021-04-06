@@ -1,6 +1,6 @@
 import React from 'react'
 import Quantity from './Quantity'
-import SubmitAnswer from './SubmitAnswer'
+import AnswerForm from './AnswerForm'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat, submitAnswer } from '../../Redux/Actions'
@@ -44,29 +44,56 @@ const OneValue = (props) => {
     // need the entire problem part
     let {
         // statePath,
-        stateCoordinates,
-        Root} = props
+        stateCoordinates: {
+            problemPartKey,
+            problemPart,
+            offsetString
+        }
+    } = props
+    // operationType: problem[problemKey].variables['operationType'],
+    // value: problem[problemKey].variables['value'],
+
+    console.log({problemPartKey, problemPart, offsetString})
     // console.log('redux tree', Root)
     // console.log('one value state name|', `${stateCoordinates.offsetString}${stateCoordinates.problemId} ${stateCoordinates.problemPart}`)
-    let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    // let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     // console.log(stateCoordinates)
-    let x = getCell(Root, problemPartName)
+    // let x = getCell(Root, problemPartName)
     // console.log('problem part', x)
-    let isForm = getVariable(Root,
-                            problemPartName,
-                            'isForm').value
-    
-    // console.log('isForm', isForm)
-    let operationType = getVariable(Root,
-        problemPartName,
-        'operationType').value
-    // console.log('operationType', "|", operationType, "|")
-    let oneValue = null
-    if(!isForm) {
-        oneValue = getVariable(Root,
-            problemPartName,
-            'value').value
+    // let isForm = getVariable(Root,
+    //                         problemPartName,
+    //                         'isForm').value
+    const form = (problemPartKey, problemPart, offsetString) => {
+        if(problemPartKey === 'answerForm') {
+
+            return <AnswerForm
+                        stateCoordinates={{
+                            answerFormVars: problemPart.variables,
+                            offsetString: offsetString}}
+                    />
+        }
+        else {
+            let operationType = problemPart.variables['operationType']
+            let value = problemPart.variables['value']
+
+            return  <Value
+                        operationType={operationType}>
+                    {(`${operationType}              ${value}`)}
+                    </Value>
+        }
     }
+    // console.log(isForm(problemPartKey), problemPart.variables.quantity)
+    // console.log('isForm', isForm)
+    // let operationType = getVariable(Root,
+    //     problemPartName,
+    //     'operationType').value
+    // console.log('operationType', "|", operationType, "|")
+    // let oneValue = null
+    // if(problemPartKey !== 'answerForm') {
+    //     oneValue = getVariable(Root,
+    //         problemPartName,
+    //         'value').value
+    // }
     // printTreeInteractive(Root)
     // we cannot assume there is a form right now
     // const oneValue = getValue(Root, statePath)
@@ -109,7 +136,8 @@ const OneValue = (props) => {
             }
             }
             */}
-            {isForm? 
+            {form(problemPartKey, problemPart, offsetString)}
+            {/* {isForm? 
                 <SubmitAnswer
                 // statePath={formPath}
                 stateCoordinates={{...stateCoordinates,
@@ -118,15 +146,15 @@ const OneValue = (props) => {
                 <Value operationType={operationType}>
                     {(`${operationType}              ${oneValue}`)}
                 </Value>
-                }
+                } */}
             <Quantity
                 // quantity comes from different locations
                 // statePath={isForm?
                 //     [...statePath, 'submission', 'variables', 'quantity']:
                 //     [...statePath, 'variables', 'quantity']}
-                stateCoordinates={{...stateCoordinates,
-                                    isForm: isForm,
-                                    offsetString: stateCoordinates.offsetString}}
+                stateCoordinates={{
+                    quantity: problemPart.variables.quantity,
+                    offsetString: offsetString}}
 
                 />
 

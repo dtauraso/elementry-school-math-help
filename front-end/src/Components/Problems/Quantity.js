@@ -51,30 +51,33 @@ const Boxes = styled.div`
 const Quantity = (props) => {
 
     const {
-        stateCoordinates,
-        Root} = props
-
+        stateCoordinates: {
+            quantity,
+            offsetString
+        }
+    } = props
+    console.log({quantity, offsetString})
     // should have the form flag and the problem, problem part coordinates
     // if form
         // get it from problem, problem part(2 0, submission 0) quntity call
     // else
         // get it from problem, problem part(1 0) quntity call
-    let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    // let problemPartName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
     // let x = getCell(Root, problemPartName)
-    let quantity = []
+    // let quantity = []
     // console.log('problem for quantity', x)
-    if(stateCoordinates.isForm) {
-        quantity = getVariable(Root,
-            `${problemPartName} submission`,
-            'quantity'
-            ).value
-    } else {
-        quantity = getVariable(Root,
-            problemPartName,
-            'quantity'
-            ).value
+    // if(stateCoordinates.isForm) {
+    //     quantity = getVariable(Root,
+    //         `${problemPartName} submission`,
+    //         'quantity'
+    //         ).value
+    // } else {
+    //     quantity = getVariable(Root,
+    //         problemPartName,
+    //         'quantity'
+    //         ).value
 
-    }
+    // }
     // let quantity = getValue(Root, statePath)
     // should take in the quantity array
     // We should already have the array by this point

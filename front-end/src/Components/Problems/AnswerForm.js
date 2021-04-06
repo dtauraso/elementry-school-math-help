@@ -25,24 +25,28 @@ const FeedbackMessage = styled.p`
     color: ${props => props.backgroundColor};
 `
 
-const SubmitAnswer = (props) => {
+const AnswerForm = (props) => {
 
     let {
         // statePath,
-        stateCoordinates,
+        stateCoordinates: {
+            answerFormVars,
+            offsetString
+        },
         Root} = props
+    console.log({answerFormVars, offsetString})
     // console.log("submit answer", stateCoordinates)
     // should assume the coordinates for the answer form were passed in
-    let answerFormStateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
-    let answer = getCell(Root, answerFormStateName)
+    // let answerFormStateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${stateCoordinates.problemPart}`
+    // let answer = getCell(Root, answerFormStateName)
     // console.log('answer', answer)
 //     `${offsetString}${i} ${j}`
 //  submission`
 
     // console.log('submission name', "|" + `${answerFormStateName} submission ${stateCoordinates.problemId}` + "|")
-    let submissionStateName = `${answerFormStateName} submission`
+    // let submissionStateName = `${answerFormStateName} submission`
     // the submission doesn't exist
-    let submission = getCell(Root, submissionStateName)
+    // let submission = getCell(Root, submissionStateName)
     // console.log({submissionStateName})
     // console.log(Root)
     // console.log("submission context", submission)
@@ -50,12 +54,12 @@ const SubmitAnswer = (props) => {
     // let submissionStateName = [`${stateCoordinates.problemPart} ${stateCoordinates.problemId}`,
     //                             `submission ${stateCoordinates.problemId}`]
     // let dataSetName = ''
-    let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
+    // let y = getVariable(Root, submissionStateName, 'value')//[`value ${stateCoordinates.problemPart}`])
     // console.log("submission's value", y)
-    let feedbackMessage = getVariable(Root, submissionStateName, 'feedbackMessage').value
-    let backgroundColor = getVariable(Root, submissionStateName, 'backgroundColor').value
+    let feedbackMessage = answerFormVars.feedbackMessage
+    let backgroundColor = answerFormVars.backgroundColor
 
-    let updateTypedAnswerStateName = `${submissionStateName} updateTypedAnswer`
+    // let updateTypedAnswerStateName = `${submissionStateName} updateTypedAnswer`
     // console.log("submit answer form path", statePath)
     // ["redux", "elementary school", "children", "problem set", 0, "answerForm"]
     // const answerForm = getValue(Root, statePath)
@@ -78,7 +82,7 @@ const SubmitAnswer = (props) => {
         // get the answer from Root
         // getVariable(Root, submissionStateName, 'value')
         // submitting the answer multiple times causes duplicate results
-        props.submitAnswer(submissionStateName)
+        props.submitAnswer({nothing: true}/*submissionStateName*/)
         // console.log(event)
         // const data = new FormData(event.target);
         
@@ -104,7 +108,7 @@ const SubmitAnswer = (props) => {
                     props.addToAnswer({
                         newValue: e.target.value
                     },
-                    updateTypedAnswerStateName
+                    'updateTypedAnswerStateName'
                     )
                     // call add to answer here
                     console.log(Root)
@@ -126,4 +130,4 @@ export default connect(
     mapStateToProps,
     { getCat, submitAnswer, addToAnswer }
 
-)(SubmitAnswer)
+)(AnswerForm)

@@ -4,11 +4,7 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from '../../Redux/Actions'
 
-import {
-    getCell,
-    getChildren,
-    getVariable,
-    printTreeInteractive } from '../../Redux/reducerHelpers'
+import { getState2 } from '../../Redux/reducerHelpers2'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
@@ -49,28 +45,29 @@ export const AddTwoValues = (props) => {
         problem,
         offsetString
     })
+    
     // getValue(Root).table['AddTwoValues'][stateCoordinates.problemId] => #
     // problem #
     // console.log('our key', stateCoordinates)
     // console.log(stateCoordinates)
-    console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
+    // console.log('state to look for|', `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
     // printTreeInteractive(Root)
     // get problem parts
-    let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
+    // let x = getCell(Root, `${stateCoordinates.offsetString} problem ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId}`)
     // console.log("our state", x)
-    let problemParts = getChildren(Root, x.name)
+    let problemParts = Object.keys(problem)//getChildren(Root, x.name)
 
     console.log({problemParts})
     // get the quantity size
      // 3rd coordinate point in the name [offsetString, x, y, z]
-    let problemPart = problemParts[0].split(' ')[3]
+    // let problemPart = problemParts[0].split(' ')[3]
     // console.log({item})
 
-    let stateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${problemPart}`
+    // let stateName = `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} ${problemPart}`
     // console.log({stateName})
     // printTreeInteractive(Root)
     // console.log(Root)
-    let state = getCell(Root, stateName)
+    // let state = getCell(Root, stateName)
     // let isForm = getVariable(Root,
     //     stateName,
     //     'isForm').value
@@ -81,26 +78,30 @@ export const AddTwoValues = (props) => {
     // console.log('state', state)
     // the submission context is only with the 3rd number in each problem
     // this state only exists for the problem set
-    let isForm = getVariable(Root,
-        stateName,
-        'isForm').value
+    // let isForm = getVariable(Root,
+    //     stateName,
+    //     'isForm').value
     // console.log({isForm, problemParts})
     // printTreeInteractive(Root)
-    let myQuantity = null
+    // let myQuantity = null
     let sizeOfQuantity = 0
     // ${offsetString} ${i} ${j} ${k}
-    if(stateCoordinates.offsetString === 'plusProblems') {
-        myQuantity = getVariable(Root,
-            `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} 2 submission`,
-            'quantity'
-            ).value
-        sizeOfQuantity = myQuantity.length
+    if(offsetString === 'plusProblems') {
+        const path = 'answerForm'
+        const answerForm = getState2(problem, path)
+        sizeOfQuantity = answerForm.variables['quantity'].length
+        // getVariable(Root,
+        //     `${stateCoordinates.offsetString} ${stateCoordinates.ithProblemSet} ${stateCoordinates.problemId} 2 submission`,
+        //     'quantity'
+        //     ).value
+        // sizeOfQuantity = myQuantity.length
     }
     else {
         // may want to visit all quantities and get the largest one
         sizeOfQuantity = 10
     }
-   
+    console.log({sizeOfQuantity})
+    // console.log(problem[problemKey].variables)
     // console.log({problemParts})
     // console.log('quantity for the add 2 values', myQuantity)
     // let problemParts = getVariable(Root, x.name, 'problemParts').value
@@ -120,12 +121,13 @@ export const AddTwoValues = (props) => {
         // needs a form and both values with the solution
         <Container quantityLength={sizeOfQuantity}>
             {/* <h1>testing</h1> */}
-            {problemParts.map((problemKey, i) => (
+            {problemParts.map((problemPartKey, i) => (
                 <OneValue
                     key={i}
-                    stateCoordinates={{...stateCoordinates,
-                                        problemPart: problemKey.split(' ')[3], // 3rd coordinate point in the name [offsetString, x, y, z]
-                                        offsetString: stateCoordinates.offsetString}}
+                    stateCoordinates={{
+                        problemPartKey: problemPartKey,
+                        problemPart: problem[problemPartKey],
+                        offsetString: offsetString}}
                     />
             ))}
             
