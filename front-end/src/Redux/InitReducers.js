@@ -1,5 +1,17 @@
+import { makeQuantity } from "../utility"
 
-/*
+import {storeResults,
+        setupSubmachineForDisplay,
+        setupSubmachineForProblems} from '../Components/ShowResults/ResultsReducers'
+
+const returnStateTrue = (state, action) => {
+    return [state, true]
+}
+const returnStateFalse = (state, action) => {
+    return [state, false]
+}
+        
+        /*
 i : {
     paragraph: {
         j: {
@@ -129,7 +141,6 @@ blockers
 
 */
 
-import { makeQuantity } from "../utility"
 const problems = [
     {a: 4, b: 3},
 
@@ -239,19 +250,19 @@ export var newContextualStateChart = {
         },
         children: {
             plusProblems: {
-                'problemSet': makeProblemComponents(problems, false, 'add')
+                problemSet: makeProblemComponents(problems, false, 'add')
             },
-            dislayResults: {
-                'problemSets': [makeProblemComponents(problems, displayResultComponents)],
-                // functionCode: returnState,
-                start: ['saveProblemSetSelectedForDisplay'],
+            displayResults: {
+                problemSets: [makeProblemComponents(problems, displayResultComponents)],
+                functionCode: returnStateTrue,
+                start: ['storeResults'],
                 children: {
-                    saveProblemSetSelectedForDisplay: {
-                        // functionCode: saveProblemSetSelectedForDisplay,
+                    storeResults: {
+                        functionCode: storeResults,
                         next: ['setupSubmachineForDisplay']
                     },
                     setupSubmachineForDisplay: {
-                        // functionCode: setupSubmachineForDisplay
+                        functionCode: setupSubmachineForProblems
                     }
                 },
                 variables: {

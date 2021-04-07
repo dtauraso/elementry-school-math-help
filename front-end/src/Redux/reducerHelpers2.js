@@ -11,16 +11,21 @@ export const getState2 = (root, absolutePath) => {
     let pathList = listOfStrings.map(string => string.split(' '))
 
     let tracker = root
-    // console.log(root, pathList)
-    pathList.forEach(stateNameParts => {
+    console.log({root, pathList})
+    pathList.forEach((stateNameParts, i) => {
         stateNameParts.forEach(stateNamePart => {
             if(stateNamePart in tracker) {
                 tracker = tracker[stateNamePart]
             }
         })
-        if('children' in tracker) {
-            tracker = tracker['children']
+        // ' - ' means child and is only between the states in the path
+        if(i < pathList.length - 1) {
+            if('children' in tracker) {
+                tracker = tracker['children']
+            }
         }
+        
+        console.log({tracker, stateNameParts})
     })
     return tracker
 
@@ -318,88 +323,93 @@ export const treeVisualizer2 = () => {
 //         // )
 
 // }
-// export const breathFirstTraversal2 = (state, action, startStateName, levelId) => {
 
-//     let temporaryState = state
-//     let nextStates = startStateName
-//     let currentStateName = startStateName
+export const breathFirstTraversal2 = (state, action, levelId) => {
 
-//     while(true) {
-//         let passes = false
-//         let winningStateName = ''
+    let temporaryState = state
+    let nextStates = action.type
+    let currentStateName = action.type
+    // let start
+    console.log('inside the bft2')
+    console.log({state, action, levelId})
+    while(true) {
+        let passes = false
+        let winningStateName = ''
         
-//         nextStates.forEach(nextState => {
+        nextStates.forEach(nextState => {
 
-//             if(nextState === undefined) {
-//                 console.log("the js syntax for the next states is wrong")
-//                 return null
-//             }
+            if(nextState === undefined) {
+                console.log("the js syntax for the next states is wrong")
+                return null
+            }
 
-//             if(passes) {
-//                 return null
-//             }
-//             let state = getState2(temporaryState, nextState)
-//             if(!Object.keys(state).includes('functionCode')) {
-//                 console.log(state, "doesn't have a function")
-//                 return null
-//             }
+            if(passes) {
+                return null
+            }
+            console.log({temporaryState, nextState})
+            let state = getState2(temporaryState, nextState)
+            console.log({state})
+            if(!Object.keys(state).includes('functionCode')) {
+                console.log(state, "doesn't have a function")
+                return null
+            }
 
-//             action.type = nextState
+            action.type = nextState
 
-//             const result = state['functionCode'](temporaryState, action)
-//             const success = result[1]
+            const result = state['functionCode'](temporaryState, action)
+            const success = result[1]
 
-//             if(!success) {
-//                 // save error entry
-//                 saveErrorEntry(
-//                     temporaryState,
-//                     nextStates,
-//                     currentStateName)
-//                 // rest counts for state
-//                 return null
-//             }
-//             temporaryState = result[0]
+            if(!success) {
+                // save error entry
+                // saveErrorEntry(
+                //     temporaryState,
+                //     nextStates,
+                //     currentStateName)
+                // rest counts for state
+                return null
+            }
+            temporaryState = result[0]
 
-//             passes = true
-//             winningStateName = nextState
-//             let childrenStates = getChildren(temporaryState, winningStateName)
-//             if(childrenStates === null) {
-//                 return null
-//             }
-//             if(childrenStates.length === 0) {
-//                 return null
-//             }
-//             action.meta.parentStateName = action.type
-//             const nestedResult = breathFirstTraversal2(
-//                 temporaryState,
-//                 action,
-//                 childrenStates,
-//                 levelId + 1
-//             )
-//             passes = nestedResult[1]
-//             if(!pass) {
-//                 return null
-//             }
-//             temporaryState = nestedResult[0]
-//         })
-//         if(nextStates.length === 0) {
-//             return [temporaryState, passes]
-//         }
-//         else if(passes) {
+            passes = true
+            winningStateName = nextState
+            let childrenStates = []//getChildren(temporaryState, winningStateName)
+            if(childrenStates === null) {
+                return null
+            }
+            if(childrenStates.length === 0) {
+                return null
+            }
+            action.meta.parentStateName = action.type
+            const nestedResult = breathFirstTraversal2(
+                temporaryState,
+                action,
+                childrenStates,
+                levelId + 1
+            )
+            passes = nestedResult[1]
+            if(!passes) {
+                return null
+            }
+            temporaryState = nestedResult[0]
+        })
+        if(nextStates.length === 0) {
+            return [temporaryState, passes]
+        }
+        else if(passes) {
 
-//             currentStateName = winningStateName
-//             const currentStateObject = getCell(temporaryState, currentStateName)
-//             if(!Object.keys(currentStateObject).includes('next')) {
-//                 return [temporaryState, true]
-//             }
-//             if(currentStateObject.next.length === 0) {
-//                 return [temporaryState, true]
-//             }
-//             nextStates = currentStateObject.next
-//         }
-//         else {
-//             return [temporaryState, false]
-//         }
-//     }
+            currentStateName = winningStateName
+            const currentStateObject = {}//getCell(temporaryState, currentStateName)
+            if(!Object.keys(currentStateObject).includes('next')) {
+                return [temporaryState, true]
+            }
+            if(currentStateObject.next.length === 0) {
+                return [temporaryState, true]
+            }
+            nextStates = currentStateObject.next
+        }
+        else {
+            return [temporaryState, false]
+        }
+    }
 
-// }
+}

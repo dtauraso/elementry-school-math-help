@@ -4,7 +4,20 @@ import {
     getCell,
     breathFirstTraversal,
     printTreeInteractive } from './reducerHelpers'
-
+import {
+    setVariable2,
+    getVariable2,
+    getState2,
+    setTimelineMetadataToStates,
+    makeEntry,
+    getParentObject,
+    setupFirstState,
+    setupSetInAllRemainingStates,
+    revisitingSuccessfullyRunStates,
+    allRemainingSetCallsInState,
+    treeVisualizer2,
+    breathFirstTraversal2
+} from './reducerHelpers2'
 // import { BreakApp } from './reducers/breakAppReducer'
 const initialState = {
     ...newContextualStateChart,
@@ -22,7 +35,7 @@ const initialState = {
 const universalReducer = (state = initialState, action) => {
 
     console.log("in the Reducers")
-    console.log(state, action)
+    console.log({state, action})
     // action.type always holds the start state
     // console.log(action.type, state, Root)
     const { type, payload, meta } = action
@@ -35,12 +48,11 @@ const universalReducer = (state = initialState, action) => {
     } else {
 
         // type is the start state
-        // {} is stateChartHistory
-        const [temporaryState, success, stateChartHistory] = breathFirstTraversal(state, action, type, 0, {})
+        const [temporaryState, success] = breathFirstTraversal2(state, action, 0)
+        // breathFirstTraversal(state, action, type, 0, {})
         if(success) {
             console.log('all reducers are done')
-            console.log({stateChartHistory})
-            printTreeInteractive(temporaryState)        
+            console.log(temporaryState)        
 
             return temporaryState
         } else {
