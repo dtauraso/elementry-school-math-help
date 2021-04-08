@@ -25,7 +25,8 @@ const storeResults = (state, action) => {
     // const stateName = action.type
     // const payload = action.payload
     // let temporaryState = state
-
+    console.log('store results')
+    console.log({state, action})
     // // console.log('store resulst', payload)
 
     // let parentStateName = 'elementarySchool storeResults'

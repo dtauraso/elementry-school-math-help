@@ -30,10 +30,67 @@ export const getState2 = (root, absolutePath) => {
     return tracker
 
 }
+export const specialKeysInState = (state) => {
+    // start and next are optional keys
+    return  'functionCode' in state &&
+            'children'  in state &&
+            'variables'  in state
+}
+export const isLeafState = (state) => {
+
+    return specialKeysInState(state) &&
+        Object.keys(state).length >= 3 && Object.keys(state).length <= 5
+}
+export const isInternalState = (state) => {
+
+    if(specialKeysInState(state) &&
+        Object.keys(state).length >= 3) {
+        return true
+    }
+    else if(!specialKeysInState(state) && Object.keys(state).length > 0) {
+        return true
+    }
+    return false
+}
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
     // add timeline keys to each state
     // put in parent links
+    if(contextualStateChart === {}) {
+        return contextualStateChart
+    }
+    // if it's a leaf state
+        // return the state
+    // if it's an internal state
+        /*
+        what if the internal state has children and substates
+            return the most nested substates and the internal state
+        if the internal state has children
+            allNestedSubstates = setTimelineMetadataToStates(contextualStateChart[children])
+            for each state in allNestedSubstates
+                state.parent = contextualStateChare
+                state.metadata = {
+
+                }
+            returnCollection.push(internal state)
+        if the internal state has substates
+            returnCollection.push(setTimelineMetadataToStates(contextualStateChart[subState]))
+        return returnCollection
+        */
+    else if('children' in contextualStateChart) {
+        // if()
+    }
+    if(!('children' in contextualStateChart)) {
+        Object.keys(contextualStateChart).forEach(subState => {
+            setTimelineMetadataToStates(contextualStateChart[subState])
+        })
+    }
+    else {
+        let parent = contextualStateChart
+        Object.keys(contextualStateChart).forEach(subState => {
+            setTimelineMetadataToStates(contextualStateChart[subState])
+        })
+    }
 }
 export const makeEntry = (  stateWeWillRunName,
                             functionName,
