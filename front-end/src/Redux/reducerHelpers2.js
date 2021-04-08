@@ -30,6 +30,15 @@ export const getState2 = (root, absolutePath) => {
     return tracker
 
 }
+export const substateKeys = (state) => {
+    let specialKeys = ['functionCode',
+                        'start',
+                        'next',
+                        'children',
+                        'variables']
+    let keys = Object.keys(state)
+    return keys.filter(key => specialKeys.includes(key))
+}
 export const specialKeysInState = (state) => {
     // start and next are optional keys
     return  'functionCode' in state &&
@@ -56,8 +65,42 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
     
     // add timeline keys to each state
     // put in parent links
-    if(contextualStateChart === {}) {
-        return contextualStateChart
+    if(Object.keys(contextualStateChart).length === 0) {
+        return [contextualStateChart]
+    }
+    if(isLeafState(contextualStateChart)) {
+        return [contextualStateChart]
+    }
+    if(isInternalState(contextualStateChart)) {
+
+        // getting all the substates(may be several nodes long) of a particular state to connect
+        // them to their parent
+        let returnCollection = []
+        if('children' in contextualStateChart) {
+            let allSubstates = []
+
+            Object.keys(contextualStateChart.children).forEach(child => {
+                allSubstates = [
+                    ...allSubstates,
+                    ...setTimelineMetadataToStates(contextualStateChart.children[child])
+                ]
+            })
+            allSubstates.forEach(nestedSubstate => {
+                nestedSubstate['parent'] = contextualStateChart
+            })
+            returnCollection.push(contextualStateChart)
+        }
+        let subKeys = substateKeys(contextualStateChart)
+
+        if(subKeys.length > 0) {
+            subKeys.forEach(subKey => {
+                returnCollection = [
+                    ...returnCollection,
+                    ...setTimelineMetadataToStates(contextualStateChart[subKey])
+                ]
+            })
+        }
+        return returnCollection
     }
     // if it's a leaf state
         // return the state
@@ -77,20 +120,20 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
             returnCollection.push(setTimelineMetadataToStates(contextualStateChart[subState]))
         return returnCollection
         */
-    else if('children' in contextualStateChart) {
-        // if()
-    }
-    if(!('children' in contextualStateChart)) {
-        Object.keys(contextualStateChart).forEach(subState => {
-            setTimelineMetadataToStates(contextualStateChart[subState])
-        })
-    }
-    else {
-        let parent = contextualStateChart
-        Object.keys(contextualStateChart).forEach(subState => {
-            setTimelineMetadataToStates(contextualStateChart[subState])
-        })
-    }
+    // else if('children' in contextualStateChart) {
+    //     // if()
+    // }
+    // if(!('children' in contextualStateChart)) {
+    //     Object.keys(contextualStateChart).forEach(subState => {
+    //         setTimelineMetadataToStates(contextualStateChart[subState])
+    //     })
+    // }
+    // else {
+    //     let parent = contextualStateChart
+    //     Object.keys(contextualStateChart).forEach(subState => {
+    //         setTimelineMetadataToStates(contextualStateChart[subState])
+    //     })
+    // }
 }
 export const makeEntry = (  stateWeWillRunName,
                             functionName,

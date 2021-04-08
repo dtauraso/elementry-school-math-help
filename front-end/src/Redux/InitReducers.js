@@ -253,7 +253,11 @@ export var newContextualStateChart = {
                 problemSet: makeProblemComponents(problems, false, 'add')
             },
             displayResults: {
-                problemSets: [makeProblemComponents(problems, displayResultComponents)],
+                problemSets: {
+                    variables: {
+                        aList: []
+                    }
+                },//[makeProblemComponents(problems, displayResultComponents)],
                 functionCode: returnStateTrue,
                 start: ['storeResults'],
                 children: {
