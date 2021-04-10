@@ -37,29 +37,15 @@ export const substateKeys = (state) => {
                         'children',
                         'variables']
     let keys = Object.keys(state)
-    return keys.filter(key => specialKeys.includes(key))
-}
-export const specialKeysInState = (state) => {
-    // start and next are optional keys
-    return  'functionCode' in state &&
-            'children'  in state &&
-            'variables'  in state
+    return keys.filter(key => !specialKeys.includes(key))
 }
 export const isLeafState = (state) => {
 
-    return specialKeysInState(state) &&
-        Object.keys(state).length >= 3 && Object.keys(state).length <= 5
+    return substateKeys(state).length === 0
 }
 export const isInternalState = (state) => {
 
-    if(specialKeysInState(state) &&
-        Object.keys(state).length >= 3) {
-        return true
-    }
-    else if(!specialKeysInState(state) && Object.keys(state).length > 0) {
-        return true
-    }
-    return false
+    return substateKeys(state).length > 0
 }
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
