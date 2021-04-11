@@ -86,7 +86,8 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
                 nestedSubstate['parent'] = contextualStateChart
                 nestedSubstate['Set2SFromtateFunctionCallCount'] = 0
                 nestedSubstate['stateRunCount'] = 0
-                nestedSubstate['timeLines'] = []
+                nestedSubstate['E2ETimeLines'] = []
+                nestedSubstate['unitTimeLines'] = []
             })
             returnCollection.push(contextualStateChart)
         }
