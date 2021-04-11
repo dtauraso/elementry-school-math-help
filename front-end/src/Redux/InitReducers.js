@@ -3,7 +3,7 @@ import { makeQuantity } from "../utility"
 import {storeResults,
         setupSubmachineForDisplay,
         setupSubmachineForProblems} from '../Components/ShowResults/ResultsReducers'
-
+import { setTimelineMetadataToStates } from './reducerHelpers2'
 const returnStateTrue = (state, action) => {
     return [state, true]
 }
@@ -278,3 +278,4 @@ export var newContextualStateChart = {
         }
     }
 }
+setTimelineMetadataToStates(newContextualStateChart)

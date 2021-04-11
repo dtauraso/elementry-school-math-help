@@ -35,17 +35,21 @@ export const substateKeys = (state) => {
                         'start',
                         'next',
                         'children',
-                        'variables']
-    let keys = Object.keys(state)
-    return keys.filter(key => !specialKeys.includes(key))
+                        'variables',
+                        'parent']
+    let keys = Object.keys(state).filter(key => !specialKeys.includes(key))
+    // console.log(keys)
+    return keys
 }
 export const isLeafState = (state) => {
-
-    return substateKeys(state).length === 0
+    // console.log(state, !('children' in state), substateKeys(state).length)
+    return substateKeys(state).length === 0 &&
+            !('children' in state)
 }
 export const isInternalState = (state) => {
 
-    return substateKeys(state).length > 0
+    return substateKeys(state).length > 0 ||
+            'children' in state
 }
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
@@ -54,7 +58,13 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
     if(Object.keys(contextualStateChart).length === 0) {
         return [contextualStateChart]
     }
+    // if('variables' in contextualStateChart && !('children' in state)) {
+    //     // console.log("PASSES")
+    //     return [contextualStateChart]
+    // }
     if(isLeafState(contextualStateChart)) {
+        // console.log(substateKeys(contextualStateChart), contextualStateChart)
+        // console.log("leaf state", Object.keys(contextualStateChart))
         return [contextualStateChart]
     }
     if(isInternalState(contextualStateChart)) {
@@ -62,6 +72,7 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
         // getting all the substates(may be several nodes long) of a particular state to connect
         // them to their parent
         let returnCollection = []
+        
         if('children' in contextualStateChart) {
             let allSubstates = []
 
@@ -85,8 +96,17 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
                     ...setTimelineMetadataToStates(contextualStateChart[subKey])
                 ]
             })
+            if('variables' in contextualStateChart && !('children' in contextualStateChart)) {
+                returnCollection = [
+                    ...returnCollection,
+                    contextualStateChart
+                ]
+            }
         }
         return returnCollection
+    }
+    else {
+        console.log("problem", contextualStateChart)
     }
     // if it's a leaf state
         // return the state
