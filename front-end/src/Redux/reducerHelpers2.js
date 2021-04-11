@@ -236,101 +236,100 @@ export const allRemainingSetCallsInState = (entry,
 
 }
 
-// export const applyE2EAndUnitTimelineRules = (
-//     set2CallCount,
-//     stateRunCount,
-//     childState,
-//     startChildren,
-//     parentState,
-//     childState,
-//     entry,
-//     stateWeWillRunName,
-//     parentDataStateAbsolutePath,
-//     varName,
-//     newValue
-// ) => {
-//     if(set2CallCount === 0) {
+export const applyE2EAndUnitTimelineRules = (
+    set2CallCount,
+    stateRunCount,
+    childState,
+    startChildren,
+    parentState,
+    entry,
+    stateWeWillRunName,
+    parentDataStateAbsolutePath,
+    varName,
+    newValue
+) => {
+    if(set2CallCount === 0) {
 
-//         if(stateRunCount === 0) {
-//             // the start of each state
+        if(stateRunCount === 0) {
+            // the start of each state
             
-//             if(childState in startChildren) {
-//                 // the first state in the submachine
-//                 setupFirstState(parentState, childState, entry)
-//             }
-//             else {
-//                 // first set function called in all states that aren't start states
-//                 setupSetInAllRemainingStates(parentState, childState, entry)                
+            if(childState in startChildren) {
+                // the first state in the submachine
+                setupFirstState(parentState, childState, entry)
+            }
+            else {
+                // first set function called in all states that aren't start states
+                setupSetInAllRemainingStates(parentState, childState, entry)                
 
-//             }
-//         }
-//         else if(stateRunCount > 0) {
-//             // any state that has already been successfully run once
-//             revisitingSuccessfullyRunStates(parentState, childState, entry)
-//         }
-//     }
-//     else if(set2CallCount > 0) {
-//         // all remaining set calls inside a single state
-//         allRemainingSetCallsInState(
-//             entry,
-//             stateWeWillRunName,
-//             parentDataStateAbsolutePath,
-//             varName,
-//             newValue)
-//     }
-// }
-// export const set2 = (root,
-//                     parentstateNameAbsolutePath,
-//                     stateWeWillRunName,
-//                     parentDataStateAbsolutePath,
-//                     varName,
-//                     newValue) => {
-//     // the react components will travel down the state chart
-//     // when loading components
+            }
+        }
+        else if(stateRunCount > 0) {
+            // any state that has already been successfully run once
+            revisitingSuccessfullyRunStates(parentState, childState, entry)
+        }
+    }
+    else if(set2CallCount > 0) {
+        // all remaining set calls inside a single state
+        allRemainingSetCallsInState(
+            entry,
+            stateWeWillRunName,
+            parentDataStateAbsolutePath,
+            varName,
+            newValue)
+    }
+}
+export const set2 = (root,
+                    parentstateNameAbsolutePath,
+                    stateWeWillRunName,
+                    parentDataStateAbsolutePath,
+                    varName,
+                    newValue) => {
+    // the react components will travel down the state chart
+    // when loading components
 
-//     let parentState = getState2(root, parentstateNameAbsolutePath)
-//     let childState = getState2(root, stateWeWillRunName)
-//     let functionName = childState.functionCode.toString()
-//     let parentDataState = getState2(root, parentDataStateAbsolutePath)
-//     let variable = parentState['variables'][varName]
+    let parentState = getState2(root, parentstateNameAbsolutePath)
+    let childState = getState2(root, stateWeWillRunName)
+    let functionName = childState.functionCode.toString()
+    let parentDataState = getState2(root, parentDataStateAbsolutePath)
+    let variable = parentState['variables'][varName]
 
-//     let set2CallCount = childState['Set2SFromtateFunctionCallCount']
-//     let stateRunCount = childState['stateRunCount']
-//     let startChildren = parentState['start']
+    let set2CallCount = childState['Set2SFromtateFunctionCallCount']
+    let stateRunCount = childState['stateRunCount']
+    let startChildren = parentState['start']
 
-//     root['entries'].push(makeEntry(
-//         stateWeWillRunName,
-//         functionName,
-//         parentDataStateAbsolutePath,
-//         parentDataState,
-//         varName,
-//         variable,
-//         newValue,
-//         null))
-//     const entriesLen = root['entries'].length
-//     const entry = root['entries'][entriesLen - 1]
-//     /* 
-//     unit test:
-//         entry is saved at the state it was made in
-//     end to end test:
-//         entry is saved at the parent state
-//     */
-//     applyE2EAndUnitTimelineRules(
-//         set2CallCount,
-//         stateRunCount,
-//         childState,
-//         startChildren,
-//         parentState,
-//         childState,
-//         entry,
-//         stateWeWillRunName,
-//         parentDataStateAbsolutePath,
-//         varName,
-//         newValue
-//     )
+    root['entries'].push(makeEntry(
+        stateWeWillRunName,
+        functionName,
+        parentDataStateAbsolutePath,
+        parentDataState,
+        varName,
+        variable,
+        newValue,
+        null))
+    const entriesLen = root['entries'].length
+    const entry = root['entries'][entriesLen - 1]
+    /* 
+    unit test:
+        entry is saved at the state it was made in
+    end to end test:
+        entry is saved at the parent state
+    */
+    applyE2EAndUnitTimelineRules(
+        set2CallCount,
+        stateRunCount,
+        childState,
+        startChildren,
+        parentState,
+        childState,
+        entry,
+        stateWeWillRunName,
+        parentDataStateAbsolutePath,
+        varName,
+        newValue
+    )
 
-//     parentState['variables'][varName] = newValue
-//     childState['Set2SFromtateFunctionCallCount'] += 1
+    parentState['variables'][varName] = newValue
+    childState['Set2SFromtateFunctionCallCount'] += 1
 //     /*
 //     resetting
 //     childState['Set2SFromtateFunctionCallCount']
@@ -398,41 +397,45 @@ export const allRemainingSetCallsInState = (entry,
 //     }
     
 //     */
-// }
+}
 
-export const treeVisualizer2 = () => {
+// export const treeVisualizer2 = () => {
+
+// }
+export const saveErrorEntry = (
+    temporaryState,
+    parentstateNameAbsolutePath,
+    stateWeWillRunName,
+    parentDataStateAbsolutePath,
+    nextStates,
+    currentStateName,
+    varName,
+    newValue) => {
+        let entry = {}
+        let parentState = getState2(temporaryState, parentstateNameAbsolutePath)
+        let childState = getState2(temporaryState, stateWeWillRunName)
+        let functionName = childState.functionCode.toString()
+        let parentDataState = getState2(temporaryState, parentDataStateAbsolutePath)
+        let variable = parentState['variables'][varName]
+    
+        let set2CallCount = childState['Set2SFromtateFunctionCallCount']
+        let stateRunCount = childState['stateRunCount']
+        let startChildren = parentState['start']
+    
+        applyE2EAndUnitTimelineRules(
+            set2CallCount,
+            stateRunCount,
+            childState,
+            startChildren,
+            parentState,
+            entry,
+            stateWeWillRunName,
+            parentDataStateAbsolutePath,
+            varName,
+            newValue
+        )
 
 }
-// export const saveErrorEntry = (
-//     temporaryState,
-//     nextStates,
-//     currentStateName) => {
-//         let entry = {}
-//         // let parentState = getState2(root, parentstateNameAbsolutePath)
-//         // let childState = getState2(root, stateWeWillRunName)
-//         // let functionName = childState.functionCode.toString()
-//         // let parentDataState = getState2(root, parentDataStateAbsolutePath)
-//         // let variable = parentState['variables'][varName]
-    
-//         // let set2CallCount = childState['Set2SFromtateFunctionCallCount']
-//         // let stateRunCount = childState['stateRunCount']
-//         // let startChildren = parentState['start']
-    
-//         // applyE2EAndUnitTimelineRules = (
-//         //     set2CallCount,
-//         //     stateRunCount,
-//         //     childState,
-//         //     startChildren,
-//         //     parentState,
-//         //     childState,
-//         //     entry,
-//         //     stateWeWillRunName,
-//         //     parentDataStateAbsolutePath,
-//         //     varName,
-//         //     newValue
-//         // )
-
-// }
 
 export const breathFirstTraversal2 = (state, action, levelId) => {
 
@@ -521,5 +524,4 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             return [temporaryState, false]
         }
     }
-
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { store } from '../../index'
-
+import { getState2 } from '../../Redux/reducerHelpers2'
 
 export const getProblemSets = () => dispatch => {
 
@@ -11,11 +11,16 @@ export const getProblemSets = () => dispatch => {
             console.log('returned')
             if(res.status === 200) {
                 console.log('got the data', res.data)
+            
+                // get the state object
                 dispatch({
-                    type: ['elementarySchool - displayResults'], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+                    type: [getState2(store.getState(), 'elementarySchool - displayResults')], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
                     payload: res.data,
                     meta: {
                             offsetString: 'plusProblems',
+                            // if you are going to run a state that access data outside the scope of
+                            // type object
+                            root: store.getState()
                             // basePath: pathToState, // base state(for the object data)
                             // parentStateName: pathToState,
                             // testPayload: store.getState()
