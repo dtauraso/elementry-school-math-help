@@ -12,15 +12,19 @@ export const getProblemSets = () => dispatch => {
             if(res.status === 200) {
                 console.log('got the data', res.data)
             
-                // get the state object
+                // let x = { displayResults: getState2(store.getState(), `elementarySchool - displayResults`)}
+                // console.log("X", x)
                 dispatch({
-                    type: [getState2(store.getState(), 'elementarySchool - displayResults')], // current state (can't make it the base state for object datatbecause sometimes the current state doesn't have ojbect data )
+
+                    type: 'elementarySchool - displayResults',
                     payload: res.data,
                     meta: {
                             offsetString: 'plusProblems',
+                            // currentState: getState2(store.getState(), startStateName),
+                            // parent: getState2(store.getState(), 'elementarySchool'),
                             // if you are going to run a state that access data outside the scope of
                             // type object
-                            root: store.getState()
+                            // root: store.getState()
                             // basePath: pathToState, // base state(for the object data)
                             // parentStateName: pathToState,
                             // testPayload: store.getState()

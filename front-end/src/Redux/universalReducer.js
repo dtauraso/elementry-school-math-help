@@ -16,6 +16,7 @@ import {
     revisitingSuccessfullyRunStates,
     allRemainingSetCallsInState,
     treeVisualizer2,
+    setupForBreathFirstTraversal2,
     breathFirstTraversal2
 } from './reducerHelpers2'
 // import { BreakApp } from './reducers/breakAppReducer'
@@ -39,16 +40,20 @@ const universalReducer = (state = initialState, action) => {
     // action.type always holds the start state
     // console.log(action.type, state, Root)
     const { type, payload, meta } = action
-    if(typeof(type) === 'string') {
-        console.log('caught', type)
+    // if(typeof(type) === 'string') {
+    //     console.log('caught', type)
+    //     return state
+    // }
+    if(type === '@@INIT') {
         return state
     }
-    if(getCell(state, type) === null) {
-        return state
-    } else {
+    // if(getCell(state, type) === null) {
+    //     return state
+    // }
+    else {
 
         // type is the start state
-        const [temporaryState, success] = breathFirstTraversal2(state, action, 0)
+        const [temporaryState, success] = setupForBreathFirstTraversal2(state, action, 0)
         // breathFirstTraversal(state, action, type, 0, {})
         if(success) {
             console.log('all reducers are done')
