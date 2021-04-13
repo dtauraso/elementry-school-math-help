@@ -455,9 +455,9 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
 export const breathFirstTraversal2 = (state, action, levelId) => {
 
     let temporaryState = state
-    let next = [action.meta.currentState]
+
+    let next = action.meta.currentStateNames
     let parent = action.meta.parent
-    let currentState = action.meta.currentState
     /*
     parentstateNameAbsolutePath,
     stateWeWillRunName
@@ -470,8 +470,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         let passes = false
         let winningStateName = ''
         
-        next.forEach(nextState => {
-            // let nextState = next[stateName]
+        next.forEach(nextStateName => {
+            let nextState = action.meta.parent.children[nextStateName]
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
                 return null
@@ -481,71 +481,47 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
                 return null
             }
             console.log({temporaryState, nextState})
-            // let state = getState2(temporaryState, nextState)
+
             // console.log({state})
             if(!('functionCode' in nextState)) {
                 console.log(nextState, "doesn't have a function")
                 return null
             }
-
-            // action.type = nextState
-
             const result = nextState['functionCode'](temporaryState, action)
             const success = result[1]
 
-            if(!success) {
-                // save error entry
-                // saveErrorEntry(
-                //     temporaryState,
-                //     nextStates,
-                //     currentStateName)
-                // rest counts for state
-                return null
-            }
             temporaryState = result[0]
-
+            if(!success) {
+                return null
+            }
             passes = true
-            winningStateName = state
-            action.meta.parent = action.type
+            winningStateName = nextStateName
 
-            action.type = nextState.children
-            if(action.type === null || action.type === undefined) {
-                return null
-            }
-            // console.log(action.type)
-            if(Object.keys(action.type).length === 0) {
-                return null
-            }
-            const nestedResult = [9, 8]//breathFirstTraversal2(
-            //     temporaryState,
-            //     action,
-            //     levelId + 1
-            // )
+        })
+        if(!passes) {
+            return [temporaryState, false]
+        }
+        const winningState = action.meta.parent.children[nextStateName]
+        if('children' in winningState) {
+            action.meta.parent = winningState
+            action.meta.currentStateNames = Object.keys(action.meta.parent.children)
+            const nestedResult = breathFirstTraversal2(
+                temporaryState,
+                action,
+                levelId + 1
+            )
             passes = nestedResult[1]
             if(!passes) {
-                return null
+                return [temporaryState, false]
             }
             temporaryState = nestedResult[0]
-        })
-        if(next.length === 0) {
-            return [temporaryState, passes]
+            action.meta.parent = parent
         }
-        else if(passes) {
-
-            // currentStateName = winningStateName
-            // next[winningStateName]
-            let winningState = next[winningStateName]
-            if(!('next' in winningState)) {
-                return [temporaryState, true]
-            }
-            if(winningState.next.length === 0) {
-                return [temporaryState, true]
-            }
-            next = next[winningStateName].next
-                    .map(nextName => action.meta.parent.children[nextName])
+        if('next' in winningState) {
+            next = action.meta.parent.children[winningState].next
         }
         else {
-            return [temporaryState, false]
+            return [temporaryState, true]
         }
     }
 }
