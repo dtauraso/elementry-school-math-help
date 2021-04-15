@@ -449,6 +449,9 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     action.meta.parent = getState2(state, pathToParent)
 
     action.meta.root = state
+    // action.type = action.type.split(' - ')
+    // action.type.pop()
+    // action.type = action.type.join(' - ') + ' - '
     console.log("action", action)
     return breathFirstTraversal2(state, action, levelId)
 
@@ -502,8 +505,16 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         if(!passes) {
             return [temporaryState, false]
         }
-        const winningState = action.meta.parent.children[nextStateName]
+        const winningState = action.meta.parent.children[winningStateName]
+        action.type = action.type.split(' - ')
+        action.type.pop()
+        action.type.push(winningStateName)
+        action.type = action.type.join(' - ')
+
+        console.log(action.type)
         if('children' in winningState) {
+            console.log("children")
+            action.type += ' - '
             action.meta.parent = winningState
             action.meta.currentStateNames = Object.keys(action.meta.parent.children)
             const nestedResult = breathFirstTraversal2(
@@ -517,9 +528,13 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             }
             temporaryState = nestedResult[0]
             action.meta.parent = parent
+            action.type = action.type.split(' - ')
+            action.type.pop()
+            action.type = action.type.join(' - ')
         }
         if('next' in winningState) {
-            next = action.meta.parent.children[winningState].next
+            // console.log('next', winningStateName, action.meta.parent.children[winningStateName])
+            next = action.meta.parent.children[winningStateName].next
         }
         else {
             return [temporaryState, true]

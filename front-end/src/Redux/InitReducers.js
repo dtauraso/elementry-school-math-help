@@ -266,7 +266,7 @@ export var newContextualStateChart = {
                         next: ['setupSubmachineForDisplay']
                     },
                     setupSubmachineForDisplay: {
-                        functionCode: setupSubmachineForProblems
+                        functionCode: setupSubmachineForDisplay
                     }
                 },
                 variables: {
