@@ -441,12 +441,13 @@ export const saveErrorEntry = (
 export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     // setup
 
-    action.meta.currentState = getState2(state, action.type)
+    action.meta.currentStateNames = [action.type.split(' - ').pop()]
 
     let pathToParent = action.type.split(' - ')
     pathToParent.pop()
     pathToParent = pathToParent.join(' - ')
     action.meta.parent = getState2(state, pathToParent)
+
     action.meta.root = state
     console.log("action", action)
     return breathFirstTraversal2(state, action, levelId)
