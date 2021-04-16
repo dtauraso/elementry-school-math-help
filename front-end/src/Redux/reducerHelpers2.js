@@ -174,8 +174,12 @@ export const makeEntry = (  stateWeWillRunName,
     }
 }
 
-export const getParentObject = () => {
+export const getParentObject = (parentState) => {
 
+    if('parent' in parentState) {
+        return parentState['parent']
+    }
+    return false
 }
 
 export const setupFirstState = (parentState, childState, entry) => {
@@ -186,10 +190,13 @@ export const setupFirstState = (parentState, childState, entry) => {
     parentState['E2ETimeLines'][lenParent - 1].push(entry)
     // what if there is no grandparent
     // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
-    const grandParentOjbect = getParentObject(parentState)
-    const grandparentTimeLinesLen = grandParentOjbect['E2ETimeLines'].length
-    const grandparentTimeLineLen = grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1].length
-    grandParentOjbect['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+    const grandParentObject = getParentObject(parentState)
+    if(grandParentObject) {
+        const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
+        const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+        grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+    
+    }
 
     childState['unitTimeLines'].push([])
     const lenChild = childState['unitTimeLines'].length
@@ -439,6 +446,7 @@ export const saveErrorEntry = (
 }
 
 export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
+
     // setup
 
     action.meta.currentStateNames = [action.type.split(' - ').pop()]
@@ -478,8 +486,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
     */
     // let currentStateName = action.type
     // let start
-    console.log('inside the bft2')
-    console.log({state, action, levelId})
+    // console.log('inside the bft2')
+    // console.log({state, action, levelId})
     while(true) {
         let passes = false
         let winningStateName = ''
@@ -494,7 +502,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             if(passes) {
                 return null
             }
-            console.log({temporaryState, nextState})
+            // console.log({temporaryState, nextState})
 
             // console.log({state})
             if(!('functionCode' in nextState)) {
