@@ -280,3 +280,4 @@ export var newContextualStateChart = {
     }
 }
 setTimelineMetadataToStates(newContextualStateChart)
+newContextualStateChart['entries'] = []

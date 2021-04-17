@@ -151,25 +151,27 @@ export const makeEntry = (  stateWeWillRunName,
                             parentDataStateAbsolutePath,
                             parentDataState,
                             varName,
-                            variable,
+                            value,
                             newValue,
                             childTimeLine) => {
     return {
         [stateWeWillRunName]: {
-            functionName: functionName,
-            [parentDataStateAbsolutePath]: {
-                reference: parentDataState,
+            [`A_${parentDataStateAbsolutePath}`]: {
+
                 // is set 1 time
-                before: {
-                    [varName]: variable
+                A_before: {
+                    [varName]: value
                 },
                 // is set 1 time and reset the remaining times set2 is called inside the
                 // function for stateWeWillRunName
-                after: {
+                B_after: {
                     [varName]: newValue
-                }
+                },
+                C_reference: parentDataState,
             },
-            childTimeLine: childTimeLine
+            B_childTimeLine: childTimeLine,
+            C_functionName: functionName,
+
         }
     }
 }
@@ -255,6 +257,7 @@ export const applyE2EAndUnitTimelineRules = (
     parentDataStateAbsolutePath,
     varName,
     newValue
+
 ) => {
     if(set2CallCount === 0) {
 
@@ -300,8 +303,10 @@ export const set2 = ({root,
     let childState = parentState.children[stateWeWillRunName]
     let functionName = childState.functionCode.name
     let parentDataState = getState2(root, parentDataStateAbsolutePath)
-    // assumes the variable already exists
-    let variable = parentState['variables'][varName]
+    let value = null
+    if(varName in parentState['variables']) {
+        value = parentState['variables'][varName]
+    }
 
     let set2CallCount = childState['Set2SFromtateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
@@ -312,7 +317,7 @@ export const set2 = ({root,
         parentDataStateAbsolutePath,
         parentDataState,
         varName,
-        variable,
+        value,
         newValue})
     root['entries'].push(makeEntry(
         stateWeWillRunName,
@@ -320,12 +325,13 @@ export const set2 = ({root,
         parentDataStateAbsolutePath,
         parentDataState,
         varName,
-        variable,
+        value,
         newValue,
         null))
     console.log('entry made')
     const entriesLen = root['entries'].length
     const entry = root['entries'][entriesLen - 1]
+    console.log({entry})
     /* 
     unit test:
         entry is saved at the state it was made in
@@ -338,7 +344,6 @@ export const set2 = ({root,
         childState,
         startChildren,
         parentState,
-        childState,
         entry,
         stateWeWillRunName,
         parentDataStateAbsolutePath,
