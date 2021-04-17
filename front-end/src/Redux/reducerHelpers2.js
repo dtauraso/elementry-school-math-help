@@ -286,25 +286,34 @@ export const applyE2EAndUnitTimelineRules = (
             newValue)
     }
 }
-export const set2 = (root,
+export const set2 = ({root,
                     parentStateNameAbsolutePath,
                     stateWeWillRunName,
-                    parentDataStateAbsolutePath,
+                    parentDataStateAbsolutePath},
                     varName,
                     newValue) => {
     // the react components will travel down the state chart
     // when loading components
-
+    // Set2SFromtateFunctionCallCount, stateRunCount
+    // are reset inside breathFirstTraversal2
     let parentState = getState2(root, parentStateNameAbsolutePath)
     let childState = parentState.children[stateWeWillRunName]
-    let functionName = childState.functionCode.toString()
+    let functionName = childState.functionCode.name
     let parentDataState = getState2(root, parentDataStateAbsolutePath)
+    // assumes the variable already exists
     let variable = parentState['variables'][varName]
 
     let set2CallCount = childState['Set2SFromtateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
     let startChildren = parentState['start']
-
+    console.log('about to make entry')
+    console.log({stateWeWillRunName,
+        functionName,
+        parentDataStateAbsolutePath,
+        parentDataState,
+        varName,
+        variable,
+        newValue})
     root['entries'].push(makeEntry(
         stateWeWillRunName,
         functionName,
@@ -314,6 +323,7 @@ export const set2 = (root,
         variable,
         newValue,
         null))
+    console.log('entry made')
     const entriesLen = root['entries'].length
     const entry = root['entries'][entriesLen - 1]
     /* 
@@ -448,13 +458,14 @@ export const saveErrorEntry = (
 export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
 
     // setup
+    let parent = getState2(state, action.type)
 
-    action.meta.currentStateNames = [action.type.split(' - ').pop()]
+    action.meta.currentStateNames = parent.start
 
-    let pathToParent = action.type.split(' - ')
-    pathToParent.pop()
-    pathToParent = pathToParent.join(' - ')
-    action.meta.parent = getState2(state, pathToParent)
+    // let pathToParent = action.type.split(' - ')
+    // pathToParent.pop()
+    // pathToParent = pathToParent.join(' - ')
+    action.meta.parent = parent
 
     action.meta.root = state
     console.log("action", action)
@@ -474,6 +485,12 @@ export const pushNextLevel = (action) => {
     action.type = action.type.join(' - ')
 
 }
+export const popLowestLevel = (action) => {
+    action.type = action.type.split(' - ')
+    action.type.pop()
+
+}
+
 export const breathFirstTraversal2 = (state, action, levelId) => {
 
     let temporaryState = state
@@ -493,6 +510,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         let winningStateName = ''
         
         next.forEach(nextStateName => {
+            // console.log(action.meta.parent, next)
             let nextState = action.meta.parent.children[nextStateName]
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
@@ -509,6 +527,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
                 console.log(nextState, "doesn't have a function")
                 return null
             }
+
+            action.currentStateName = nextStateName
             const result = nextState['functionCode'](temporaryState, action)
             const success = result[1]
 
@@ -530,11 +550,17 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         let winningState = action.meta.parent.children[winningStateName]
         // reset Set2SFromtateFunctionCallCount after the state passed
         winningState.Set2SFromtateFunctionCallCount = 0
-        replaceState(action, winningStateName)
+        // if state was start
+        if(parent.start.includes(winningStateName)) {
+            action.type += ` - ${winningStateName}`
+        }
+        else {
+            replaceState(action, winningStateName)
+        }
         console.log(action.type)
         if('children' in winningState) {
             console.log("children")
-            action.type += ' - '
+            // action.type += ' - '
             action.meta.parent = winningState
             action.meta.currentStateNames = Object.keys(action.meta.parent.children)
             const nestedResult = breathFirstTraversal2(
@@ -552,7 +578,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             }
             temporaryState = nestedResult[0]
             action.meta.parent = parent
-            pushNextLevel(action)
+
+            popLowestLevel(action)
         }
         if('next' in winningState) {
             // console.log('next', winningStateName, action.meta.parent.children[winningStateName])

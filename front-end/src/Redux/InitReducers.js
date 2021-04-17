@@ -248,6 +248,7 @@ export var newContextualStateChart = {
                 payload: {'problem set tale': []}
             }
         },
+        start: ['displayResults'],
         children: {
             plusProblems: {
                 problemSet: makeProblemComponents(problems, false, 'add')

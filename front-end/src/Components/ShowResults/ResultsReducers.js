@@ -17,7 +17,7 @@
         
         
 //         } from '../Redux/reducerHelpers'
-
+import { set2 } from '../../Redux/reducerHelpers2'
 
 // only runs when user does autocompute
 const storeResults = (state, action) => {
@@ -26,7 +26,17 @@ const storeResults = (state, action) => {
     // const payload = action.payload
     // let temporaryState = state
     console.log('store results')
-    console.log({state, action})
+    // console.log({state, action})
+    const argumentObject = {
+        root: state,
+        parentStateNameAbsolutePath: action.type,
+        stateWeWillRunName: action.currentStateName,
+        parentDataStateAbsolutePath: action.type
+    }
+    console.log(argumentObject)
+    set2(argumentObject,
+        'test',
+        1)
     // // console.log('store resulst', payload)
 
     // let parentStateName = 'elementarySchool storeResults'
