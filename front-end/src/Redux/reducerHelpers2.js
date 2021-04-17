@@ -11,7 +11,7 @@ export const getState2 = (root, absolutePath) => {
     let pathList = listOfStrings.map(string => string.split(' '))
 
     let tracker = root
-    console.log({root, pathList})
+    // console.log({root, pathList})
     pathList.forEach((stateNameParts, i) => {
         stateNameParts.forEach(stateNamePart => {
             if(stateNamePart in tracker) {
@@ -25,9 +25,9 @@ export const getState2 = (root, absolutePath) => {
             }
         }
         
-        console.log({tracker, stateNameParts})
+        // console.log({tracker, stateNameParts})
     })
-    console.log('return this', tracker)
+    // console.log('return this', tracker)
     return tracker
 
 }
@@ -85,7 +85,7 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
             })
             allSubstates.forEach(nestedSubstate => {
                 nestedSubstate['parent'] = contextualStateChart
-                nestedSubstate['Set2SFromtateFunctionCallCount'] = 0
+                nestedSubstate['Set2SFromStateFunctionCallCount'] = 0
                 nestedSubstate['stateRunCount'] = 0
                 nestedSubstate['E2ETimeLines'] = []
                 nestedSubstate['unitTimeLines'] = []
@@ -241,8 +241,9 @@ export const allRemainingSetCallsInState = (entry,
                                             parentDataStateAbsolutePath,
                                             varName,
                                             newValue) => {
-
-    entry[stateWeWillRunName][parentDataStateAbsolutePath]['after'][varName] = newValue
+    console.log('allRemainingSetCallsInState')
+    console.log(varName, newValue)
+    entry[stateWeWillRunName][parentDataStateAbsolutePath]['B_after'][varName] = newValue
 
 }
 
@@ -284,7 +285,7 @@ export const applyE2EAndUnitTimelineRules = (
         allRemainingSetCallsInState(
             entry,
             stateWeWillRunName,
-            parentDataStateAbsolutePath,
+            `A_${parentDataStateAbsolutePath}`,
             varName,
             newValue)
     }
@@ -297,7 +298,7 @@ export const set2 = ({root,
                     newValue) => {
     // the react components will travel down the state chart
     // when loading components
-    // Set2SFromtateFunctionCallCount, stateRunCount
+    // Set2SFromStateFunctionCallCount, stateRunCount
     // are reset inside breathFirstTraversal2
     let parentState = getState2(root, parentStateNameAbsolutePath)
     let childState = parentState.children[stateWeWillRunName]
@@ -308,7 +309,7 @@ export const set2 = ({root,
         value = parentState['variables'][varName]
     }
 
-    let set2CallCount = childState['Set2SFromtateFunctionCallCount']
+    let set2CallCount = childState['Set2SFromStateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
     let startChildren = parentState['start']
     console.log('about to make entry')
@@ -319,6 +320,7 @@ export const set2 = ({root,
         varName,
         value,
         newValue})
+    // not supposed to make a new entry each time set2 is called
     root['entries'].push(makeEntry(
         stateWeWillRunName,
         functionName,
@@ -331,7 +333,7 @@ export const set2 = ({root,
     console.log('entry made')
     const entriesLen = root['entries'].length
     const entry = root['entries'][entriesLen - 1]
-    console.log({entry})
+    console.log({entry, stateWeWillRunName})
     /* 
     unit test:
         entry is saved at the state it was made in
@@ -352,10 +354,15 @@ export const set2 = ({root,
     )
 
     parentState['variables'][varName] = newValue
-    childState['Set2SFromtateFunctionCallCount'] += 1
+
+    childState['Set2SFromStateFunctionCallCount'] += 1
+    // console.log({parentState, childState})
+    // console.log(childState['Set2SFromStateFunctionCallCount'])
+    // return root
+
 //     /*
 //     resetting
-//     childState['Set2SFromtateFunctionCallCount']
+//     childState['Set2SFromStateFunctionCallCount']
 //     childState['stateRunCount']
 //     will happen in breathFirstTraversal2
     
@@ -375,15 +382,15 @@ export const set2 = ({root,
 //     take the last piece of data from the child state in the parent state
 //     and store it into the child state. use the refernce
 
-//     if childStateName is the start child and Set2SFromtateFunctionCallCount === 0
+//     if childStateName is the start child and Set2SFromStateFunctionCallCount === 0
 //         start the new timeline
 
-//     if Set2SFromtateFunctionCallCount === 0 and stateRunCount === 0
+//     if Set2SFromStateFunctionCallCount === 0 and stateRunCount === 0
 //         start the new timeline for the childStateName 
-//     reset Set2SFromtateFunctionCallCount after the state passed
+//     reset Set2SFromStateFunctionCallCount after the state passed
 //     reset stateRunCount right before the recursive call(breathFirstTraversal2) unwinds
 //     parentstateName: {
-//         Set2SFromtateFunctionCallCount: 0,
+//         Set2SFromStateFunctionCallCount: 0,
 //         stateRunCount: 0
 //         timeLines: [ {
 //             0: {
@@ -441,7 +448,7 @@ export const saveErrorEntry = (
         let parentDataState = getState2(temporaryState, parentDataStateAbsolutePath)
         let variable = parentState['variables'][varName]
     
-        let set2CallCount = childState['Set2SFromtateFunctionCallCount']
+        let set2CallCount = childState['Set2SFromStateFunctionCallCount']
         let stateRunCount = childState['stateRunCount']
         let startChildren = parentState['start']
     
@@ -553,8 +560,12 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             return [temporaryState, false]
         }
         let winningState = action.meta.parent.children[winningStateName]
-        // reset Set2SFromtateFunctionCallCount after the state passed
-        winningState.Set2SFromtateFunctionCallCount = 0
+        // reset Set2SFromStateFunctionCallCount after the state passed
+        winningState.Set2SFromStateFunctionCallCount = 0
+
+        winningState.stateRunCount += 1
+        // console.log(winningState.stateRunCount)
+
         // if state was start
         if(parent.start.includes(winningStateName)) {
             action.type += ` - ${winningStateName}`

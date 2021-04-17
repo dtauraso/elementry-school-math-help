@@ -37,7 +37,11 @@ const storeResults = (state, action) => {
     set2(argumentObject,
         'test',
         1)
-    // // console.log('store resulst', payload)
+    set2(argumentObject,
+        'test',
+        4)
+
+        // // console.log('store resulst', payload)
 
     // let parentStateName = 'elementarySchool storeResults'
     // temporaryState = setVariable(temporaryState, parentStateName, 'resultsFromBackend', payload)
