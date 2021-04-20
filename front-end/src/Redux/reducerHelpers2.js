@@ -156,6 +156,8 @@ export const makeEntry = (  stateWeWillRunName,
                             childTimeLine) => {
     return {
         [stateWeWillRunName]: {
+            // enforce order of keys becuase Chrome inspector
+            // sorts the keys
             [`A_${parentDataStateAbsolutePath}`]: {
 
                 // is set 1 time
@@ -248,24 +250,41 @@ export const allRemainingSetCallsInState = (entry,
 }
 
 export const applyE2EAndUnitTimelineRules = (
+    root,
     set2CallCount,
     stateRunCount,
     childState,
     startChildren,
     parentState,
-    entry,
     stateWeWillRunName,
+    functionName,
     parentDataStateAbsolutePath,
+    parentDataState,
     varName,
+    value,
     newValue
 
 ) => {
-    if(set2CallCount === 0) {
+   
 
+    if(set2CallCount === 0) {
+        root['entries'].push(makeEntry(
+            stateWeWillRunName,
+            functionName,
+            parentDataStateAbsolutePath,
+            parentDataState,
+            varName,
+            value,
+            newValue,
+            null))
+        console.log('entry made')
+        const entriesLen = root['entries'].length
+        const entry = root['entries'][entriesLen - 1]
         if(stateRunCount === 0) {
             // the start of each state
             
             if(childState in startChildren) {
+                // passes for machine of 1 level
                 // the first state in the submachine
                 setupFirstState(parentState, childState, entry)
             }
@@ -281,13 +300,26 @@ export const applyE2EAndUnitTimelineRules = (
         }
     }
     else if(set2CallCount > 0) {
+        const entriesLen = root['entries'].length
+        const entry = root['entries'][entriesLen - 1]
+
+        // passes
+        let sortedParentDataStateAbsolutePath = `A_${parentDataStateAbsolutePath}`
         // all remaining set calls inside a single state
         allRemainingSetCallsInState(
             entry,
             stateWeWillRunName,
-            `A_${parentDataStateAbsolutePath}`,
+            // editing an entry that already exists
+            sortedParentDataStateAbsolutePath,
             varName,
             newValue)
+        // if a different variable is set after the first set2 call
+        // in the same function
+        if(varName in entry[stateWeWillRunName][sortedParentDataStateAbsolutePath]['B_after'] &&
+            !(varName in entry[stateWeWillRunName][sortedParentDataStateAbsolutePath]['A_before'])) {
+                entry[stateWeWillRunName][sortedParentDataStateAbsolutePath]['A_before'][varName] = undefined
+            }
+
     }
 }
 export const set2 = ({root,
@@ -304,7 +336,7 @@ export const set2 = ({root,
     let childState = parentState.children[stateWeWillRunName]
     let functionName = childState.functionCode.name
     let parentDataState = getState2(root, parentDataStateAbsolutePath)
-    let value = null
+    let value = undefined
     if(varName in parentState['variables']) {
         value = parentState['variables'][varName]
     }
@@ -312,28 +344,28 @@ export const set2 = ({root,
     let set2CallCount = childState['Set2SFromStateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
     let startChildren = parentState['start']
-    console.log('about to make entry')
-    console.log({stateWeWillRunName,
-        functionName,
-        parentDataStateAbsolutePath,
-        parentDataState,
-        varName,
-        value,
-        newValue})
+    // console.log('about to make entry')
+    // console.log({stateWeWillRunName,
+    //     functionName,
+    //     parentDataStateAbsolutePath,
+    //     parentDataState,
+    //     varName,
+    //     value,
+    //     newValue})
     // not supposed to make a new entry each time set2 is called
-    root['entries'].push(makeEntry(
-        stateWeWillRunName,
-        functionName,
-        parentDataStateAbsolutePath,
-        parentDataState,
-        varName,
-        value,
-        newValue,
-        null))
-    console.log('entry made')
-    const entriesLen = root['entries'].length
-    const entry = root['entries'][entriesLen - 1]
-    console.log({entry, stateWeWillRunName})
+    // root['entries'].push(makeEntry(
+    //     stateWeWillRunName,
+    //     functionName,
+    //     parentDataStateAbsolutePath,
+    //     parentDataState,
+    //     varName,
+    //     value,
+    //     newValue,
+    //     null))
+    // console.log('entry made')
+    // const entriesLen = root['entries'].length
+    // const entry = root['entries'][entriesLen - 1]
+    // console.log({entry, stateWeWillRunName})
     /* 
     unit test:
         entry is saved at the state it was made in
@@ -341,15 +373,18 @@ export const set2 = ({root,
         entry is saved at the parent state
     */
     applyE2EAndUnitTimelineRules(
+        root,
         set2CallCount,
         stateRunCount,
         childState,
         startChildren,
         parentState,
-        entry,
         stateWeWillRunName,
+        functionName,
         parentDataStateAbsolutePath,
+        parentDataState,
         varName,
+        value,
         newValue
     )
 

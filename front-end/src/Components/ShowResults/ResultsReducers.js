@@ -34,12 +34,9 @@ const storeResults = (state, action) => {
         parentDataStateAbsolutePath: action.type
     }
     console.log(argumentObject)
-    set2(argumentObject,
-        'test',
-        1)
-    set2(argumentObject,
-        'test',
-        4)
+    set2(argumentObject, 'test', 1)
+    set2(argumentObject, 'test', 4)
+    set2(argumentObject, 'I\'m another test', 7)
 
         // // console.log('store resulst', payload)
 
