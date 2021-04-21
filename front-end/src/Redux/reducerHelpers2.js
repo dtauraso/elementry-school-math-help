@@ -245,7 +245,14 @@ export const allRemainingSetCallsInState = (entry,
                                             newValue) => {
     console.log('allRemainingSetCallsInState')
     console.log(varName, newValue)
-    entry[stateWeWillRunName][parentDataStateAbsolutePath]['B_after'][varName] = newValue
+    let before = entry[stateWeWillRunName][parentDataStateAbsolutePath]['A_before']
+    let after = entry[stateWeWillRunName][parentDataStateAbsolutePath]['B_after']
+    after[varName] = newValue
+    // if a different variable is set after the first set2 call
+    // in the same function
+    if(varName in after && !(varName in before)) {
+            before[varName] = undefined
+    }
 
 }
 
@@ -304,22 +311,14 @@ export const applyE2EAndUnitTimelineRules = (
         const entry = root['entries'][entriesLen - 1]
 
         // passes
-        let sortedParentDataStateAbsolutePath = `A_${parentDataStateAbsolutePath}`
         // all remaining set calls inside a single state
         allRemainingSetCallsInState(
             entry,
             stateWeWillRunName,
             // editing an entry that already exists
-            sortedParentDataStateAbsolutePath,
+            `A_${parentDataStateAbsolutePath}`,
             varName,
             newValue)
-        // if a different variable is set after the first set2 call
-        // in the same function
-        if(varName in entry[stateWeWillRunName][sortedParentDataStateAbsolutePath]['B_after'] &&
-            !(varName in entry[stateWeWillRunName][sortedParentDataStateAbsolutePath]['A_before'])) {
-                entry[stateWeWillRunName][sortedParentDataStateAbsolutePath]['A_before'][varName] = undefined
-            }
-
     }
 }
 export const set2 = ({root,
