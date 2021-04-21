@@ -26,12 +26,25 @@ const storeResults = (state, action) => {
     // const payload = action.payload
     // let temporaryState = state
     console.log('store results')
+    console.log({parent: action.meta.parent, currentStateName: action.currentStateName})
+
+    /*
+    action.type is acting as a parent when a state is being run
+    action.typ is acting as a child state after the state runs successfully
+    single timestep difference vs difference in hierarchy
+    can't want to print out the state path at the same time as
+    using it as the parent
+
+    the difference in pointers the first time was hierarchical
+    the second time was on the same level
+    */
     // console.log({state, action})
     const argumentObject = {
         root: state,
-        parentStateNameAbsolutePath: action.type,
-        stateWeWillRunName: action.currentStateName,
-        parentDataStateAbsolutePath: action.type
+        // action.meta.parent is not a path
+        parentStateNameAbsolutePath: action.meta.parent,
+        stateWeWillRunName: action.meta.currentStateName,
+        parentDataStateAbsolutePath: action.meta.parent
     }
     console.log(argumentObject)
     set2(argumentObject, 'test', 1)
@@ -52,6 +65,17 @@ const setupSubmachineForDisplay = (state, action) => {
     // const stateName = action.type
     // const payload = action.payload
     // let temporaryState = state
+    console.log({type: action.meta.parent, currentStateName: action.currentStateName})
+    const argumentObject = {
+        root: state,
+        parentStateNameAbsolutePath: action.meta.parent,
+        stateWeWillRunName: action.meta.currentStateName,
+        parentDataStateAbsolutePath: action.meta.parent
+    }
+    console.log(argumentObject)
+    set2(argumentObject, 'display test', 78)
+    set2(argumentObject, 'display test', 4)
+    set2(argumentObject, 'I\'m a special display test', 7)
 
     // let problemSets = getCell(temporaryState, 'resultsFromBackend').value['problems']
     // // console.log({problemSets})

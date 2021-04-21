@@ -16,7 +16,7 @@ export const getProblemSets = () => dispatch => {
                 // console.log("X", x)
                 dispatch({
 
-                    type: 'elementarySchool',// - displayResults',
+                    type: 'elementarySchool - displayResults',
                     payload: res.data,
                     meta: {
                             offsetString: 'plusProblems',
