@@ -592,6 +592,14 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             winningStateName = nextStateName
 
         })
+        /*
+        state logging rules
+            ony add an entry when it's corresponding state socceeds
+            if the state failed save all of the trial states set results
+                from the first successfull set call to the last successfull set call
+            make sure every entry has a link to the function code
+
+        */
         if(!passes) {
             // reset stateRunCount on all children states
             Object.keys(parent.children).forEach(childStateName => {
