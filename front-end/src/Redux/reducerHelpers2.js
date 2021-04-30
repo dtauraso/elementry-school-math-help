@@ -598,7 +598,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             if the state failed save all of the trial states set results
                 from the first successfull set call to the last successfull set call
             make sure every entry has a link to the function code
-
+        if we change a variable over multiple states, the inital record of the state currently
+        shows the variable as starting out undefined
         */
         if(!passes) {
             // reset stateRunCount on all children states
