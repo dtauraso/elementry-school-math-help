@@ -26,7 +26,7 @@ const storeResults = (state, action) => {
     // const payload = action.payload
     // let temporaryState = state
     console.log('store results')
-    console.log({parent: action.meta.parent, currentStateName: action.currentStateName})
+    console.log({parent: action.meta.parent, currentStateName: action.meta.currentStateName})
 
     /*
     action.type is acting as a parent when a state is being run
@@ -42,14 +42,14 @@ const storeResults = (state, action) => {
     const argumentObject = {
         root: state,
         // action.meta.parent is not a path
-        parentStateNameAbsolutePath: action.meta.parent,
+        parentStateNameAbsolutePath: action.meta.parentPath,
         stateWeWillRunName: action.meta.currentStateName,
-        parentDataStateAbsolutePath: action.meta.parent
+        parentDataStateAbsolutePath: action.meta.parentPath
     }
-    console.log(argumentObject)
+    console.log({argumentObject})
     set2(argumentObject, 'test', 1)
-    set2(argumentObject, 'test', 4)
-    set2(argumentObject, 'I\'m another test', 7)
+    // set2(argumentObject, 'test', 4)
+    // set2(argumentObject, 'I\'m another test', 7)
 
         // // console.log('store resulst', payload)
 
@@ -65,17 +65,20 @@ const setupSubmachineForDisplay = (state, action) => {
     // const stateName = action.type
     // const payload = action.payload
     // let temporaryState = state
-    console.log({type: action.meta.parent, currentStateName: action.currentStateName})
+    console.log({type: action.type, currentStateName: action.meta.currentStateName})
     const argumentObject = {
         root: state,
-        parentStateNameAbsolutePath: action.meta.parent,
+        parentStateNameAbsolutePath: action.meta.parentPath,
         stateWeWillRunName: action.meta.currentStateName,
-        parentDataStateAbsolutePath: action.meta.parent
+        parentDataStateAbsolutePath: action.meta.parentPath
     }
-    console.log(argumentObject)
+    console.log({argumentObject})
     set2(argumentObject, 'display test', 78)
-    set2(argumentObject, 'display test', 4)
-    set2(argumentObject, 'I\'m a special display test', 7)
+    // set2(argumentObject, 'display test', 4)
+    // set2(argumentObject, 'test', 6)
+    // set2(argumentObject, 'test', 8)
+
+    // set2(argumentObject, 'I\'m a special display test', 7)
 
     // let problemSets = getCell(temporaryState, 'resultsFromBackend').value['problems']
     // // console.log({problemSets})

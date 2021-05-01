@@ -276,8 +276,13 @@ export var newContextualStateChart = {
                     problemCount: 0
                 }
             }
-        }
+        },
+        'Set2SFromStateFunctionCallCount':  0,
+        'stateRunCount': 0,
+        'E2ETimeLines': [],
+        'unitTimeLines': []
     }
 }
 setTimelineMetadataToStates(newContextualStateChart)
 newContextualStateChart['entries'] = []
+newContextualStateChart['trialEntries'] = []

@@ -55,6 +55,9 @@ export const isInternalState = (state) => {
 export const setTimelineMetadataToStates = (contextualStateChart) => {
     
     // add timeline keys to each state
+    // linking state to it's parent
+    // a timeline key is not added to root because the key can only be added
+    // to the child when it links to the root
     // put in parent links
     if(Object.keys(contextualStateChart).length === 0) {
         return [contextualStateChart]
@@ -113,38 +116,6 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
     else {
         console.log("problem", contextualStateChart)
     }
-    // if it's a leaf state
-        // return the state
-    // if it's an internal state
-        /*
-        what if the internal state has children and substates
-            return the most nested substates and the internal state
-        if the internal state has children
-            allNestedSubstates = setTimelineMetadataToStates(contextualStateChart[children])
-            for each state in allNestedSubstates
-                state.parent = contextualStateChare
-                state.metadata = {
-
-                }
-            returnCollection.push(internal state)
-        if the internal state has substates
-            returnCollection.push(setTimelineMetadataToStates(contextualStateChart[subState]))
-        return returnCollection
-        */
-    // else if('children' in contextualStateChart) {
-    //     // if()
-    // }
-    // if(!('children' in contextualStateChart)) {
-    //     Object.keys(contextualStateChart).forEach(subState => {
-    //         setTimelineMetadataToStates(contextualStateChart[subState])
-    //     })
-    // }
-    // else {
-    //     let parent = contextualStateChart
-    //     Object.keys(contextualStateChart).forEach(subState => {
-    //         setTimelineMetadataToStates(contextualStateChart[subState])
-    //     })
-    // }
 }
 export const makeEntry = (  stateWeWillRunName,
                             functionName,
@@ -195,9 +166,13 @@ export const setupFirstState = (parentState, childState, entry) => {
     // what if there is no grandparent
     // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
     const grandParentObject = getParentObject(parentState)
+    console.log({parentState, grandParentObject})
+
     if(grandParentObject) {
+        // what if grandParentObject has never ben used yet
         const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
         const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+        console.log({grandparentTimeLinesLen, grandparentTimeLineLen})
         grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
     
     }
@@ -275,7 +250,7 @@ export const applyE2EAndUnitTimelineRules = (
    
 
     if(set2CallCount === 0) {
-        root['entries'].push(makeEntry(
+        root['trialEntries'].push(makeEntry(
             stateWeWillRunName,
             functionName,
             parentDataStateAbsolutePath,
@@ -285,31 +260,36 @@ export const applyE2EAndUnitTimelineRules = (
             newValue,
             null))
         // console.log('entry made')
-        const entriesLen = root['entries'].length
-        const entry = root['entries'][entriesLen - 1]
+        const entriesLen = root['trialEntries'].length
+        const entry = root['trialEntries'][entriesLen - 1]
         if(stateRunCount === 0) {
             // the start of each state
-            
-            if(childState in startChildren) {
+            console.log(stateWeWillRunName, startChildren)
+            // stateWeWillRunName is supposed to be a string
+            if(startChildren.includes(stateWeWillRunName)) {
                 // passes for machine of 1 level
                 // the first state in the submachine
+                console.log('setupFirstState')
                 setupFirstState(parentState, childState, entry)
             }
             else {
+                console.log('setupSetInAllRemainingStates')
                 // first set function called in all states that aren't start states
                 setupSetInAllRemainingStates(parentState, childState, entry)                
 
             }
         }
         else if(stateRunCount > 0) {
+            console.log('revisitingSuccessfullyRunStates')
             // any state that has already been successfully run once
             revisitingSuccessfullyRunStates(parentState, childState, entry)
         }
     }
     else if(set2CallCount > 0) {
-        const entriesLen = root['entries'].length
-        const entry = root['entries'][entriesLen - 1]
+        const entriesLen = root['trialEntries'].length
+        const entry = root['trialEntries'][entriesLen - 1]
 
+        console.log('allRemainingSetCallsInState')
         // passes
         // all remaining set calls inside a single state
         allRemainingSetCallsInState(
@@ -331,9 +311,9 @@ export const set2 = ({root,
     // when loading components
     // Set2SFromStateFunctionCallCount, stateRunCount
     // are reset inside breathFirstTraversal2
-    console.log({parentStateNameAbsolutePath})
+    // console.log({parentStateNameAbsolutePath})
     let parentState = getState2(root, parentStateNameAbsolutePath)
-    console.log({parentState})
+    // console.log({parentState})
     let childState = parentState.children[stateWeWillRunName]
     let functionName = childState.functionCode.name
     let parentDataState = getState2(root, parentDataStateAbsolutePath)
@@ -345,28 +325,7 @@ export const set2 = ({root,
     let set2CallCount = childState['Set2SFromStateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
     let startChildren = parentState['start']
-    // console.log('about to make entry')
-    // console.log({stateWeWillRunName,
-    //     functionName,
-    //     parentDataStateAbsolutePath,
-    //     parentDataState,
-    //     varName,
-    //     value,
-    //     newValue})
-    // not supposed to make a new entry each time set2 is called
-    // root['entries'].push(makeEntry(
-    //     stateWeWillRunName,
-    //     functionName,
-    //     parentDataStateAbsolutePath,
-    //     parentDataState,
-    //     varName,
-    //     value,
-    //     newValue,
-    //     null))
-    // console.log('entry made')
-    // const entriesLen = root['entries'].length
-    // const entry = root['entries'][entriesLen - 1]
-    // console.log({entry, stateWeWillRunName})
+
     /* 
     unit test:
         entry is saved at the state it was made in
@@ -468,40 +427,40 @@ export const set2 = ({root,
 // export const treeVisualizer2 = () => {
 
 // }
-export const saveErrorEntry = (
-    temporaryState,
-    parentstateNameAbsolutePath,
-    stateWeWillRunName,
-    parentDataStateAbsolutePath,
-    nextStates,
-    currentStateName,
-    varName,
-    newValue) => {
-        let entry = {}
-        let parentState = getState2(temporaryState, parentstateNameAbsolutePath)
-        let childState = getState2(temporaryState, stateWeWillRunName)
-        let functionName = childState.functionCode.toString()
-        let parentDataState = getState2(temporaryState, parentDataStateAbsolutePath)
-        let variable = parentState['variables'][varName]
+// export const saveErrorEntry = (
+//     temporaryState,
+//     parentstateNameAbsolutePath,
+//     stateWeWillRunName,
+//     parentDataStateAbsolutePath,
+//     nextStates,
+//     currentStateName,
+//     varName,
+//     newValue) => {
+//         let entry = {}
+//         let parentState = getState2(temporaryState, parentstateNameAbsolutePath)
+//         let childState = getState2(temporaryState, stateWeWillRunName)
+//         let functionName = childState.functionCode.toString()
+//         let parentDataState = getState2(temporaryState, parentDataStateAbsolutePath)
+//         let variable = parentState['variables'][varName]
     
-        let set2CallCount = childState['Set2SFromStateFunctionCallCount']
-        let stateRunCount = childState['stateRunCount']
-        let startChildren = parentState['start']
+//         let set2CallCount = childState['Set2SFromStateFunctionCallCount']
+//         let stateRunCount = childState['stateRunCount']
+//         let startChildren = parentState['start']
     
-        applyE2EAndUnitTimelineRules(
-            set2CallCount,
-            stateRunCount,
-            childState,
-            startChildren,
-            parentState,
-            entry,
-            stateWeWillRunName,
-            parentDataStateAbsolutePath,
-            varName,
-            newValue
-        )
+//         applyE2EAndUnitTimelineRules(
+//             set2CallCount,
+//             stateRunCount,
+//             childState,
+//             startChildren,
+//             parentState,
+//             entry,
+//             stateWeWillRunName,
+//             parentDataStateAbsolutePath,
+//             varName,
+//             newValue
+//         )
 
-}
+// }
 
 export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
 
@@ -599,15 +558,23 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
                 from the first successfull set call to the last successfull set call
             make sure every entry has a link to the function code
         if we change a variable over multiple states, the inital record of the state currently
-        shows the variable as starting out undefined
+        shows the variable as starting out undefined(correct)
+        adiditional issue when putting in the trial entries(unintended consequence)
+            a new timeline was made per state
+        restructuring is required
         */
         if(!passes) {
+            // trialEntries to error state entry
             // reset stateRunCount on all children states
             Object.keys(parent.children).forEach(childStateName => {
                 parent.children[childStateName].stateRunCount = 0
             })
             return [temporaryState, false]
         }
+        // trialEntries[last item] to entries
+        const trialEntriesLength = temporaryState['trialEntries'].length
+        temporaryState['entries'].push(temporaryState['trialEntries'][trialEntriesLength - 1])
+        temporaryState['trialEntries'] = []
         let winningState = action.meta.parent.children[winningStateName]
         // reset Set2SFromStateFunctionCallCount after the state passed
         winningState.Set2SFromStateFunctionCallCount = 0
