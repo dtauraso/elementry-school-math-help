@@ -73,7 +73,7 @@ const setupSubmachineForDisplay = (state, action) => {
         parentDataStateAbsolutePath: action.meta.parentPath
     }
     console.log({argumentObject})
-    set2(argumentObject, 'display test', 78)
+    set2(argumentObject, 'test', 78)
     // set2(argumentObject, 'display test', 4)
     // set2(argumentObject, 'test', 6)
     // set2(argumentObject, 'test', 8)

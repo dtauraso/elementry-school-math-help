@@ -170,10 +170,21 @@ export const setupFirstState = (parentState, childState, entry) => {
 
     if(grandParentObject) {
         // what if grandParentObject has never ben used yet
-        const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
-        const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
-        console.log({grandparentTimeLinesLen, grandparentTimeLineLen})
-        grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+        if(grandParentObject['E2ETimeLines'].length === 0) {
+            grandParentObject['E2ETimeLines'].push([])
+            const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].push([])
+            const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+
+        }
+        else {
+            const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
+            const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+            console.log({grandparentTimeLinesLen, grandparentTimeLineLen})
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+    
+        }
     
     }
 
@@ -262,6 +273,8 @@ export const applyE2EAndUnitTimelineRules = (
         // console.log('entry made')
         const entriesLen = root['trialEntries'].length
         const entry = root['trialEntries'][entriesLen - 1]
+        // need to put the state run count dependent rules in visitor function
+
         if(stateRunCount === 0) {
             // the start of each state
             console.log(stateWeWillRunName, startChildren)
@@ -467,6 +480,60 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     // setup for breathFirstTraversal2
     // pull out parent information if possible
     // assume we are starting with action.type
+    /*
+    currentState (object)
+    parentState (object)
+    parentPath (string)
+    action.type (string)
+    childPath (string)
+    
+    need to start state at getState2('elementarySchool - displayResults')
+    checking for the next state must be O(1) time
+    type must be the path of the current state (printing out in redux debugger)
+    need parent and child to always be different for accessing the next state
+    a parent(child in the first run) can represent any collection of start children
+    start:
+    parentState = getState2(state, action.type - bottom level)
+
+    parentPath = action.type - bottom level
+    childName = action.type on bottom level
+    action.logList = parentPath.split(' - ')
+    action.currentStateNames = parentState.children[childName]
+
+
+    visitor:
+    
+    next = action.currentStateNames
+
+    loop
+
+        winningStateName
+        winningStateObject
+        next.forEach(stateName => {
+            currentState = parentState.children[stateName]
+        })
+        if winningStateName is in parentState.start
+            action.logList.push(childName)
+        else
+            action.logList.pop()
+            action.logList.push(childName)
+        action.type = action.logList.join(' - )
+        if currentState (the winner)(childName) is a parent
+            action.parentState = currentState
+            action.parentPath +=  ' - ' + childName
+            action.currentStateNames = parentState.start
+            f(state, action)
+            action.logList.pop()
+        else
+            next = parentState.children[stateName].next
+
+    expected log output
+    elementarySchool - displayResults
+    elementarySchool - displayResults - storeResults
+    elementarySchool - displayResults - setupSubmachineForDisplay
+
+    */
+    let path = action.type.split(' - ')
     let parent = getState2(state, action.type)
 
     action.meta.currentStateNames = parent.start
@@ -557,11 +624,23 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             if the state failed save all of the trial states set results
                 from the first successfull set call to the last successfull set call
             make sure every entry has a link to the function code
+        */
+       /*
         if we change a variable over multiple states, the inital record of the state currently
-        shows the variable as starting out undefined(correct)
+        shows the variable as starting out undefined(verified hypothesis)
         adiditional issue when putting in the trial entries(unintended consequence)
             a new timeline was made per state
         restructuring is required
+
+        parent's child timeline only has 1 entry despite 2 statees getting run
+        */
+        /*
+        stateRunCount -> action.meta.parent.children[winningStateName].stateRunCount
+        stateWeWillRunName -> winningStateName
+        startChildren -> action.meta.parent.start
+        parentState -> action.meta.parent
+        childState -> action.meta.parent.children[winningStateName]
+        entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
         if(!passes) {
             // trialEntries to error state entry
@@ -582,6 +661,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         winningState.stateRunCount += 1
         // console.log(winningState.stateRunCount)
 
+        // addOrSwitchChildState
         // if state was start
         if(parent.start.includes(winningStateName)) {
             if(levelId > 0) {
@@ -592,6 +672,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             replaceState(action, winningStateName)
         }
         console.log(action.type)
+
         if('children' in winningState) {
             console.log("children")
             // action.type += ' - '
