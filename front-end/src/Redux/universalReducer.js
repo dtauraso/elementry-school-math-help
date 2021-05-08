@@ -40,18 +40,18 @@ const universalReducer = (state = initialState, action) => {
     // action.type always holds the start state
     // console.log(action.type, state, Root)
     const { type, payload, meta } = action
+    console.log({meta})
     // if(typeof(type) === 'string') {
     //     console.log('caught', type)
     //     return state
     // }
     if(type === '@@INIT') {
+        console.log("running init")
         return state
     }
-    // if(getCell(state, type) === null) {
-    //     return state
-    // }
     else {
-
+        // console.log('problem')
+        // return state
         // type is the start state
         const [temporaryState, success] = setupForBreathFirstTraversal2(state, action, 0)
         // breathFirstTraversal(state, action, type, 0, {})

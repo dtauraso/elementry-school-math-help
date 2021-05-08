@@ -15,7 +15,7 @@ export const getProblemSets = () => dispatch => {
                 // let x = { displayResults: getState2(store.getState(), `elementarySchool - displayResults`)}
                 // console.log("X", x)
                 dispatch({
-
+                    // 'elementarySchool - displayResults'
                     type: 'elementarySchool - displayResults',
                     payload: res.data,
                     meta: {

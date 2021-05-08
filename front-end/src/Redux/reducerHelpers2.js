@@ -5,10 +5,10 @@ export const getVariable2 = (root, absolutePath) => {
 
 }
 
-export const getState2 = (root, absolutePath) => {
+export const getState2 = (root, absolutePathArray) => {
     // assume absolute path is name1 name2 name3 - name4 name5 - name6
-    let listOfStrings = absolutePath.split(' - ')
-    let pathList = listOfStrings.map(string => string.split(' '))
+    // let listOfStrings = absolutePath.split(' - ')
+    let pathList = absolutePathArray.map(string => string.split(' '))
 
     let tracker = root
     // console.log({root, pathList})
@@ -119,7 +119,7 @@ export const setTimelineMetadataToStates = (contextualStateChart) => {
 }
 export const makeEntry = (  stateWeWillRunName,
                             functionName,
-                            parentDataStateAbsolutePath,
+                            parentDataStateAbsolutePathArray,
                             parentDataState,
                             varName,
                             value,
@@ -129,7 +129,7 @@ export const makeEntry = (  stateWeWillRunName,
         [stateWeWillRunName]: {
             // enforce order of keys becuase Chrome inspector
             // sorts the keys
-            [`A_${parentDataStateAbsolutePath}`]: {
+            [`A_${parentDataStateAbsolutePathArray}`]: {
 
                 // is set 1 time
                 A_before: {
@@ -226,13 +226,13 @@ export const revisitingSuccessfullyRunStates = (parentState, childState, entry) 
 }
 export const allRemainingSetCallsInState = (entry,
                                             stateWeWillRunName,
-                                            parentDataStateAbsolutePath,
+                                            parentDataStateAbsolutePathArray,
                                             varName,
                                             newValue) => {
     // console.log('allRemainingSetCallsInState')
     // console.log(varName, newValue)
-    let before = entry[stateWeWillRunName][parentDataStateAbsolutePath]['A_before']
-    let after = entry[stateWeWillRunName][parentDataStateAbsolutePath]['B_after']
+    let before = entry[stateWeWillRunName][parentDataStateAbsolutePathArray]['A_before']
+    let after = entry[stateWeWillRunName][parentDataStateAbsolutePathArray]['B_after']
     after[varName] = newValue
     // if a different variable is set after the first set2 call
     // in the same function
@@ -251,7 +251,7 @@ export const applyE2EAndUnitTimelineRules = (
     parentState,
     stateWeWillRunName,
     functionName,
-    parentDataStateAbsolutePath,
+    parentDataStateAbsolutePathArray,
     parentDataState,
     varName,
     value,
@@ -264,7 +264,7 @@ export const applyE2EAndUnitTimelineRules = (
         root['trialEntries'].push(makeEntry(
             stateWeWillRunName,
             functionName,
-            parentDataStateAbsolutePath,
+            parentDataStateAbsolutePathArray,
             parentDataState,
             varName,
             value,
@@ -309,27 +309,28 @@ export const applyE2EAndUnitTimelineRules = (
             entry,
             stateWeWillRunName,
             // editing an entry that already exists
-            `A_${parentDataStateAbsolutePath}`,
+            `A_${parentDataStateAbsolutePathArray}`,
             varName,
             newValue)
     }
 }
 export const set2 = ({root,
-                    parentStateNameAbsolutePath,
+                    parentStateNameAbsolutePathArray,
                     stateWeWillRunName,
-                    parentDataStateAbsolutePath},
+                    parentDataStateAbsolutePathArray},
                     varName,
                     newValue) => {
     // the react components will travel down the state chart
     // when loading components
     // Set2SFromStateFunctionCallCount, stateRunCount
     // are reset inside breathFirstTraversal2
-    // console.log({parentStateNameAbsolutePath})
-    let parentState = getState2(root, parentStateNameAbsolutePath)
+    // console.log({parentStateNameAbsolutePathArray})
+    console.log({root, parentStateNameAbsolutePathArray})
+    let parentState = getState2(root, parentStateNameAbsolutePathArray)
     // console.log({parentState})
     let childState = parentState.children[stateWeWillRunName]
     let functionName = childState.functionCode.name
-    let parentDataState = getState2(root, parentDataStateAbsolutePath)
+    let parentDataState = getState2(root, parentDataStateAbsolutePathArray)
     let value = undefined
     if(varName in parentState['variables']) {
         value = parentState['variables'][varName]
@@ -354,7 +355,7 @@ export const set2 = ({root,
         parentState,
         stateWeWillRunName,
         functionName,
-        parentDataStateAbsolutePath,
+        parentDataStateAbsolutePathArray,
         parentDataState,
         varName,
         value,
@@ -379,9 +380,9 @@ export const set2 = ({root,
     
 //     stateName could match parentDataState1 or not
 //     reference to rootObject, 
-//     parentstateNameAbsolutePath,
+//     parentStateNameAbsolutePathArray,
 //     stateWeWillRunName,
-//     parentDataStateAbsolutePath,
+//     parentDataStateAbsolutePathArray,
 //     varName,
 //     newValue
 //     the form state machine should hold a collection of timelines
@@ -403,7 +404,7 @@ export const set2 = ({root,
 //         timeLines: [ {
 //             0: {
 //                 childStateName1: {
-//                     parentDataStateAbsolutePath1: {
+//                     parentDataStateAbsolutePathArray1: {
 //                         // is assigned 1 time
 //                         before: {
 //                             var1: 
@@ -419,7 +420,7 @@ export const set2 = ({root,
 //             },
 //             1: {
 //                 childStateName2: {
-//                     parentDataStateAbsolutePath2: {
+//                     parentDataStateAbsolutePathArray2: {
 //                         before: {
 //                             var1: 
 //                             var2:
@@ -442,18 +443,18 @@ export const set2 = ({root,
 // }
 // export const saveErrorEntry = (
 //     temporaryState,
-//     parentstateNameAbsolutePath,
+//     parentStateNameAbsolutePathArray,
 //     stateWeWillRunName,
-//     parentDataStateAbsolutePath,
+//     parentDataStateAbsolutePathArray,
 //     nextStates,
 //     currentStateName,
 //     varName,
 //     newValue) => {
 //         let entry = {}
-//         let parentState = getState2(temporaryState, parentstateNameAbsolutePath)
+//         let parentState = getState2(temporaryState, parentStateNameAbsolutePathArray)
 //         let childState = getState2(temporaryState, stateWeWillRunName)
 //         let functionName = childState.functionCode.toString()
-//         let parentDataState = getState2(temporaryState, parentDataStateAbsolutePath)
+//         let parentDataState = getState2(temporaryState, parentDataStateAbsolutePathArray)
 //         let variable = parentState['variables'][varName]
     
 //         let set2CallCount = childState['Set2SFromStateFunctionCallCount']
@@ -468,7 +469,7 @@ export const set2 = ({root,
 //             parentState,
 //             entry,
 //             stateWeWillRunName,
-//             parentDataStateAbsolutePath,
+//             parentDataStateAbsolutePathArray,
 //             varName,
 //             newValue
 //         )
@@ -494,11 +495,11 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     a parent(child in the first run) can represent any collection of start children
     start:
     parentState = getState2(state, action.type - bottom level)
-
+    what if the path is only 1 unit
     parentPath = action.type - bottom level
     childName = action.type on bottom level
     action.logList = parentPath.split(' - ')
-    action.currentStateNames = parentState.children[childName]
+    action.currentStateNames = [parentState.children[childName]]
 
 
     visitor:
@@ -533,50 +534,80 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     elementarySchool - displayResults - setupSubmachineForDisplay
 
     */
-    let path = action.type.split(' - ')
-    let parent = getState2(state, action.type)
 
-    action.meta.currentStateNames = parent.start
+    /*
+    action.meta.parentState
+    action.meta.parentPathArray
+    action.meta.childName
+    */
+    console.log("setupForBreathFirstTraversal2")
+    // console.log({path})
+    let path = action.type.split(' - ')
+
+    // assume path as at least 2 elements
+
+    action.meta.parentPathArray = path.slice(0, path.length - 1)
+    action.meta.logList = path.slice(0, path.length - 1)
+
+    console.log(action.meta.parentPathArray, action.meta.logList)
+    // action.meta.childName = path[path.length - 1]
+    // console.log({x: action.meta.parentPathArray})
+    action.meta.parentState = getState2(state, action.meta.parentPathArray)
+    console.log(action.meta)
+    // messes things up
+    // const [ parentState, childName ] = [action.meta.parentState, action.meta.childName]
+
+    action.meta.currentStateNames = [path[path.length - 1]/*action.meta.childName*/]
+
+
+    // let parent = getState2(state, action.type)
+
+    // action.meta.currentStateNames = parent.start
 
     // let pathToParent = action.type.split(' - ')
     // pathToParent.pop()
     // pathToParent = pathToParent.join(' - ')
-    action.meta.parent = parent
+    // action.meta.parent = parent
 
     // need to also maintain a parentPath pointer
-    action.meta.parentPath = action.type
-    action.meta.root = state
+    // action.meta.parentPathArray = action.type
+    // action.meta.root = state
     console.log("action", action)
     return breathFirstTraversal2(state, action, levelId)
 
 }
-export const replaceState = (action, winningStateName) => {
-    action.type = action.type.split(' - ')
-    action.type.pop()
-    action.type.push(winningStateName)
-    action.type = action.type.join(' - ')
+// export const replaceState = (action, winningStateName) => {
+//     action.type = action.type.split(' - ')
+//     action.type.pop()
+//     action.type.push(winningStateName)
+//     action.type = action.type.join(' - ')
 
-}
-export const pushNextLevel = (action) => {
-    action.type = action.type.split(' - ')
-    action.type.pop()
-    action.type = action.type.join(' - ')
+// }
+// export const pushNextLevel = (action) => {
+//     action.type = action.type.split(' - ')
+//     action.type.pop()
+//     action.type = action.type.join(' - ')
 
-}
-export const popLowestLevel = (action) => {
-    action.type = action.type.split(' - ')
-    action.type.pop()
+// }
+// export const popLowestLevel = (action) => {
+//     action.type = action.type.split(' - ')
+//     action.type.pop()
 
-}
+// }
 
 export const breathFirstTraversal2 = (state, action, levelId) => {
+
+    // want user to think in terms of name - name
+    // but system is default setup to use [name, name]
+    // the path array is converted to string for action.type
+    console.log('action starting at breathFirstTraversal2', action)
 
     let temporaryState = state
 
     let next = action.meta.currentStateNames
-    let parent = action.meta.parent
+    let parentPathArray = action.meta.parentPathArray
     /*
-    parentstateNameAbsolutePath,
+    parentStateNameAbsolutePathArray,
     stateWeWillRunName
     */
     // let currentStateName = action.type
@@ -589,7 +620,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         
         next.forEach(nextStateName => {
             // console.log(action.meta.parent, next)
-            let nextState = action.meta.parent.children[nextStateName]
+            let nextState = action.meta.parentState.children[nextStateName]
             if(nextState === undefined) {
                 console.log("the js syntax for the next states is wrong")
                 return null
@@ -607,6 +638,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             }
 
             action.meta.currentStateName = nextStateName
+            console.log('action before running state', action)
             const result = nextState['functionCode'](temporaryState, action)
             const success = result[1]
 
@@ -618,6 +650,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             winningStateName = nextStateName
 
         })
+        console.log({winningStateName, passes})
         /*
         state logging rules
             ony add an entry when it's corresponding state socceeds
@@ -645,8 +678,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         if(!passes) {
             // trialEntries to error state entry
             // reset stateRunCount on all children states
-            Object.keys(parent.children).forEach(childStateName => {
-                parent.children[childStateName].stateRunCount = 0
+            Object.keys(action.meta.parentState.children).forEach(childStateName => {
+                action.meta.parentState.children[childStateName].stateRunCount = 0
             })
             return [temporaryState, false]
         }
@@ -654,7 +687,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         const trialEntriesLength = temporaryState['trialEntries'].length
         temporaryState['entries'].push(temporaryState['trialEntries'][trialEntriesLength - 1])
         temporaryState['trialEntries'] = []
-        let winningState = action.meta.parent.children[winningStateName]
+        let winningState = action.meta.parentState.children[winningStateName]
         // reset Set2SFromStateFunctionCallCount after the state passed
         winningState.Set2SFromStateFunctionCallCount = 0
 
@@ -663,47 +696,63 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
 
         // addOrSwitchChildState
         // if state was start
-        if(parent.start.includes(winningStateName)) {
-            if(levelId > 0) {
-                action.type += ` - ${winningStateName}`
-            }
+        if(action.meta.parentState.start.includes(winningStateName)) {
+            console.log("push", action.meta.logList)
+            action.meta.logList.push(winningStateName)
+            // if(levelId > 0) {
+            //     action.type += ` - ${winningStateName}`
+            // }
         }
         else {
-            replaceState(action, winningStateName)
+            action.meta.logList.pop()
+            action.meta.logList.push(winningStateName)
+            // replaceState(action, winningStateName)
         }
+        action.type = action.meta.logList.join(' - ')
         console.log(action.type)
 
         if('children' in winningState) {
-            console.log("children")
+            console.log("children", winningState)
+            // action.parentState = currentState
+            // action.parentPath +=  ' - ' + childName
+            // action.currentStateNames = parentState.start
+            // f(state, action)
+            // action.logList.pop()
+
             // action.type += ' - '
-            action.meta.parent = winningState
-            action.meta.currentStateNames = Object.keys(action.meta.parent.children)
+            action.meta.parentState = winningState
+            action.meta.parentPathArray.push(winningStateName)
+            action.meta.currentStateNames = action.meta.parentState.start
+            console.log("before recurse", action.meta)
             const nestedResult = breathFirstTraversal2(
                 temporaryState,
                 action,
                 levelId + 1
             )
             // reset stateRunCount on all children states
-            Object.keys(parent.children).forEach(childStateName => {
-                parent.children[childStateName].stateRunCount = 0
+            Object.keys(action.meta.parentState.children).forEach(childStateName => {
+                action.meta.parentState.children[childStateName].stateRunCount = 0
             })
             passes = nestedResult[1]
             if(!passes) {
                 return [temporaryState, false]
             }
             temporaryState = nestedResult[0]
-            action.meta.parent = parent
+            // wrong
+            action.meta.parentPathArray.pop()
+            action.meta.parentState = getState2(temporaryState, parentPathArray)
+            action.meta.logList.pop()
 
-            popLowestLevel(action)
+            // popLowestLevel(action)
         }
         if('next' in winningState) {
             // console.log('next', winningStateName, action.meta.parent.children[winningStateName])
-            next = action.meta.parent.children[winningStateName].next
+            next = action.meta.parentState.children[winningStateName].next
         }
         else {
             // reset stateRunCount on all children states
-            Object.keys(parent.children).forEach(childStateName => {
-                parent.children[childStateName].stateRunCount = 0
+            Object.keys(action.meta.parentState.children).forEach(childStateName => {
+                action.meta.parentState.children[childStateName].stateRunCount = 0
             })
             return [temporaryState, true]
         }
