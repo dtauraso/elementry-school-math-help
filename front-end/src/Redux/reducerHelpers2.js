@@ -149,81 +149,7 @@ export const makeEntry = (  stateWeWillRunName,
     }
 }
 
-export const getParentObject = (parentState) => {
 
-    if('parent' in parentState) {
-        return parentState['parent']
-    }
-    return false
-}
-
-export const setupFirstState = (parentState, childState, entry) => {
-
-    // make the end to end entry
-    parentState['E2ETimeLines'].push([])
-    const lenParent = parentState['E2ETimeLines'].length
-    parentState['E2ETimeLines'][lenParent - 1].push(entry)
-    // what if there is no grandparent
-    // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
-    const grandParentObject = getParentObject(parentState)
-    console.log({parentState, grandParentObject})
-
-    if(grandParentObject) {
-        // what if grandParentObject has never ben used yet
-        if(grandParentObject['E2ETimeLines'].length === 0) {
-            grandParentObject['E2ETimeLines'].push([])
-            const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
-            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].push([])
-            const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
-            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
-
-        }
-        else {
-            const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
-            const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
-            console.log({grandparentTimeLinesLen, grandparentTimeLineLen})
-            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
-    
-        }
-    
-    }
-
-    childState['unitTimeLines'].push([])
-    const lenChild = childState['unitTimeLines'].length
-    childState['unitTimeLines'][lenChild - 1].push(entry)
-}
-
-export const setupSetInAllRemainingStates = (parentState, childState, entry) => {
-
-    /*
-        make a new timeline for entries, because we need to keep the
-        new entries separate from the previous entries from prior
-        runs of the submachine
-        make a new timeline for the child state
-            the child state might be run more than 1 time in the same machine so we
-            need to keep the child runs separated from each submachine run
-        add entry to new timeline for the child state
-        append entry to end to end time line for the parent state
-        
-    */
-    parentState['E2ETimeLines'].push([])
-    const lenParent = parentState['E2ETimeLines'].length
-    parentState['E2ETimeLines'][lenParent - 1].push(entry)
-
-    childState['unitTimeLines'].push([])
-    const lenChild = childState['unitTimeLines'].length
-    childState['unitTimeLines'][lenChild - 1].push(entry)
-
-}
-export const revisitingSuccessfullyRunStates = (parentState, childState, entry) => {
-
-    const lenParent = parentState['E2ETimeLines'].length
-    parentState['E2ETimeLines'][lenParent - 1].push(entry)
-
-    const lenChild = childState['unitTimeLines'].length
-    childState['unitTimeLines'][lenChild - 1].push(entry)
-
-}
 export const allRemainingSetCallsInState = (entry,
                                             stateWeWillRunName,
                                             parentDataStateAbsolutePathArray,
@@ -275,34 +201,12 @@ export const applyE2EAndUnitTimelineRules = (
         const entry = root['trialEntries'][entriesLen - 1]
         // need to put the state run count dependent rules in visitor function
 
-        if(stateRunCount === 0) {
-            // the start of each state
-            console.log(stateWeWillRunName, startChildren)
-            // stateWeWillRunName is supposed to be a string
-            if(startChildren.includes(stateWeWillRunName)) {
-                // passes for machine of 1 level
-                // the first state in the submachine
-                console.log('setupFirstState')
-                setupFirstState(parentState, childState, entry)
-            }
-            else {
-                console.log('setupSetInAllRemainingStates')
-                // first set function called in all states that aren't start states
-                setupSetInAllRemainingStates(parentState, childState, entry)                
-
-            }
-        }
-        else if(stateRunCount > 0) {
-            console.log('revisitingSuccessfullyRunStates')
-            // any state that has already been successfully run once
-            revisitingSuccessfullyRunStates(parentState, childState, entry)
-        }
     }
     else if(set2CallCount > 0) {
         const entriesLen = root['trialEntries'].length
         const entry = root['trialEntries'][entriesLen - 1]
 
-        console.log('allRemainingSetCallsInState')
+        // console.log('allRemainingSetCallsInState')
         // passes
         // all remaining set calls inside a single state
         allRemainingSetCallsInState(
@@ -325,7 +229,7 @@ export const set2 = ({root,
     // Set2SFromStateFunctionCallCount, stateRunCount
     // are reset inside breathFirstTraversal2
     // console.log({parentStateNameAbsolutePathArray})
-    console.log({root, parentStateNameAbsolutePathArray})
+    // console.log({root, parentStateNameAbsolutePathArray})
     let parentState = getState2(root, parentStateNameAbsolutePathArray)
     // console.log({parentState})
     let childState = parentState.children[stateWeWillRunName]
@@ -476,6 +380,131 @@ export const set2 = ({root,
 
 // }
 
+
+
+
+export const addOrSwitchWinningStateName = (action, winningStateName) => {
+
+    if(action.meta.parentState.start.includes(winningStateName)) {
+        // console.log("push", action.meta.logList)
+        action.meta.logList.push(winningStateName)
+        // if(levelId > 0) {
+        //     action.type += ` - ${winningStateName}`
+        // }
+    }
+    else {
+        action.meta.logList.pop()
+        action.meta.logList.push(winningStateName)
+        // replaceState(action, winningStateName)
+    }
+}
+export const getParentObject = (parentState) => {
+
+    if('parent' in parentState) {
+        return parentState['parent']
+    }
+    return false
+}
+
+export const setupFirstState = (parentState, childState, entry) => {
+
+    // make the end to end entry
+    parentState['E2ETimeLines'].push([])
+    const lenParent = parentState['E2ETimeLines'].length
+    parentState['E2ETimeLines'][lenParent - 1].push(entry)
+    // what if there is no grandparent
+    // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
+    const grandParentObject = getParentObject(parentState)
+    // console.log({parentState, grandParentObject})
+
+    if(grandParentObject) {
+        // what if grandParentObject has never ben used yet
+        if(grandParentObject['E2ETimeLines'].length === 0) {
+            grandParentObject['E2ETimeLines'].push([])
+            const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].push([])
+            const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+
+        }
+        else {
+            const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
+            const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
+            // console.log({grandparentTimeLinesLen, grandparentTimeLineLen})
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+    
+        }
+    
+    }
+
+    childState['unitTimeLines'].push([])
+    const lenChild = childState['unitTimeLines'].length
+    childState['unitTimeLines'][lenChild - 1].push(entry)
+}
+
+export const setupSetInAllRemainingStates = (parentState, childState, entry) => {
+
+    /*
+        make a new timeline for entries, because we need to keep the
+        new entries separate from the previous entries from prior
+        runs of the submachine
+        make a new timeline for the child state
+            the child state might be run more than 1 time in the same machine so we
+            need to keep the child runs separated from each submachine run
+        add entry to new timeline for the child state
+        append entry to end to end time line for the parent state
+        
+    */
+    parentState['E2ETimeLines'].push([])
+    const lenParent = parentState['E2ETimeLines'].length
+    parentState['E2ETimeLines'][lenParent - 1].push(entry)
+
+    childState['unitTimeLines'].push([])
+    const lenChild = childState['unitTimeLines'].length
+    childState['unitTimeLines'][lenChild - 1].push(entry)
+
+}
+export const revisitingSuccessfullyRunStates = (parentState, childState, entry) => {
+
+    const lenParent = parentState['E2ETimeLines'].length
+    parentState['E2ETimeLines'][lenParent - 1].push(entry)
+
+    const lenChild = childState['unitTimeLines'].length
+    childState['unitTimeLines'][lenChild - 1].push(entry)
+
+}
+export const applyStateCountRecordRules = (
+    stateRunCount,
+    startChildren,
+    stateWeWillRunName,
+    parentState,
+    childState,
+    entry
+) => {
+
+    if(stateRunCount === 0) {
+        // the start of each state
+        // console.log(stateWeWillRunName, startChildren)
+        // stateWeWillRunName is supposed to be a string
+        if(startChildren.includes(stateWeWillRunName)) {
+            // passes for machine of 1 level
+            // the first state in the submachine
+            // console.log('setupFirstState')
+            setupFirstState(parentState, childState, entry)
+        }
+        else {
+            // console.log('setupSetInAllRemainingStates')
+            // first set function called in all states that aren't start states
+            setupSetInAllRemainingStates(parentState, childState, entry)                
+
+        }
+    }
+    else if(stateRunCount > 0) {
+        // console.log('revisitingSuccessfullyRunStates')
+        // any state that has already been successfully run once
+        revisitingSuccessfullyRunStates(parentState, childState, entry)
+    }
+}
 export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
 
     // setup for breathFirstTraversal2
@@ -486,48 +515,13 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     parentState (object)
     parentPath (string)
     action.type (string)
-    childPath (string)
     
     need to start state at getState2('elementarySchool - displayResults')
     checking for the next state must be O(1) time
     type must be the path of the current state (printing out in redux debugger)
     need parent and child to always be different for accessing the next state
     a parent(child in the first run) can represent any collection of start children
-    start:
-    parentState = getState2(state, action.type - bottom level)
-    what if the path is only 1 unit
-    parentPath = action.type - bottom level
-    childName = action.type on bottom level
-    action.logList = parentPath.split(' - ')
-    action.currentStateNames = [parentState.children[childName]]
-
-
-    visitor:
-    
-    next = action.currentStateNames
-
-    loop
-
-        winningStateName
-        winningStateObject
-        next.forEach(stateName => {
-            currentState = parentState.children[stateName]
-        })
-        if winningStateName is in parentState.start
-            action.logList.push(childName)
-        else
-            action.logList.pop()
-            action.logList.push(childName)
-        action.type = action.logList.join(' - )
-        if currentState (the winner)(childName) is a parent
-            action.parentState = currentState
-            action.parentPath +=  ' - ' + childName
-            action.currentStateNames = parentState.start
-            f(state, action)
-            action.logList.pop()
-        else
-            next = parentState.children[stateName].next
-
+  
     expected log output
     elementarySchool - displayResults
     elementarySchool - displayResults - storeResults
@@ -540,7 +534,7 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     action.meta.parentPathArray
     action.meta.childName
     */
-    console.log("setupForBreathFirstTraversal2")
+    // console.log("setupForBreathFirstTraversal2")
     // console.log({path})
     let path = action.type.split(' - ')
 
@@ -548,60 +542,22 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
 
     action.meta.parentPathArray = path.slice(0, path.length - 1)
     action.meta.logList = path.slice(0, path.length - 1)
-
-    console.log(action.meta.parentPathArray, action.meta.logList)
-    // action.meta.childName = path[path.length - 1]
-    // console.log({x: action.meta.parentPathArray})
     action.meta.parentState = getState2(state, action.meta.parentPathArray)
-    console.log(action.meta)
-    // messes things up
-    // const [ parentState, childName ] = [action.meta.parentState, action.meta.childName]
+    action.meta.currentStateNames = [path[path.length - 1]]
+    action.meta.stateNumberRun = -1
 
-    action.meta.currentStateNames = [path[path.length - 1]/*action.meta.childName*/]
-
-
-    // let parent = getState2(state, action.type)
-
-    // action.meta.currentStateNames = parent.start
-
-    // let pathToParent = action.type.split(' - ')
-    // pathToParent.pop()
-    // pathToParent = pathToParent.join(' - ')
-    // action.meta.parent = parent
-
-    // need to also maintain a parentPath pointer
-    // action.meta.parentPathArray = action.type
-    // action.meta.root = state
-    console.log("action", action)
     return breathFirstTraversal2(state, action, levelId)
-
 }
-// export const replaceState = (action, winningStateName) => {
-//     action.type = action.type.split(' - ')
-//     action.type.pop()
-//     action.type.push(winningStateName)
-//     action.type = action.type.join(' - ')
-
-// }
-// export const pushNextLevel = (action) => {
-//     action.type = action.type.split(' - ')
-//     action.type.pop()
-//     action.type = action.type.join(' - ')
-
-// }
-// export const popLowestLevel = (action) => {
-//     action.type = action.type.split(' - ')
-//     action.type.pop()
-
-// }
-
 export const breathFirstTraversal2 = (state, action, levelId) => {
 
     // want user to think in terms of name - name
     // but system is default setup to use [name, name]
     // the path array is converted to string for action.type
-    console.log('action starting at breathFirstTraversal2', action)
-
+    // console.log('action starting at breathFirstTraversal2', action)
+    /* the logging system has 2 parts
+            # set calls in each state function(seems to work)
+            # times state was run in submachine(redesign)
+    */
     let temporaryState = state
 
     let next = action.meta.currentStateNames
@@ -638,7 +594,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             }
 
             action.meta.currentStateName = nextStateName
-            console.log('action before running state', action)
+            // console.log('action before running state', action)
             const result = nextState['functionCode'](temporaryState, action)
             const success = result[1]
 
@@ -650,7 +606,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             winningStateName = nextStateName
 
         })
-        console.log({winningStateName, passes})
+        // console.log({winningStateName, passes})
         /*
         state logging rules
             ony add an entry when it's corresponding state socceeds
@@ -683,10 +639,33 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             })
             return [temporaryState, false]
         }
-        // trialEntries[last item] to entries
+        /*
+        stateRunCount -> action.meta.parentState.children[winningStateName].stateRunCount,
+        startChildren -> action.meta.parentState.start
+        stateWeWillRunName -> winningStateName,
+        parentState -> action.meta.parentState,
+        childState -> action.meta.parentState[winningStateName],
+        entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
+        */
+        action.meta.stateNumberRun += 1
+        // if(action.meta.stateNumberRun )
+       /*
+       state passed, set was run at least 1 time
+       state passed, set wasn't run 1 time
+       */
         const trialEntriesLength = temporaryState['trialEntries'].length
-        temporaryState['entries'].push(temporaryState['trialEntries'][trialEntriesLength - 1])
-        temporaryState['trialEntries'] = []
+
+        // applyStateCountRecordRules(
+        //     action.meta.parentState.children[winningStateName].stateRunCount,
+        //     action.meta.parentState.start,
+        //     winningStateName,
+        //     action.meta.parentState,
+        //     action.meta.parentState[winningStateName],
+        //     temporaryState['trialEntries'][trialEntriesLength - 1]
+        // )
+        // trialEntries[last item] to entries
+        // temporaryState['entries'].push(temporaryState['trialEntries'][trialEntriesLength - 1])
+        // temporaryState['trialEntries'] = []
         let winningState = action.meta.parentState.children[winningStateName]
         // reset Set2SFromStateFunctionCallCount after the state passed
         winningState.Set2SFromStateFunctionCallCount = 0
@@ -694,25 +673,14 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         winningState.stateRunCount += 1
         // console.log(winningState.stateRunCount)
 
-        // addOrSwitchChildState
+        // addOrSwitchWinningStateName
         // if state was start
-        if(action.meta.parentState.start.includes(winningStateName)) {
-            console.log("push", action.meta.logList)
-            action.meta.logList.push(winningStateName)
-            // if(levelId > 0) {
-            //     action.type += ` - ${winningStateName}`
-            // }
-        }
-        else {
-            action.meta.logList.pop()
-            action.meta.logList.push(winningStateName)
-            // replaceState(action, winningStateName)
-        }
+        addOrSwitchWinningStateName(action, winningStateName)
         action.type = action.meta.logList.join(' - ')
         console.log(action.type)
 
         if('children' in winningState) {
-            console.log("children", winningState)
+            // console.log("children", winningState)
             // action.parentState = currentState
             // action.parentPath +=  ' - ' + childName
             // action.currentStateNames = parentState.start
@@ -720,10 +688,11 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             // action.logList.pop()
 
             // action.type += ' - '
+
             action.meta.parentState = winningState
             action.meta.parentPathArray.push(winningStateName)
             action.meta.currentStateNames = action.meta.parentState.start
-            console.log("before recurse", action.meta)
+            // console.log("before recurse", action.meta)
             const nestedResult = breathFirstTraversal2(
                 temporaryState,
                 action,
@@ -738,7 +707,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
                 return [temporaryState, false]
             }
             temporaryState = nestedResult[0]
-            // wrong
+
             action.meta.parentPathArray.pop()
             action.meta.parentState = getState2(temporaryState, parentPathArray)
             action.meta.logList.pop()
@@ -746,7 +715,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             // popLowestLevel(action)
         }
         if('next' in winningState) {
-            // console.log('next', winningStateName, action.meta.parent.children[winningStateName])
+            // console.log('next', winningStateName, action.meta.parentState.children[winningStateName].next)
             next = action.meta.parentState.children[winningStateName].next
         }
         else {

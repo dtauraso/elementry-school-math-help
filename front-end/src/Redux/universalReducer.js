@@ -35,18 +35,18 @@ const initialState = {
 // down to the target js object that we want to be called the state name
 const universalReducer = (state = initialState, action) => {
 
-    console.log("in the Reducers")
-    console.log({state, action})
+    // console.log("in the Reducers")
+    // console.log({state, action})
     // action.type always holds the start state
     // console.log(action.type, state, Root)
     const { type, payload, meta } = action
-    console.log({meta})
+    // console.log({meta})
     // if(typeof(type) === 'string') {
     //     console.log('caught', type)
     //     return state
     // }
     if(type === '@@INIT') {
-        console.log("running init")
+        // console.log("running init")
         return state
     }
     else {

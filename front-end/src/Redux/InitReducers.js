@@ -267,7 +267,11 @@ export var newContextualStateChart = {
                         next: ['setupSubmachineForDisplay']
                     },
                     setupSubmachineForDisplay: {
-                        functionCode: setupSubmachineForDisplay
+                        functionCode: setupSubmachineForDisplay,
+                        next: ['fakeState']
+                    },
+                    fakeState: {
+                        functionCode: returnStateTrue
                     }
                 },
                 variables: {

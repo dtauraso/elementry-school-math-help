@@ -25,8 +25,8 @@ const storeResults = (state, action) => {
     // const stateName = action.type
     // const payload = action.payload
     // let temporaryState = state
-    console.log('store results')
-    console.log({parent: action.meta.parentState, meta: action.meta})
+    // console.log('store results')
+    // console.log({parent: action.meta.parentState, meta: action.meta})
 
     /*
     action.type is acting as a parent when a state is being run
@@ -46,9 +46,9 @@ const storeResults = (state, action) => {
         stateWeWillRunName: action.meta.currentStateName,
         parentDataStateAbsolutePathArray: action.meta.parentPathArray
     }
-    console.log({argumentObject})
+    // console.log({argumentObject})
     set2(argumentObject, 'test', 1)
-    // set2(argumentObject, 'test', 4)
+    set2(argumentObject, 'test', 4)
     // set2(argumentObject, 'I\'m another test', 7)
 
         // // console.log('store resulst', payload)
@@ -65,14 +65,14 @@ const setupSubmachineForDisplay = (state, action) => {
     // const stateName = action.type
     // const payload = action.payload
     // let temporaryState = state
-    console.log({type: action.type, meta: action.meta})
+    // console.log({type: action.type, meta: action.meta})
     const argumentObject = {
         root: state,
         parentStateNameAbsolutePathArray: action.meta.parentPathArray,
         stateWeWillRunName: action.meta.currentStateName,
         parentDataStateAbsolutePathArray: action.meta.parentPathArray
     }
-    console.log({argumentObject})
+    // console.log({argumentObject})
     set2(argumentObject, 'test', 78)
     // set2(argumentObject, 'display test', 4)
     // set2(argumentObject, 'test', 6)
