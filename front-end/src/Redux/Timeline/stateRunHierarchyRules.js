@@ -106,3 +106,10 @@ export const applyStateCountRecordRules = (
         revisitingSuccessfullyRunStates(parentState, childState, entry)
     }
 }
+
+/* have a separate timeline tree from the main control flow tree
+    put in whatever things from original tree that let's us mentally link the records
+    to the functions, variable, and state that created them
+
+    change the linear timeline to a tree timeline for parallel state
+*/
