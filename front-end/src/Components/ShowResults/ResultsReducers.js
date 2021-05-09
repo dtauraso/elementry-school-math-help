@@ -17,7 +17,7 @@
         
         
 //         } from '../Redux/reducerHelpers'
-import { set2 } from '../../Redux/reducerHelpers2'
+import { set2 } from '../../Redux/Timeline/setFunctionCountRules'
 
 // only runs when user does autocompute
 const storeResults = (state, action) => {

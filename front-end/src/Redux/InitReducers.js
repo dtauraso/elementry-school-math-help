@@ -3,7 +3,8 @@ import { makeQuantity } from "../utility"
 import {storeResults,
         setupSubmachineForDisplay,
         setupSubmachineForProblems} from '../Components/ShowResults/ResultsReducers'
-import { setTimelineMetadataToStates } from './reducerHelpers2'
+import { setTimelineMetadataToStates } from './Timeline/timelineHierarchyMetadata'
+
 const returnStateTrue = (state, action) => {
     return [state, true]
 }

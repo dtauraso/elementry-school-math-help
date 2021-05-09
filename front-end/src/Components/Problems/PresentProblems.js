@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { autoSolve } from '../../Redux/Actions'
 
 import {
-    getState2 } from '../../Redux/reducerHelpers2'
+    getState2 } from '../../Redux/utilityFunctions'
 import AddTwoValues from './AddTwoValues'
 
 

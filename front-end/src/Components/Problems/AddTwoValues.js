@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { getCat } from '../../Redux/Actions'
 
-import { getState2 } from '../../Redux/reducerHelpers2'
+import { getState2 } from '../../Redux/utilityFunctions'
 // AddTwoValues box
 // mobile first
 const backgroundColor = "lightblue"
