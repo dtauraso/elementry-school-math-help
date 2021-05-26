@@ -4,6 +4,8 @@ import {
     getState2
 } from './utilityFunctions'
 
+import { entryDispatch } from './Timeline/stateRunHierarchyRules'
+
 export const addOrSwitchWinningStateName = (action, winningStateName) => {
 
     if(action.meta.parentState.start.includes(winningStateName)) {
@@ -169,7 +171,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
        state passed, set wasn't run 1 time
        */
         const trialEntriesLength = temporaryState['trialEntries'].length
-
+        entryDispatch(state, action)
         // applyStateCountRecordRules(
         //     action.meta.parentState.children[winningStateName].stateRunCount,
         //     action.meta.parentState.start,
