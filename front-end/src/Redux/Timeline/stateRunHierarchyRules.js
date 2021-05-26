@@ -74,6 +74,14 @@ export const revisitingSuccessfullyRunStates = (parentState, childState, entry) 
     childState['unitTimeLines'][lenChild - 1].push(entry)
 
 }
+// visiting a state for the first time on the same run(continue current timeline)
+// vs visiting a state for the first time, but we are on a different run(make new timeline)
+/*
+step tree for 1 timeline(parallel states)
+a0a1a2
+    b0b1b2
+    c0c1c2
+*/
 export const applyStateCountRecordRules = (
     stateRunCount,
     startChildren,
