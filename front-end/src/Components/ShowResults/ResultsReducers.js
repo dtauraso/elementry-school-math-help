@@ -39,6 +39,7 @@ const storeResults = (state, action) => {
     the second time was on the same level
     */
     // console.log({state, action})
+    // use an array for the path
     const argumentObject = {
         root: state,
         // action.meta.parent is not a path

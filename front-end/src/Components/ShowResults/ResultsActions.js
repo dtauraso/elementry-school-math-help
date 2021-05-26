@@ -14,6 +14,7 @@ export const getProblemSets = () => dispatch => {
             
                 // let x = { displayResults: getState2(store.getState(), `elementarySchool - displayResults`)}
                 // console.log("X", x)
+                // use a string for the path
                 dispatch({
                     // 'elementarySchool - displayResults'
                     type: 'elementarySchool - displayResults',
