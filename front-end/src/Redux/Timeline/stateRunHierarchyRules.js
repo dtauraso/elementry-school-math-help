@@ -113,3 +113,17 @@ export const applyStateCountRecordRules = (
 
     change the linear timeline to a tree timeline for parallel state
 */
+
+export const entryDispatch = (state, action) => {
+
+    if(state['trialEntries'].length === 0) {
+        // There is a missing entry.
+
+    }
+    else if(state['trialEntries'].length === 1) {
+        // There was 1 successfull state.
+    }
+    else if(state['trialEntries'].length > 1) {
+        // There were 0 succesfull states.
+    }
+}
