@@ -122,6 +122,8 @@ export const entryDispatch = (state, action) => {
     }
     else if(state['trialEntries'].length === 1) {
         // There was 1 successfull state.
+        const entry = state['trialEntries'].pop()
+        state['entries'].push(entry)
     }
     else if(state['trialEntries'].length > 1) {
         // There were 0 succesfull states.
