@@ -80,6 +80,11 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
     /* the logging system has 2 parts
             # set calls in each state function(seems to work)
             # times state was run in submachine(seems to work for 1 case)
+
+            parent and child pointers for traversing the states
+            metadata for tracking the current state
+            metadata for tracking # of times the state ran successfully and how many times
+            set2 was called for each time the state ran sucessfully
     */
     let temporaryState = state
 
