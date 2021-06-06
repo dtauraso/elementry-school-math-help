@@ -56,7 +56,7 @@ export const setupSetInAllRemainingStates = (parentState, childState, entry) => 
         append entry to end to end time line for the parent state
         
     */
-    // parentState['E2ETimeLines'].push([])
+
     const lenParent = parentState['E2ETimeLines'].length
     parentState['E2ETimeLines'][lenParent - 1].push(entry)
 
@@ -140,18 +140,19 @@ export const entryDispatch = (state, action) => {
         childState -> action.meta.parent.children[winningStateName]
         entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
-        let winningStateName = action.meta.currentStateName
-        let entriesLength = state['entries'].length
-        console.log({action})
-        applyStateCountRecordRules(
-            {stateRunCount: action.meta.parentState.children[winningStateName].stateRunCount,
-            startChildren: action.meta.parentState.start,
-            stateWeWillRunName: winningStateName,
-            parentState: action.meta.parentState,
-            childState: action.meta.parentState.children[winningStateName],
-            entry: state['entries'][entriesLength - 1]})
+        
     }
     else if(state['trialEntries'].length > 1) {
         // There were 0 succesfull states.
     }
+    let winningStateName = action.meta.currentStateName
+    let entriesLength = state['entries'].length
+    console.log({action})
+    applyStateCountRecordRules(
+        {stateRunCount: action.meta.parentState.children[winningStateName].stateRunCount,
+        startChildren: action.meta.parentState.start,
+        stateWeWillRunName: winningStateName,
+        parentState: action.meta.parentState,
+        childState: action.meta.parentState.children[winningStateName],
+        entry: state['entries'][entriesLength - 1]})
 }
