@@ -45,6 +45,7 @@ const universalReducer = (state = initialState, action) => {
     //     console.log('caught', type)
     //     return state
     // }
+
     if(type === '@@INIT') {
         // console.log("running init")
         return state

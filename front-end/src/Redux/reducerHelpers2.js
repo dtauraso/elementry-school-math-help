@@ -53,10 +53,11 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     */
     // console.log("setupForBreathFirstTraversal2")
     // console.log({path})
+    console.log(action)
     let path = action.type.split(' - ')
 
     // assume path as at least 2 elements
-
+    
     action.meta.parentPathArray = path.slice(0, path.length - 1)
     action.meta.logList = path.slice(0, path.length - 1)
     action.meta.parentState = getState2(state, action.meta.parentPathArray)
@@ -170,7 +171,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
        state passed, set was run at least 1 time
        state passed, set wasn't run 1 time
        */
-        const trialEntriesLength = temporaryState['trialEntries'].length
+        // const trialEntriesLength = temporaryState['trialEntries'].length
         entryDispatch(state, action)
         // applyStateCountRecordRules(
         //     action.meta.parentState.children[winningStateName].stateRunCount,

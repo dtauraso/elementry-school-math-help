@@ -13,7 +13,7 @@ export const allRemainingSetCallsInState = (
     varName,
     newValue) => {
     // console.log('allRemainingSetCallsInState')
-    // console.log(varName, newValue)
+    // console.log({varName, newValue})
     let before = entry[stateWeWillRunName][parentDataStateAbsolutePathArray]['A_before']
     let after = entry[stateWeWillRunName][parentDataStateAbsolutePathArray]['B_after']
     after[varName] = newValue
@@ -24,6 +24,7 @@ export const allRemainingSetCallsInState = (
     }
 
 }
+
 
 export const applyE2EAndUnitTimelineRules = (
     root,
@@ -99,7 +100,7 @@ export const set2 = (
     let set2CallCount = childState['Set2SFromStateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
     let startChildren = parentState['start']
-
+    console.log({varName, value})
     /* 
     unit test:
     entry is saved at the state it was made in
@@ -109,10 +110,6 @@ export const set2 = (
     applyE2EAndUnitTimelineRules(
         root,
         set2CallCount,
-        stateRunCount,
-        childState,
-        startChildren,
-        parentState,
         stateWeWillRunName,
         functionName,
         parentDataStateAbsolutePathArray,
