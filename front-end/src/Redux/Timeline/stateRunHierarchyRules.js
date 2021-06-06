@@ -144,7 +144,7 @@ export const entryDispatch = (state, action) => {
         entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
        console.log("here", entry)
-
+       
         
     }
     else if(state['trialEntries'].length > 1) {
@@ -153,7 +153,7 @@ export const entryDispatch = (state, action) => {
         // what if it runs through all the states and they all fail and none of them
         // set variables
     }
-
+    // requires at least 1 entry to exist
     let winningStateName = action.meta.currentStateName
     let entriesLength = state['entries'].length
     console.log({action, entry: state['entries'][entriesLength - 1]})
@@ -164,4 +164,5 @@ export const entryDispatch = (state, action) => {
         parentState: action.meta.parentState,
         childState: action.meta.parentState.children[winningStateName],
         entry: state['entries'][entriesLength - 1]})
+    
 }
