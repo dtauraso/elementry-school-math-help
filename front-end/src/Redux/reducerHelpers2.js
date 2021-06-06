@@ -96,6 +96,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
     // there is no code for storing trial state entries
     // a trial state entry is only made when set2 is called
     while(true) {
+        // what if there is only 1 trial state and it fails
         let passes = false
         let winningStateName = ''
         
