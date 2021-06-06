@@ -83,12 +83,12 @@ a0a1a2
     c0c1c2
 */
 export const applyStateCountRecordRules = (
-    stateRunCount,
+    {stateRunCount,
     startChildren,
     stateWeWillRunName,
     parentState,
     childState,
-    entry
+    entry}
 ) => {
 
     if(stateRunCount === 0) {
@@ -132,6 +132,24 @@ export const entryDispatch = (state, action) => {
         // There was 1 successfull state.
         const entry = state['trialEntries'].pop()
         state['entries'].push(entry)
+        /*
+        stateRunCount -> action.meta.parent.children[winningStateName].stateRunCount
+        stateWeWillRunName -> winningStateName
+        startChildren -> action.meta.parent.start
+        parentState -> action.meta.parent
+        childState -> action.meta.parent.children[winningStateName]
+        entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
+        */
+        let winningStateName = action.meta.currentStateName
+        let entriesLength = state['entries'].length
+        console.log({action})
+        applyStateCountRecordRules(
+            {stateRunCount: action.meta.parentState.children[winningStateName].stateRunCount,
+            startChildren: action.meta.parentState.start,
+            stateWeWillRunName: winningStateName,
+            parentState: action.meta.parentState,
+            childState: action.meta.parentState.children[winningStateName],
+            entry: state['entries'][entriesLength - 1]})
     }
     else if(state['trialEntries'].length > 1) {
         // There were 0 succesfull states.
