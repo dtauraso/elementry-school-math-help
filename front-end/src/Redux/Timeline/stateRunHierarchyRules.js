@@ -144,6 +144,9 @@ export const entryDispatch = (state, action) => {
     }
     else if(state['trialEntries'].length > 1) {
         // There were 0 succesfull states.
+        // what happens if at least 1 trial state didn't set any variables
+        // what if it runs through all the states and they all fail and none of them
+        // set variables
     }
     let winningStateName = action.meta.currentStateName
     let entriesLength = state['entries'].length
