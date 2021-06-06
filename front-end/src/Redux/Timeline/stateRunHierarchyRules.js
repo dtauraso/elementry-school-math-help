@@ -12,11 +12,12 @@ export const setupFirstState = (parentState, childState, entry) => {
     // make the end to end entry
     parentState['E2ETimeLines'].push([])
     const lenParent = parentState['E2ETimeLines'].length
+    console.log({entry})
     parentState['E2ETimeLines'][lenParent - 1].push(entry)
     // what if there is no grandparent
     // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
     const grandParentObject = getParentObject(parentState)
-    // console.log({parentState, grandParentObject})
+    console.log({parentState, grandParentObject})
 
     if(grandParentObject) {
         // what if grandParentObject has never ben used yet
@@ -124,13 +125,15 @@ export const applyStateCountRecordRules = (
 
 export const entryDispatch = (state, action) => {
 
+    let entry = null
+    console.log('entries', state['trialEntries'])
     if(state['trialEntries'].length === 0) {
         // There is a missing entry.
 
     }
     else if(state['trialEntries'].length === 1) {
         // There was 1 successfull state.
-        const entry = state['trialEntries'].pop()
+        entry = state['trialEntries'].pop()
         state['entries'].push(entry)
         /*
         stateRunCount -> action.meta.parent.children[winningStateName].stateRunCount
@@ -140,6 +143,8 @@ export const entryDispatch = (state, action) => {
         childState -> action.meta.parent.children[winningStateName]
         entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
+       console.log("here", entry)
+
         
     }
     else if(state['trialEntries'].length > 1) {
@@ -148,9 +153,10 @@ export const entryDispatch = (state, action) => {
         // what if it runs through all the states and they all fail and none of them
         // set variables
     }
+
     let winningStateName = action.meta.currentStateName
     let entriesLength = state['entries'].length
-    console.log({action})
+    console.log({action, entry: state['entries'][entriesLength - 1]})
     applyStateCountRecordRules(
         {stateRunCount: action.meta.parentState.children[winningStateName].stateRunCount,
         startChildren: action.meta.parentState.start,

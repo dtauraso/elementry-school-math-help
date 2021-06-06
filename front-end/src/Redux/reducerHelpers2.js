@@ -66,6 +66,11 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
 
     return breathFirstTraversal2(state, action, levelId)
 }
+// export const setChildrenStateCountsToZero = (action) => {
+// Object.keys(action.meta.parentState.children).forEach(childStateName => {
+//                 action.meta.parentState.children[childStateName].stateRunCount = 0
+//             })
+// }
 export const breathFirstTraversal2 = (state, action, levelId) => {
 
     // want user to think in terms of name - name
@@ -88,6 +93,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
     // let start
     // console.log('inside the bft2')
     // console.log({state, action, levelId})
+    // there is no code for storing trial state entries
+    // a trial state entry is only made when set2 is called
     while(true) {
         let passes = false
         let winningStateName = ''
