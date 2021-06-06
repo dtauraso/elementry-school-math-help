@@ -74,7 +74,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
     // console.log('action starting at breathFirstTraversal2', action)
     /* the logging system has 2 parts
             # set calls in each state function(seems to work)
-            # times state was run in submachine(redesign)
+            # times state was run in submachine(seems to work for 1 case)
     */
     let temporaryState = state
 

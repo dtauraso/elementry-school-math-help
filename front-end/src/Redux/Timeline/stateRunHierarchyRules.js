@@ -56,7 +56,7 @@ export const setupSetInAllRemainingStates = (parentState, childState, entry) => 
         append entry to end to end time line for the parent state
         
     */
-    parentState['E2ETimeLines'].push([])
+    // parentState['E2ETimeLines'].push([])
     const lenParent = parentState['E2ETimeLines'].length
     parentState['E2ETimeLines'][lenParent - 1].push(entry)
 
