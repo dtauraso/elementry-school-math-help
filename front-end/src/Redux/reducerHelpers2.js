@@ -86,6 +86,9 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             metadata for tracking the current state
             metadata for tracking # of times the state ran successfully and how many times
             set2 was called for each time the state ran sucessfully
+
+            E2E testing is the main focus now
+            unit testing is secondary
     */
     let temporaryState = state
 
