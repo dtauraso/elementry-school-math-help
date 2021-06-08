@@ -3,10 +3,7 @@ import {
     getVariable2,
     getState2
 } from './utilityFunctions'
-import {
-    makeInitEntry,
-    updateEntry
-} from './Timeline/timelineEntries'
+import { makeInitEntry } from './Timeline/timelineEntries'
 
 import { entryDispatch } from './Timeline/stateRunHierarchyRules'
 

@@ -4,7 +4,7 @@ import {
     getState2
 } from '../utilityFunctions'
 
-import { makeEntry, updateEntry } from './timelineEntries'
+import { updateEntry } from './timelineEntries'
 
 export const allRemainingSetCallsInState = (
     entry,
