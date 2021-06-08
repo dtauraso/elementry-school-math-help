@@ -9,13 +9,14 @@ import { updateEntry } from './timelineEntries'
 export const allRemainingSetCallsInState = (
     entry,
     stateWeWillRunName,
-    parentDataStateAbsolutePathArray,
+    parentDataStateAbsolutePathString,
     varName,
     newValue) => {
     // console.log('allRemainingSetCallsInState')
     // console.log({varName, newValue})
-    let before = entry[stateWeWillRunName][parentDataStateAbsolutePathArray]['A_before']
-    let after = entry[stateWeWillRunName][parentDataStateAbsolutePathArray]['B_after']
+    console.log({updating: entry[stateWeWillRunName], entry})
+    let before = entry[stateWeWillRunName][parentDataStateAbsolutePathString]['A_before']
+    let after = entry[stateWeWillRunName][parentDataStateAbsolutePathString]['B_after']
     after[varName] = newValue
     // if a different variable is set after the first set2 call
     // in the same function
@@ -55,6 +56,7 @@ export const applyE2EAndUnitTimelineRules = (
         const entriesLen = root['trialEntries'].length
         const entry = root['trialEntries'][entriesLen - 1]
 
+        console.log({parentDataStateAbsolutePathArray})
         // console.log('allRemainingSetCallsInState')
         // passes
         // all remaining set calls inside a single state
@@ -62,7 +64,7 @@ export const applyE2EAndUnitTimelineRules = (
         entry,
         stateWeWillRunName,
         // editing an entry that already exists
-        `A_${parentDataStateAbsolutePathArray}`,
+        `A_${parentDataStateAbsolutePathArray.join(' - ')}`,
         varName,
         newValue)
     }

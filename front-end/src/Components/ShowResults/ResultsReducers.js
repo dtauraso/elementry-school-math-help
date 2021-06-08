@@ -73,9 +73,12 @@ const setupSubmachineForDisplay = (state, action) => {
         stateWeWillRunName: action.meta.currentStateName,
         parentDataStateAbsolutePathArray: action.meta.parentPathArray
     }
+    console.log("inside setupSubmachineForDisplay")
+    console.log({trialEntries: state['trialEntries']})
     // console.log({argumentObject})
     set2(argumentObject, 'test', 78)
     set2(argumentObject, 'I am a different test', 'string')
+    // console.log('        ', argumentObject)
     // set2(argumentObject, 'display test', 4)
     // set2(argumentObject, 'test', 6)
     // set2(argumentObject, 'test', 8)
@@ -162,7 +165,7 @@ const setupSubmachineForDisplay = (state, action) => {
     // printTreeInteractive(temporaryState)
 
     // have the viewing card read the structure
-    return [state, true]
+    return [state, false]
 }
 
 const setupSubmachineForProblems = (state, action) => {

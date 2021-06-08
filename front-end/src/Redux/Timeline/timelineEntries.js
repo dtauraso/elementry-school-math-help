@@ -20,7 +20,7 @@ export const updateEntry = (entries,
 
     let lastEntry = entries[entries.length - 1]
 
-    lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray}`] = {
+    lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray.join(' - ')}`] = {
 
         // is set 1 time
         A_before: {

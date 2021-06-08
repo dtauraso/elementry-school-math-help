@@ -123,36 +123,25 @@ export const applyStateCountRecordRules = (
     change the linear timeline to a tree timeline for parallel state
 */
 
-export const entryDispatch = (state, action) => {
+export const entryDispatch = (state, action, passes) => {
 
     let entry = null
     console.log('entries', state['trialEntries'])
-    if(state['trialEntries'].length === 0) {
-        // There is a missing entry.
-
-    }
-    else if(state['trialEntries'].length === 1) {
-        // There was 1 successfull state.
+    if(passes) {
         entry = state['trialEntries'].pop()
         state['entries'].push(entry)
-        /*
-        stateRunCount -> action.meta.parent.children[winningStateName].stateRunCount
-        stateWeWillRunName -> winningStateName
-        startChildren -> action.meta.parent.start
-        parentState -> action.meta.parent
-        childState -> action.meta.parent.children[winningStateName]
-        entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
-        */
-       console.log("here", entry)
-       
-        
+        console.log("here", entry)
     }
-    else if(state['trialEntries'].length > 1) {
+    else {
+        state['entries'].push(state['trialEntries'])
+        state['trialEntries'] = []
+    }
+    // else if(state['trialEntries'].length > 1) {
         // There were 0 succesfull states.
-        // what happens if at least 1 trial state didn't set any variables
+        // what happens if at least 1 failed trial state didn't set any variables
         // what if it runs through all the states and they all fail and none of them
         // set variables
-    }
+    // }
     // requires at least 1 entry to exist
     let winningStateName = action.meta.currentStateName
     let entriesLength = state['entries'].length

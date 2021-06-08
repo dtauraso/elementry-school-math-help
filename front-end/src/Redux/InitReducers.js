@@ -265,7 +265,7 @@ export var newContextualStateChart = {
                 children: {
                     storeResults: {
                         functionCode: storeResults,
-                        next: ['setupSubmachineForDisplay']
+                        next: ['setupSubmachineForDisplay', 'setupSubmachineForDisplay', 'setupSubmachineForDisplay']
                     },
                     setupSubmachineForDisplay: {
                         functionCode: setupSubmachineForDisplay,

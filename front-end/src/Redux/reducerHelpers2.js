@@ -63,7 +63,7 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
     action.meta.logList = path.slice(0, path.length - 1)
     action.meta.parentState = getState2(state, action.meta.parentPathArray)
     action.meta.currentStateNames = [path[path.length - 1]]
-    action.meta.stateNumberRun = -1
+    // action.meta.stateNumberRun = -1
 
     return breathFirstTraversal2(state, action, levelId)
 }
@@ -94,6 +94,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         via array methods
         The visitor function was taken from an earlier redux project I made and it
         was incomplete.
+
+        each state is limited to the states that are in the same json object
     */
     let temporaryState = state
 
@@ -137,9 +139,11 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             temporaryState['trialEntries'].push(makeInitEntry(   nextStateName,
                                                             null,
                                                             nextState['functionCode'].name))
-           
+            console.log("just made entry", temporaryState['trialEntries'])
             // console.log('action before running state', action)
             const result = nextState['functionCode'](temporaryState, action)
+            console.log({nextState})
+            nextState.Set2SFromStateFunctionCallCount = 0
             const success = result[1]
 
             temporaryState = result[0]
@@ -175,6 +179,8 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         childState -> action.meta.parent.children[winningStateName]
         entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
+        entryDispatch(state, action, passes)
+
         if(!passes) {
             // trialEntries to error state entry
             // reset stateRunCount on all children states
@@ -191,14 +197,14 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         childState -> action.meta.parentState[winningStateName],
         entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
-        action.meta.stateNumberRun += 1
+        // action.meta.stateNumberRun += 1
         // if(action.meta.stateNumberRun )
        /*
        state passed, set was run at least 1 time
        state passed, set wasn't run 1 time
        */
         // const trialEntriesLength = temporaryState['trialEntries'].length
-        entryDispatch(state, action)
+        
         // applyStateCountRecordRules(
         //     action.meta.parentState.children[winningStateName].stateRunCount,
         //     action.meta.parentState.start,
