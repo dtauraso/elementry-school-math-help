@@ -30,7 +30,6 @@ export const applyE2EAndUnitTimelineRules = (
     root,
     set2CallCount,
     stateWeWillRunName,
-    functionName,
     parentDataStateAbsolutePathArray,
     parentDataState,
     varName,
@@ -43,7 +42,6 @@ export const applyE2EAndUnitTimelineRules = (
     if(set2CallCount === 0) {
         // add things to the last entry
 
-        // root['trialEntries'].push(
         updateEntry(root['trialEntries'],
                     stateWeWillRunName,
                     parentDataStateAbsolutePathArray,
@@ -51,29 +49,6 @@ export const applyE2EAndUnitTimelineRules = (
                     varName,
                     value,
                     newValue)
-
-        //     makeEntry(
-        // stateWeWillRunName,
-        // functionName,
-        // parentDataStateAbsolutePathArray,
-        // parentDataState,
-        // varName,
-        // value,
-        // newValue,
-        // null)
-        // )
-
-        // updateEntry = (entries,
-        //     stateWeWillRunName,
-        //     parentDataStateAbsolutePathArray,
-        //     parentDataState,
-        //     varName,
-        //     value,
-        //     newValue)
-        // console.log('entry made')
-        const entriesLen = root['trialEntries'].length
-        const entry = root['trialEntries'][entriesLen - 1]
-        // need to put the state run count dependent rules in visitor function
 
     }
     else if(set2CallCount > 0) {

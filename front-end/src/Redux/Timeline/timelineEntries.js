@@ -1,34 +1,34 @@
-export const makeEntry = (  stateWeWillRunName,
-    functionName,
-    parentDataStateAbsolutePathArray,
-    parentDataState,
-    varName,
-    value,
-    newValue,
-    childTimeLine) => {
-    return {
-        [stateWeWillRunName]: {
-            // enforce order of keys becuase Chrome inspector
-            // sorts the keys
-            [`A_${parentDataStateAbsolutePathArray}`]: {
+// export const makeEntry = (  stateWeWillRunName,
+//     functionName,
+//     parentDataStateAbsolutePathArray,
+//     parentDataState,
+//     varName,
+//     value,
+//     newValue,
+//     childTimeLine) => {
+//     return {
+//         [stateWeWillRunName]: {
+//             // enforce order of keys becuase Chrome inspector
+//             // sorts the keys
+//             [`A_${parentDataStateAbsolutePathArray}`]: {
 
-                // is set 1 time
-                A_before: {
-                    [varName]: value
-                },
-                // is set 1 time and reset the remaining times set2 is called inside the
-                // function for stateWeWillRunName
-                B_after: {
-                    [varName]: newValue
-                },
-                C_reference: parentDataState,
-            },
-            B_childTimeLine: childTimeLine,
-            C_functionName: functionName,
+//                 // is set 1 time
+//                 A_before: {
+//                     [varName]: value
+//                 },
+//                 // is set 1 time and reset the remaining times set2 is called inside the
+//                 // function for stateWeWillRunName
+//                 B_after: {
+//                     [varName]: newValue
+//                 },
+//                 C_reference: parentDataState,
+//             },
+//             B_childTimeLine: childTimeLine,
+//             C_functionName: functionName,
 
-        }
-    }
-}
+//         }
+//     }
+// }
 
 export const makeInitEntry = (  stateWeWillRunName,
                                 childTimeLine,
