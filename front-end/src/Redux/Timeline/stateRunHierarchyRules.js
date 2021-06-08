@@ -18,7 +18,7 @@ export const setupFirstState = (parentState, childState, entry) => {
     // get the parent's parent and link it down to parentState['E2ETimeLines'][lenParent - 1][lastItem]
     const grandParentObject = getParentObject(parentState)
     console.log({parentState, grandParentObject})
-
+    // its possible for parentState === grandParentObject
     if(grandParentObject) {
         // what if grandParentObject has never ben used yet
         if(grandParentObject['E2ETimeLines'].length === 0) {

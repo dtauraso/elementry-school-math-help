@@ -30,6 +30,43 @@ export const makeEntry = (  stateWeWillRunName,
     }
 }
 
+export const makeInitEntry = (  stateWeWillRunName,
+                                childTimeLine,
+                                functionName) => {
+
+    return {
+        [stateWeWillRunName]: {
+            B_childTimeLine: childTimeLine,
+            C_functionName: functionName,
+        }
+    }
+}
+export const updateEntry = (entries,
+                            stateWeWillRunName,
+                            parentDataStateAbsolutePathArray,
+                            parentDataState,
+                            varName,
+                            value,
+                            newValue) => {
+
+    let lastEntry = entries[entries.length - 1]
+    console.log({entries})
+    lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray}`] = {
+
+        // is set 1 time
+        A_before: {
+            [varName]: value
+        },
+        // is set 1 time and reset the remaining times set2 is called inside the
+        // function for stateWeWillRunName
+        B_after: {
+            [varName]: newValue
+        },
+        C_reference: parentDataState,
+    }
+    
+
+}
 // export const saveErrorEntry = (
 //     temporaryState,
 //     parentStateNameAbsolutePathArray,

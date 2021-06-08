@@ -4,7 +4,7 @@ import {
     getState2
 } from '../utilityFunctions'
 
-import { makeEntry } from './timelineEntries'
+import { makeEntry, updateEntry } from './timelineEntries'
 
 export const allRemainingSetCallsInState = (
     entry,
@@ -41,15 +41,35 @@ export const applyE2EAndUnitTimelineRules = (
 
 
     if(set2CallCount === 0) {
-        root['trialEntries'].push(makeEntry(
-        stateWeWillRunName,
-        functionName,
-        parentDataStateAbsolutePathArray,
-        parentDataState,
-        varName,
-        value,
-        newValue,
-        null))
+        // add things to the last entry
+
+        // root['trialEntries'].push(
+        updateEntry(root['trialEntries'],
+                    stateWeWillRunName,
+                    parentDataStateAbsolutePathArray,
+                    parentDataState,
+                    varName,
+                    value,
+                    newValue)
+
+        //     makeEntry(
+        // stateWeWillRunName,
+        // functionName,
+        // parentDataStateAbsolutePathArray,
+        // parentDataState,
+        // varName,
+        // value,
+        // newValue,
+        // null)
+        // )
+
+        // updateEntry = (entries,
+        //     stateWeWillRunName,
+        //     parentDataStateAbsolutePathArray,
+        //     parentDataState,
+        //     varName,
+        //     value,
+        //     newValue)
         // console.log('entry made')
         const entriesLen = root['trialEntries'].length
         const entry = root['trialEntries'][entriesLen - 1]

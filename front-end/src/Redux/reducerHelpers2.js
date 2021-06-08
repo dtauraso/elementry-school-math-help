@@ -3,6 +3,10 @@ import {
     getVariable2,
     getState2
 } from './utilityFunctions'
+import {
+    makeInitEntry,
+    updateEntry
+} from './Timeline/timelineEntries'
 
 import { entryDispatch } from './Timeline/stateRunHierarchyRules'
 
@@ -125,6 +129,10 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             }
 
             action.meta.currentStateName = nextStateName
+            temporaryState['trialEntries'].push(makeInitEntry(   nextStateName,
+                                                            null,
+                                                            nextState['functionCode'].toString()))
+           
             // console.log('action before running state', action)
             const result = nextState['functionCode'](temporaryState, action)
             const success = result[1]
