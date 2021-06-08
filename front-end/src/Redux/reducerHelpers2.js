@@ -89,6 +89,11 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
 
             E2E testing(testing)
             unit testing(haven't started testing)
+        This visitor function requires the action.type to be a string for the
+        reduc console, but the hierarchy path needs to be an array for quick updating
+        via array methods
+        The visitor function was taken from an earlier redux project I made and it
+        was incomplete.
     */
     let temporaryState = state
 
