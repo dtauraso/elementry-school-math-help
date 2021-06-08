@@ -75,14 +75,7 @@ export const revisitingSuccessfullyRunStates = (parentState, childState, entry) 
     childState['unitTimeLines'][lenChild - 1].push(entry)
 
 }
-// visiting a state for the first time on the same run(continue current timeline)
-// vs visiting a state for the first time, but we are on a different run(make new timeline)
-/*
-step tree for 1 timeline(parallel states, later version)
-a0a1a2
-    b0b1b2
-    c0c1c2
-*/
+
 export const applyStateCountRecordRules = (
     {stateRunCount,
     startChildren,
@@ -116,13 +109,6 @@ export const applyStateCountRecordRules = (
     }
 }
 
-/* have a separate timeline tree from the main control flow tree
-    put in whatever things from original tree that let's us mentally link the records
-    to the functions, variable, and state that created them
-
-    change the linear timeline to a tree timeline for parallel state
-*/
-
 export const entryDispatch = (state, action, passes) => {
 
     let entry = null
@@ -136,12 +122,6 @@ export const entryDispatch = (state, action, passes) => {
         state['entries'].push(state['trialEntries'])
         state['trialEntries'] = []
     }
-    // else if(state['trialEntries'].length > 1) {
-        // There were 0 succesfull states.
-        // what happens if at least 1 failed trial state didn't set any variables
-        // what if it runs through all the states and they all fail and none of them
-        // set variables
-    // }
     // requires at least 1 entry to exist
     let winningStateName = action.meta.currentStateName
     let entriesLength = state['entries'].length
