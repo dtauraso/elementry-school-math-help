@@ -106,7 +106,6 @@ export const set2 = (
         root,
         set2CallCount,
         stateWeWillRunName,
-        functionName,
         parentDataStateAbsolutePathArray,
         parentDataState,
         varName,

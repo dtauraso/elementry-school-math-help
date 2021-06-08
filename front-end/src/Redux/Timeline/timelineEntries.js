@@ -19,7 +19,7 @@ export const updateEntry = (entries,
                             newValue) => {
 
     let lastEntry = entries[entries.length - 1]
-    console.log({entries})
+
     lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray}`] = {
 
         // is set 1 time
@@ -33,7 +33,7 @@ export const updateEntry = (entries,
         },
         C_reference: parentDataState,
     }
-    
+
 
 }
 // export const saveErrorEntry = (

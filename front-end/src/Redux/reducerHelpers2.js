@@ -131,7 +131,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
             action.meta.currentStateName = nextStateName
             temporaryState['trialEntries'].push(makeInitEntry(   nextStateName,
                                                             null,
-                                                            nextState['functionCode'].toString()))
+                                                            nextState['functionCode'].name))
            
             // console.log('action before running state', action)
             const result = nextState['functionCode'](temporaryState, action)
