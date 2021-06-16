@@ -135,3 +135,12 @@ export const entryDispatch = (state, action, passes) => {
         entry: state['entries'][entriesLength - 1]})
     
 }
+
+export const printStateRunTree = (state) => {
+    // what happens if at least 1 variable has alot of data for multiple states?
+    // https://en.wikipedia.org/wiki/Longest_common_subsequence_problem#Print_the_diff
+    // 1 record per state
+    // the record is a copy(value) or link to the object/array where the variable is 
+    // stord as a state
+    // if the state is the first state, record a before for the initial value
+}
