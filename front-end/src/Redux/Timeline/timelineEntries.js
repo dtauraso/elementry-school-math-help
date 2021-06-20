@@ -36,6 +36,24 @@ export const updateEntry = (entries,
 
 
 }
+export const updateEntry2 = (entries,
+                            stateWeWillRunName,
+                            parentDataStateAbsolutePathArray,
+                            parentDataState,
+                            varName,
+                            value,
+                            newValue) => {
+                                let lastEntry = entries[entries.length - 1]
+
+    lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray.join(' - ')}`] = {
+        // REMOVE ALL NULLS 
+        B_after: {
+            [varName]: value
+        },
+        C_reference: parentDataState,
+    }
+
+}    
 // export const saveErrorEntry = (
 //     temporaryState,
 //     parentStateNameAbsolutePathArray,
