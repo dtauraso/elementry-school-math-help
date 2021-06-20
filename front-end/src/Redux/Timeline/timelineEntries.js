@@ -19,16 +19,16 @@ export const updateEntry = (entries,
                             newValue) => {
 
     let lastEntry = entries[entries.length - 1]
-
+    // console.log("here 5")
     lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray.join(' - ')}`] = {
 
-        // is set 1 time
-        A_before: {
-            [varName]: value
-        },
+        // // is set 1 time
+        // A_before: {
+        //     [varName]: value
+        // },
         // is set 1 time and reset the remaining times set2 is called inside the
         // function for stateWeWillRunName
-        B_after: {
+        A_after: {
             [varName]: newValue
         },
         C_reference: parentDataState,
@@ -36,24 +36,25 @@ export const updateEntry = (entries,
 
 
 }
-export const updateEntry2 = (entries,
-                            stateWeWillRunName,
-                            parentDataStateAbsolutePathArray,
-                            parentDataState,
-                            varName,
-                            value,
-                            newValue) => {
-                                let lastEntry = entries[entries.length - 1]
+// export const updateEntry = (entries,
+//                             stateWeWillRunName,
+//                             parentDataStateAbsolutePathArray,
+//                             parentDataState,
+//                             varName,
+//                             value,
+//                             newValue) => {
+//                                 let lastEntry = entries[entries.length - 1]
 
-    lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray.join(' - ')}`] = {
-        // REMOVE ALL NULLS 
-        B_after: {
-            [varName]: value
-        },
-        C_reference: parentDataState,
-    }
+//     lastEntry[stateWeWillRunName][`A_${parentDataStateAbsolutePathArray.join(' - ')}`] = {
+//         // REMOVE ALL NULLS 
+//         after: {
+//             [varName]: value
+//         },
+//         // childTimeLine is now a separate key in the object
+//         C_reference: parentDataState,
+//     }
 
-}    
+// }    
 // export const saveErrorEntry = (
 //     temporaryState,
 //     parentStateNameAbsolutePathArray,

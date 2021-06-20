@@ -4,25 +4,42 @@ import {
     getState2
 } from '../utilityFunctions'
 
-import { updateEntry } from './timelineEntries'
+import { updateEntryStartState, updateEntry } from './timelineEntries'
 
 export const allRemainingSetCallsInState = (
     entry,
     stateWeWillRunName,
+    // parentState,
     parentDataStateAbsolutePathString,
     varName,
     newValue) => {
     // console.log('allRemainingSetCallsInState')
     // console.log({varName, newValue})
     console.log({updating: entry[stateWeWillRunName], entry})
-    let before = entry[stateWeWillRunName][parentDataStateAbsolutePathString]['A_before']
-    let after = entry[stateWeWillRunName][parentDataStateAbsolutePathString]['B_after']
+    // if(Object.keys(parentState.start).includes(stateWeWillRunName)) {
+    //     let before = entry[stateWeWillRunName][parentDataStateAbsolutePathString]['A_before']
+    //     let after = entry[stateWeWillRunName][parentDataStateAbsolutePathString]['B_after']
+    //     after[varName] = newValue
+    //     // if a different variable is set after the first set2 call
+    //     // in the same function
+    //     console.log("here", before)
+    //     if(varName in after && !(varName in before)) {
+    //         before[varName] = undefined
+    //     }
+    // }
+    // else {
+
+    console.log({A: entry[stateWeWillRunName], ParentPath: parentDataStateAbsolutePathString})
+    // parentDataStateAbsolutePathString is not a string
+    let after = entry[stateWeWillRunName][parentDataStateAbsolutePathString]['A_after']
     after[varName] = newValue
-    // if a different variable is set after the first set2 call
-    // in the same function
-    if(varName in after && !(varName in before)) {
-        before[varName] = undefined
-    }
+        // if a different variable is set after the first set2 call
+        // in the same function
+        // console.log("here", before)
+        // if(varName in after && !(varName in before)) {
+        //     before[varName] = undefined
+        // }
+    // }
 
 }
 
@@ -31,6 +48,7 @@ export const applyE2EAndUnitTimelineRules = (
     root,
     set2CallCount,
     stateWeWillRunName,
+    parentState,
     parentDataStateAbsolutePathArray,
     parentDataState,
     varName,
@@ -39,30 +57,34 @@ export const applyE2EAndUnitTimelineRules = (
 
     ) => {
 
-
+    console.log({set2CallCount})
     if(set2CallCount === 0) {
         // add things to the last entry
-
+        // console.log(parentState.start)
+        
         updateEntry(root['trialEntries'],
-                    stateWeWillRunName,
-                    parentDataStateAbsolutePathArray,
-                    parentDataState,
-                    varName,
-                    value,
-                    newValue)
+        stateWeWillRunName,
+        parentDataStateAbsolutePathArray,
+        parentDataState,
+        varName,
+        value,
+        newValue)
+        
+        
 
     }
     else if(set2CallCount > 0) {
         const entriesLen = root['trialEntries'].length
         const entry = root['trialEntries'][entriesLen - 1]
 
-        console.log({parentDataStateAbsolutePathArray})
+        console.log({entry})
         // console.log('allRemainingSetCallsInState')
         // passes
         // all remaining set calls inside a single state
         allRemainingSetCallsInState(
         entry,
         stateWeWillRunName,
+        // parentState,
         // editing an entry that already exists
         `A_${parentDataStateAbsolutePathArray.join(' - ')}`,
         varName,
@@ -97,17 +119,21 @@ export const set2 = (
     let set2CallCount = childState['Set2SFromStateFunctionCallCount']
     let stateRunCount = childState['stateRunCount']
     let startChildren = parentState['start']
-    console.log({varName, value})
+    console.log({varName, newValue})
     /* 
     unit test:
     entry is saved at the state it was made in
     end to end test:
     entry is saved at the parent state
+
+    using same value from previous round instead of updating for the result
+    of the current state
     */
     applyE2EAndUnitTimelineRules(
         root,
         set2CallCount,
         stateWeWillRunName,
+        parentState,
         parentDataStateAbsolutePathArray,
         parentDataState,
         varName,

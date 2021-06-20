@@ -26,14 +26,17 @@ export const setupFirstState = (parentState, childState, entry) => {
             const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
             grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].push([])
             const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
-            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+            let key = Object.keys(grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1])[0]
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1][key].B_childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
 
         }
         else {
             const grandparentTimeLinesLen = grandParentObject['E2ETimeLines'].length
             const grandparentTimeLineLen = grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1].length
             // console.log({grandparentTimeLinesLen, grandparentTimeLineLen})
-            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1].childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
+            let key = Object.keys(grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1])[0]
+
+            grandParentObject['E2ETimeLines'][grandparentTimeLinesLen - 1][grandparentTimeLineLen - 1][key].B_childTimeLine = parentState['E2ETimeLines'][lenParent - 1]
     
         }
     
