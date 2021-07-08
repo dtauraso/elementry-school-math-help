@@ -50,6 +50,7 @@ const storeResults = (state, action) => {
     // console.log({argumentObject})
     set2(argumentObject, 'test', 1)
     set2(argumentObject, 'test', 4)
+    set2(argumentObject, 'myArray', action.payload.problems)
     // set2(argumentObject, 'I\'m another test', 7)
 
         // // console.log('store resulst', payload)
@@ -78,6 +79,8 @@ const setupSubmachineForDisplay = (state, action) => {
     // console.log({argumentObject})
     set2(argumentObject, 'test', 78)
     set2(argumentObject, 'I am a different test', 'string')
+    set2(argumentObject, 'myArray', action.payload.problemSets)
+
     // console.log('        ', argumentObject)
     // set2(argumentObject, 'display test', 4)
     // set2(argumentObject, 'test', 6)

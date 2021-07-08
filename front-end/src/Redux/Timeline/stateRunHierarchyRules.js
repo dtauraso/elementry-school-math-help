@@ -139,11 +139,28 @@ export const entryDispatch = (state, action, passes) => {
     
 }
 
+const printArray = (array) => {
+    /*
+    if array is object
+        print json(array)
+    for item in array
+        printArray(array)
+
+    */
+}
 export const printStateRunTree = (state) => {
     // what happens if at least 1 variable has alot of data for multiple states?
     // https://en.wikipedia.org/wiki/Longest_common_subsequence_problem#Print_the_diff
     // 1 record per state
     // the record is a copy(value) or link to the object/array where the variable is 
     // stord as a state
+    // make sure the record system stores a reference to  to the value when it's an opbect or list
     // if the state is the first state, record a before for the initial value
+    /*
+    variable keys
+        Object.keys(state['A_after'])
+
+        if a variable key is an array
+
+    */
 }
