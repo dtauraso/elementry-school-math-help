@@ -357,6 +357,7 @@ export var newContextualStateChart = {
               "setupSubmachineForDisplay",
               "setupSubmachineForDisplay",
               "setupSubmachineForDisplay",
+              "setupSubmachineForDisplay",
             ],
           },
           setupSubmachineForDisplay: {

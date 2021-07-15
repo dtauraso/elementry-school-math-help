@@ -162,7 +162,7 @@ const setupSubmachineForDisplay = (state, action) => {
   // printTreeInteractive(temporaryState)
 
   // have the viewing card read the structure
-  return [state, true];
+  return [state, false];
 };
 
 const setupSubmachineForProblems = (state, action) => {

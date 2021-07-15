@@ -66,6 +66,10 @@ const universalReducer = (state = initialState, action) => {
 
       return temporaryState;
     } else {
+      console.log("there was a failure");
+      console.log(temporaryState);
+      printStateRunTree(temporaryState["entries"][0], "");
+
       return state;
     }
   }

@@ -203,8 +203,12 @@ export const printStateRunTree = (state, indent) => {
     printVariables(state["A_after"], indent + " ");
     return;
   }
+  //   console.log({ state });
   if ("B_childTimeLine" in state) {
     state["B_childTimeLine"].forEach((child) => {
+      if (child.constructor.name === "Array") {
+        console.log(`${indent + "   "}error states`);
+      }
       printStateRunTree(child, indent + "  ");
     });
   }
@@ -212,7 +216,11 @@ export const printStateRunTree = (state, indent) => {
   Object.keys(state)
     .filter((key) => key !== "B_childTimeLine" && key !== "C_functionName")
     .forEach((key, i) => {
-      console.log(`${indent + " "}|${key}`);
+      let isState = false;
+      if (key[0] !== "A") {
+        isState = true;
+      }
+      console.log(`${indent + " "}|${isState ? "" : "metadata -> "}${key}`);
       printStateRunTree(state[key], indent + "  ");
     });
 };
