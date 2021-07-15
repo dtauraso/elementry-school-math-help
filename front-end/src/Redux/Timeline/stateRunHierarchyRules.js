@@ -145,15 +145,33 @@ export const entryDispatch = (state, action, passes) => {
   });
 };
 
-const printArray = (array) => {
-  /*
-    if array is object
-        print json(array)
-    only print 10 items
-    for item in array
-        printArray(array)
+const formatJson = (json, indents) => {
+  if (json.constructor.name === "Array") {
+    return `${indents}[\n${json
+      .map((element, i) => {
+        if (i < 5) {
+          return formatJson(element, indents + "  ");
+        }
+      })
+      .join("")}\n${indents}],\n`;
+  } else if (json.constructor.name === "Object") {
+    return `${indents}${JSON.stringify(json)}\n`;
+  }
+};
+const printVariables = (variableObject, indents) => {
+  Object.keys(variableObject).forEach((variableName) => {
+    if (typeof variableObject[variableName] === "object") {
+      console.log(`${indents}|"${variableName}":`);
 
-    */
+      console.log(formatJson(variableObject[variableName], indents + " "));
+    } else {
+      console.log(
+        `${indents}|"${variableName}": ${JSON.stringify(
+          variableObject[variableName]
+        )}`
+      );
+    }
+  });
 };
 export const printStateRunTree = (state, indent) => {
   // what happens if at least 1 variable has alot of data for multiple states?
@@ -172,16 +190,18 @@ export const printStateRunTree = (state, indent) => {
 
     */
   //    console.log(typeof [])
-  console.log({ state });
+  //   console.log({ state });
   if (state === {}) {
     return;
   }
-  console.log({ x: typeof state });
-  if (typeof state === "number") {
-    console.log("yes");
-  }
+  //   console.log({ x: typeof state });
+  //   if (typeof state === "number") {
+  //     console.log("yes");
+  //   }
   if ("A_after" in state) {
-    console.log("variables", { state });
+    // console.log("variables", { state });
+    printVariables(state["A_after"], indent + " ");
+    return;
   }
   if ("B_childTimeLine" in state) {
     state["B_childTimeLine"].forEach((child) => {
@@ -192,7 +212,7 @@ export const printStateRunTree = (state, indent) => {
   Object.keys(state)
     .filter((key) => key !== "B_childTimeLine" && key !== "C_functionName")
     .forEach((key, i) => {
-      console.log(`|${indent + " "}|${key}`);
+      console.log(`${indent + " "}|${key}`);
       printStateRunTree(state[key], indent + "  ");
     });
 };
