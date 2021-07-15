@@ -51,7 +51,6 @@ export const applyE2EAndUnitTimelineRules = (
   parentDataStateAbsolutePathArray,
   parentDataState,
   varName,
-  value,
   newValue
 ) => {
   console.log({ set2CallCount });
@@ -65,7 +64,6 @@ export const applyE2EAndUnitTimelineRules = (
       parentDataStateAbsolutePathArray,
       parentDataState,
       varName,
-      value,
       newValue
     );
   } else if (set2CallCount > 0) {
@@ -108,10 +106,6 @@ export const set2 = (
   let childState = parentState.children[stateWeWillRunName];
   let functionName = childState.functionCode.name;
   let parentDataState = getState2(root, parentDataStateAbsolutePathArray);
-  let value = undefined;
-  if (varName in parentState["variables"]) {
-    value = parentState["variables"][varName];
-  }
 
   let set2CallCount = childState["Set2SFromStateFunctionCallCount"];
   let stateRunCount = childState["stateRunCount"];
@@ -134,7 +128,6 @@ export const set2 = (
     parentDataStateAbsolutePathArray,
     parentDataState,
     varName,
-    value,
     newValue
   );
 

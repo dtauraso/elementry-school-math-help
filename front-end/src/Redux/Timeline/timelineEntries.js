@@ -16,7 +16,6 @@ export const updateEntry = (
   parentDataStateAbsolutePathArray,
   parentDataState,
   varName,
-  value,
   newValue
 ) => {
   let lastEntry = entries[entries.length - 1];
