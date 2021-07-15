@@ -1,18 +1,20 @@
-import { makeQuantity } from "../utility"
+import { makeQuantity } from "../utility";
 
-import {storeResults,
-        setupSubmachineForDisplay,
-        setupSubmachineForProblems} from '../Components/ShowResults/ResultsReducers'
-import { setTimelineMetadataToStates } from './Timeline/timelineHierarchyMetadata'
+import {
+  storeResults,
+  setupSubmachineForDisplay,
+  setupSubmachineForProblems,
+} from "../Components/ShowResults/ResultsReducers";
+import { setTimelineMetadataToStates } from "./Timeline/timelineHierarchyMetadata";
 
 const returnStateTrue = (state, action) => {
-    return [state, true]
-}
+  return [state, true];
+};
 const returnStateFalse = (state, action) => {
-    return [state, false]
-}
-        
-        /*
+  return [state, false];
+};
+
+/*
 i : {
     paragraph: {
         j: {
@@ -143,151 +145,241 @@ blockers
 */
 
 const problems = [
-    {a: 4, b: 3},
+  { a: 4, b: 3 },
 
-    {a: 5, b: 6},
+  { a: 5, b: 6 },
 
-    {a: 2, b: 4},
+  { a: 2, b: 4 },
 
-    {a: 9, b: 4},
+  { a: 9, b: 4 },
 
-    {a: 5, b: 1}
-
-
-]
+  { a: 5, b: 1 },
+];
 
 // const makeNumber = ()
-let displayResultComponents = [ 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
+let displayResultComponents = [
+  {
+    theirAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        isCorrect: true,
+        operationType: null,
+      },
+    },
+    actualAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        operationType: null,
+      },
+    },
+  },
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
+  {
+    theirAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        isCorrect: true,
+        operationType: null,
+      },
+    },
+    actualAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        operationType: null,
+      },
+    },
+  },
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
+  {
+    theirAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        isCorrect: true,
+        operationType: null,
+      },
+    },
+    actualAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        operationType: null,
+      },
+    },
+  },
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}},
+  {
+    theirAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        isCorrect: true,
+        operationType: null,
+      },
+    },
+    actualAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        operationType: null,
+      },
+    },
+  },
 
-    {theirAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), isCorrect: true, operationType: null}},
-    actualAnswer: {variables: {value: 5, quantity: makeQuantity(5, 5), operationType: null}}}
-]
-const makeProblemComponents = ( problems,
-                                displayResultComponents,
-                                operationType) => {
-
-    let problemSet = {}
-    problems.forEach((problem, i) => {
-
-        let {a, b} = problem
-        const mySum = a + b
-        problemSet[i] = {
-            children: {
-                a: {variables: {value: a, quantity: makeQuantity(a, mySum), operationType: null}},
-                b: {variables: {value: b, quantity: makeQuantity(b, mySum), operationType: operationType}},
-            }
-        }
-        if(operationType === 'add' || operationType === 'subtract') {
-            problemSet[i]['children']['answerForm'] = {
-                variables: {
-                    value: '',
-                    quantity: makeQuantity(0, mySum),
-                    correct: false,
-                    firstAnswer: null,
-                    actualAnswer: mySum,
-                    correctFirstTime: false,
-                    feedbackMessage: 'O',
-                    backgroundColor: 'white'
-                },
-                submission: {
-                    variables: {
-                        submitCount: 0,
-                    }
-                },
-                progressMeter: {
-                    variables: {
-                        testingWithoutForm: false
-                    }
-                }
-            }
-        }
-        if(!displayResultComponents) {
-            return
-        }
-        problemSet[i]['children']['theirAnswer'] = displayResultComponents[i]['theirAnswer']
-        problemSet[i]['children']['actualAnswer'] = displayResultComponents[i]['actualAnswer']
-
-    })
-    return problemSet
-}
+  {
+    theirAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        isCorrect: true,
+        operationType: null,
+      },
+    },
+    actualAnswer: {
+      variables: {
+        value: 5,
+        quantity: makeQuantity(5, 5),
+        operationType: null,
+      },
+    },
+  },
+];
+const makeProblemComponents = (
+  problems,
+  displayResultComponents,
+  operationType
+) => {
+  let problemSet = {};
+  problems.forEach((problem, i) => {
+    let { a, b } = problem;
+    const mySum = a + b;
+    problemSet[i] = {
+      children: {
+        a: {
+          variables: {
+            value: a,
+            quantity: makeQuantity(a, mySum),
+            operationType: null,
+          },
+        },
+        b: {
+          variables: {
+            value: b,
+            quantity: makeQuantity(b, mySum),
+            operationType: operationType,
+          },
+        },
+      },
+    };
+    if (operationType === "add" || operationType === "subtract") {
+      problemSet[i]["children"]["answerForm"] = {
+        variables: {
+          value: "",
+          quantity: makeQuantity(0, mySum),
+          correct: false,
+          firstAnswer: null,
+          actualAnswer: mySum,
+          correctFirstTime: false,
+          feedbackMessage: "O",
+          backgroundColor: "white",
+        },
+        submission: {
+          variables: {
+            submitCount: 0,
+          },
+        },
+        progressMeter: {
+          variables: {
+            testingWithoutForm: false,
+          },
+        },
+      };
+    }
+    if (!displayResultComponents) {
+      return;
+    }
+    problemSet[i]["children"]["theirAnswer"] =
+      displayResultComponents[i]["theirAnswer"];
+    problemSet[i]["children"]["actualAnswer"] =
+      displayResultComponents[i]["actualAnswer"];
+  });
+  return problemSet;
+};
 
 export var newContextualStateChart = {
-    elementarySchool : {
-        utilities: {
-            createProblems: {
-            // functionCode: makeProblemSet
-            }
+  elementarySchool: {
+    utilities: {
+      createProblems: {
+        // functionCode: makeProblemSet
+      },
+    },
+    testing: {
+      // functionCode: returnState,
+      start: ["autosolve"],
+      children: {
+        autosolve: {
+          // functionCode: autoSolve,
+          next: ["setupForBackEnd"],
         },
-        testing: {
-            // functionCode: returnState,
-            start: ['autosolve'],
-            children: {
-                autosolve: {
-                    // functionCode: autoSolve,
-                    next: ['setupForBackEnd']
-                },
-                setupForBackEnd: {
-                // functionCode: setupForBackend
-                }
-            }
+        setupForBackEnd: {
+          // functionCode: setupForBackend
         },
-        storeResults: {
-            // functionCode: storeResults,
-            variables: {
-                resultsFromBackend: -1,
-                payload: {'problem set tale': []}
-            }
-        },
-        start: ['displayResults'],
+      },
+    },
+    storeResults: {
+      // functionCode: storeResults,
+      variables: {
+        resultsFromBackend: -1,
+        payload: { "problem set tale": [] },
+      },
+    },
+    start: ["displayResults"],
+    children: {
+      plusProblems: {
+        problemSet: makeProblemComponents(problems, false, "add"),
+      },
+      displayResults: {
+        problemSets: {
+          variables: {
+            aList: [],
+          },
+        }, //[makeProblemComponents(problems, displayResultComponents)],
+        functionCode: returnStateTrue,
+        start: ["storeResults"],
         children: {
-            plusProblems: {
-                problemSet: makeProblemComponents(problems, false, 'add')
-            },
-            displayResults: {
-                problemSets: {
-                    variables: {
-                        aList: []
-                    }
-                },//[makeProblemComponents(problems, displayResultComponents)],
-                functionCode: returnStateTrue,
-                start: ['storeResults'],
-                children: {
-                    storeResults: {
-                        functionCode: storeResults,
-                        next: ['setupSubmachineForDisplay', 'setupSubmachineForDisplay', 'setupSubmachineForDisplay']
-                    },
-                    setupSubmachineForDisplay: {
-                        functionCode: setupSubmachineForDisplay,
-                        next: ['fakeState']
-                    },
-                    fakeState: {
-                        functionCode: returnStateTrue
-                    }
-                },
-                variables: {
-                    selectedProblemSetFromBackend: -1,
-                    problemSetIdMapToAppendedProblemId: {},
-                    problemCount: 0
-                }
-            }
+          storeResults: {
+            functionCode: storeResults,
+            next: [
+              "setupSubmachineForDisplay",
+              "setupSubmachineForDisplay",
+              "setupSubmachineForDisplay",
+            ],
+          },
+          setupSubmachineForDisplay: {
+            functionCode: setupSubmachineForDisplay,
+            next: ["fakeState"],
+          },
+          fakeState: {
+            functionCode: returnStateTrue,
+          },
         },
-        'Set2SFromStateFunctionCallCount':  0,
-        'stateRunCount': 0,
-        'E2ETimeLines': [],
-        'unitTimeLines': []
-    }
-}
-setTimelineMetadataToStates(newContextualStateChart)
-newContextualStateChart['entries'] = []
-newContextualStateChart['trialEntries'] = []
+        variables: {
+          selectedProblemSetFromBackend: -1,
+          problemSetIdMapToAppendedProblemId: {},
+          problemCount: 0,
+        },
+      },
+    },
+    Set2SFromStateFunctionCallCount: 0,
+    stateRunCount: 0,
+    E2ETimeLines: [],
+    unitTimeLines: [],
+  },
+};
+setTimelineMetadataToStates(newContextualStateChart);
+newContextualStateChart["entries"] = [];
+newContextualStateChart["trialEntries"] = [];

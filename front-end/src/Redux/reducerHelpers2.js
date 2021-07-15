@@ -1,34 +1,27 @@
-import {
-    setVariable2,
-    getVariable2,
-    getState2
-} from './utilityFunctions'
-import { makeInitEntry } from './Timeline/timelineEntries'
+import { setVariable2, getVariable2, getState2 } from "./utilityFunctions";
+import { makeInitEntry } from "./Timeline/timelineEntries";
 
-import { entryDispatch } from './Timeline/stateRunHierarchyRules'
+import { entryDispatch } from "./Timeline/stateRunHierarchyRules";
 
 export const addOrSwitchWinningStateName = (action, winningStateName) => {
-
-    if(action.meta.parentState.start.includes(winningStateName)) {
-        // console.log("push", action.meta.logList)
-        action.meta.logList.push(winningStateName)
-        // if(levelId > 0) {
-        //     action.type += ` - ${winningStateName}`
-        // }
-    }
-    else {
-        action.meta.logList.pop()
-        action.meta.logList.push(winningStateName)
-        // replaceState(action, winningStateName)
-    }
-}
+  if (action.meta.parentState.start.includes(winningStateName)) {
+    // console.log("push", action.meta.logList)
+    action.meta.logList.push(winningStateName);
+    // if(levelId > 0) {
+    //     action.type += ` - ${winningStateName}`
+    // }
+  } else {
+    action.meta.logList.pop();
+    action.meta.logList.push(winningStateName);
+    // replaceState(action, winningStateName)
+  }
+};
 
 export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
-
-    // setup for breathFirstTraversal2
-    // pull out parent information if possible
-    // assume we are starting with action.type
-    /*
+  // setup for breathFirstTraversal2
+  // pull out parent information if possible
+  // assume we are starting with action.type
+  /*
     currentState (object)
     parentState (object)
     parentPath (string)
@@ -47,38 +40,37 @@ export const setupForBreathFirstTraversal2 = (state, action, levelId) => {
 
     */
 
-    /*
+  /*
     action.meta.parentState
     action.meta.parentPathArray
     action.meta.childName
     */
-    // console.log("setupForBreathFirstTraversal2")
-    // console.log({path})
-    console.log(action)
-    let path = action.type.split(' - ')
+  // console.log("setupForBreathFirstTraversal2")
+  // console.log({path})
+  console.log(action);
+  let path = action.type.split(" - ");
 
-    // assume path as at least 2 elements
-    
-    action.meta.parentPathArray = path.slice(0, path.length - 1)
-    action.meta.logList = path.slice(0, path.length - 1)
-    action.meta.parentState = getState2(state, action.meta.parentPathArray)
-    action.meta.currentStateNames = [path[path.length - 1]]
-    // action.meta.stateNumberRun = -1
+  // assume path as at least 2 elements
 
-    return breathFirstTraversal2(state, action, levelId)
-}
+  action.meta.parentPathArray = path.slice(0, path.length - 1);
+  action.meta.logList = path.slice(0, path.length - 1);
+  action.meta.parentState = getState2(state, action.meta.parentPathArray);
+  action.meta.currentStateNames = [path[path.length - 1]];
+  // action.meta.stateNumberRun = -1
+
+  return breathFirstTraversal2(state, action, levelId);
+};
 // export const setChildrenStateCountsToZero = (action) => {
 // Object.keys(action.meta.parentState.children).forEach(childStateName => {
 //                 action.meta.parentState.children[childStateName].stateRunCount = 0
 //             })
 // }
 export const breathFirstTraversal2 = (state, action, levelId) => {
-
-    // want user to think in terms of name - name
-    // but system is default setup to use [name, name]
-    // the path array is converted to string for action.type
-    // console.log('action starting at breathFirstTraversal2', action)
-    /* the logging system has 2 parts
+  // want user to think in terms of name - name
+  // but system is default setup to use [name, name]
+  // the path array is converted to string for action.type
+  // console.log('action starting at breathFirstTraversal2', action)
+  /* the logging system has 2 parts
             # set calls in each state function(seems to work)
             # times state was run in submachine(seems to work for 1 case)
 
@@ -97,72 +89,71 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
 
         each state is limited to the states that are in the same json object
     */
-    let temporaryState = state
+  let temporaryState = state;
 
-    let next = action.meta.currentStateNames
-    let parentPathArray = action.meta.parentPathArray
-    /*
+  let next = action.meta.currentStateNames;
+  let parentPathArray = action.meta.parentPathArray;
+  /*
     parentStateNameAbsolutePathArray,
     stateWeWillRunName
     */
-    // let currentStateName = action.type
-    // let start
-    // console.log('inside the bft2')
-    // console.log({state, action, levelId})
-    // there is no code for storing trial state entries
-    // a trial state entry is only made when set2 is called
-    while(true) {
-        // what if there is only 1 trial state and it fails
-        let passes = false
-        let winningStateName = ''
-        
-        next.forEach(nextStateName => {
-            // console.log(action.meta.parent, next)
-            let nextState = action.meta.parentState.children[nextStateName]
-            if(nextState === undefined) {
-                console.log("the js syntax for the next states is wrong")
-                return null
-            }
+  // let currentStateName = action.type
+  // let start
+  // console.log('inside the bft2')
+  // console.log({state, action, levelId})
+  // there is no code for storing trial state entries
+  // a trial state entry is only made when set2 is called
+  while (true) {
+    // what if there is only 1 trial state and it fails
+    let passes = false;
+    let winningStateName = "";
 
-            if(passes) {
-                return null
-            }
-            // console.log({temporaryState, nextState})
+    next.forEach((nextStateName) => {
+      // console.log(action.meta.parent, next)
+      let nextState = action.meta.parentState.children[nextStateName];
+      if (nextState === undefined) {
+        console.log("the js syntax for the next states is wrong");
+        return null;
+      }
 
-            // console.log({state})
-            if(!('functionCode' in nextState)) {
-                console.log(nextState, "doesn't have a function")
-                return null
-            }
+      if (passes) {
+        return null;
+      }
+      // console.log({temporaryState, nextState})
 
-            action.meta.currentStateName = nextStateName
-            temporaryState['trialEntries'].push(makeInitEntry(   nextStateName,
-                                                            null,
-                                                            nextState['functionCode'].name))
-            console.log("just made entry", temporaryState['trialEntries'])
-            // console.log('action before running state', action)
-            const result = nextState['functionCode'](temporaryState, action)
-            console.log({nextState})
-            nextState.Set2SFromStateFunctionCallCount = 0
-            const success = result[1]
+      // console.log({state})
+      if (!("functionCode" in nextState)) {
+        console.log(nextState, "doesn't have a function");
+        return null;
+      }
 
-            temporaryState = result[0]
-            if(!success) {
-                return null
-            }
-            passes = true
-            winningStateName = nextStateName
+      action.meta.currentStateName = nextStateName;
+      temporaryState["trialEntries"].push(
+        makeInitEntry(nextStateName, [], nextState["functionCode"].name)
+      );
+      console.log("just made entry", temporaryState["trialEntries"]);
+      // console.log('action before running state', action)
+      const result = nextState["functionCode"](temporaryState, action);
+      console.log({ nextState });
+      nextState.Set2SFromStateFunctionCallCount = 0;
+      const success = result[1];
 
-        })
-        // console.log({winningStateName, passes})
-        /*
+      temporaryState = result[0];
+      if (!success) {
+        return null;
+      }
+      passes = true;
+      winningStateName = nextStateName;
+    });
+    // console.log({winningStateName, passes})
+    /*
         state logging rules
             ony add an entry when it's corresponding state socceeds
             if the state failed save all of the trial states set results
                 from the first successfull set call to the last successfull set call
             make sure every entry has a link to the function code
         */
-       /*
+    /*
         if we change a variable over multiple states, the inital record of the state currently
         shows the variable as starting out undefined(verified hypothesis)
         adiditional issue when putting in the trial entries(unintended consequence)
@@ -171,7 +162,7 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
 
         parent's child timeline only has 1 entry despite 2 statees getting run
         */
-        /*
+    /*
         stateRunCount -> action.meta.parent.children[winningStateName].stateRunCount
         stateWeWillRunName -> winningStateName
         startChildren -> action.meta.parent.start
@@ -179,17 +170,19 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         childState -> action.meta.parent.children[winningStateName]
         entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
-        entryDispatch(state, action, passes)
+    entryDispatch(state, action, passes);
 
-        if(!passes) {
-            // trialEntries to error state entry
-            // reset stateRunCount on all children states
-            Object.keys(action.meta.parentState.children).forEach(childStateName => {
-                action.meta.parentState.children[childStateName].stateRunCount = 0
-            })
-            return [temporaryState, false]
+    if (!passes) {
+      // trialEntries to error state entry
+      // reset stateRunCount on all children states
+      Object.keys(action.meta.parentState.children).forEach(
+        (childStateName) => {
+          action.meta.parentState.children[childStateName].stateRunCount = 0;
         }
-        /*
+      );
+      return [temporaryState, false];
+    }
+    /*
         stateRunCount -> action.meta.parentState.children[winningStateName].stateRunCount,
         startChildren -> action.meta.parentState.start
         stateWeWillRunName -> winningStateName,
@@ -197,83 +190,86 @@ export const breathFirstTraversal2 = (state, action, levelId) => {
         childState -> action.meta.parentState[winningStateName],
         entry -> temporaryState['trialEntries'][trialEntriesLength - 1]
         */
-        // action.meta.stateNumberRun += 1
-        // if(action.meta.stateNumberRun )
-       /*
+    // action.meta.stateNumberRun += 1
+    // if(action.meta.stateNumberRun )
+    /*
        state passed, set was run at least 1 time
        state passed, set wasn't run 1 time
        */
-        // const trialEntriesLength = temporaryState['trialEntries'].length
-        
-        // applyStateCountRecordRules(
-        //     action.meta.parentState.children[winningStateName].stateRunCount,
-        //     action.meta.parentState.start,
-        //     winningStateName,
-        //     action.meta.parentState,
-        //     action.meta.parentState[winningStateName],
-        //     temporaryState['trialEntries'][trialEntriesLength - 1]
-        // )
-        // trialEntries[last item] to entries
-        // temporaryState['entries'].push(temporaryState['trialEntries'][trialEntriesLength - 1])
-        // temporaryState['trialEntries'] = []
-        let winningState = action.meta.parentState.children[winningStateName]
-        // reset Set2SFromStateFunctionCallCount after the state passed
-        winningState.Set2SFromStateFunctionCallCount = 0
+    // const trialEntriesLength = temporaryState['trialEntries'].length
 
-        winningState.stateRunCount += 1
-        // console.log(winningState.stateRunCount)
+    // applyStateCountRecordRules(
+    //     action.meta.parentState.children[winningStateName].stateRunCount,
+    //     action.meta.parentState.start,
+    //     winningStateName,
+    //     action.meta.parentState,
+    //     action.meta.parentState[winningStateName],
+    //     temporaryState['trialEntries'][trialEntriesLength - 1]
+    // )
+    // trialEntries[last item] to entries
+    // temporaryState['entries'].push(temporaryState['trialEntries'][trialEntriesLength - 1])
+    // temporaryState['trialEntries'] = []
+    let winningState = action.meta.parentState.children[winningStateName];
+    // reset Set2SFromStateFunctionCallCount after the state passed
+    winningState.Set2SFromStateFunctionCallCount = 0;
 
-        // addOrSwitchWinningStateName
-        // if state was start
-        addOrSwitchWinningStateName(action, winningStateName)
-        action.type = action.meta.logList.join(' - ')
-        console.log(action.type)
+    winningState.stateRunCount += 1;
+    // console.log(winningState.stateRunCount)
 
-        if('children' in winningState) {
-            // console.log("children", winningState)
-            // action.parentState = currentState
-            // action.parentPath +=  ' - ' + childName
-            // action.currentStateNames = parentState.start
-            // f(state, action)
-            // action.logList.pop()
+    // addOrSwitchWinningStateName
+    // if state was start
+    addOrSwitchWinningStateName(action, winningStateName);
+    action.type = action.meta.logList.join(" - ");
+    console.log(action.type);
 
-            // action.type += ' - '
+    if ("children" in winningState) {
+      // console.log("children", winningState)
+      // action.parentState = currentState
+      // action.parentPath +=  ' - ' + childName
+      // action.currentStateNames = parentState.start
+      // f(state, action)
+      // action.logList.pop()
 
-            action.meta.parentState = winningState
-            action.meta.parentPathArray.push(winningStateName)
-            action.meta.currentStateNames = action.meta.parentState.start
-            // console.log("before recurse", action.meta)
-            const nestedResult = breathFirstTraversal2(
-                temporaryState,
-                action,
-                levelId + 1
-            )
-            // reset stateRunCount on all children states
-            Object.keys(action.meta.parentState.children).forEach(childStateName => {
-                action.meta.parentState.children[childStateName].stateRunCount = 0
-            })
-            passes = nestedResult[1]
-            if(!passes) {
-                return [temporaryState, false]
-            }
-            temporaryState = nestedResult[0]
+      // action.type += ' - '
 
-            action.meta.parentPathArray.pop()
-            action.meta.parentState = getState2(temporaryState, parentPathArray)
-            action.meta.logList.pop()
-
-            // popLowestLevel(action)
+      action.meta.parentState = winningState;
+      action.meta.parentPathArray.push(winningStateName);
+      action.meta.currentStateNames = action.meta.parentState.start;
+      // console.log("before recurse", action.meta)
+      const nestedResult = breathFirstTraversal2(
+        temporaryState,
+        action,
+        levelId + 1
+      );
+      // reset stateRunCount on all children states
+      Object.keys(action.meta.parentState.children).forEach(
+        (childStateName) => {
+          action.meta.parentState.children[childStateName].stateRunCount = 0;
         }
-        if('next' in winningState) {
-            // console.log('next', winningStateName, action.meta.parentState.children[winningStateName].next)
-            next = action.meta.parentState.children[winningStateName].next
-        }
-        else {
-            // reset stateRunCount on all children states
-            Object.keys(action.meta.parentState.children).forEach(childStateName => {
-                action.meta.parentState.children[childStateName].stateRunCount = 0
-            })
-            return [temporaryState, true]
-        }
+      );
+      passes = nestedResult[1];
+      if (!passes) {
+        return [temporaryState, false];
+      }
+      temporaryState = nestedResult[0];
+
+      action.meta.parentPathArray.pop();
+      action.meta.parentState = getState2(temporaryState, parentPathArray);
+      action.meta.logList.pop();
+
+      // popLowestLevel(action)
     }
-}
+    if ("next" in winningState) {
+      // console.log('next', winningStateName, action.meta.parentState.children[winningStateName].next)
+      next = action.meta.parentState.children[winningStateName].next;
+    } else {
+      // reset stateRunCount on all children states
+      Object.keys(action.meta.parentState.children).forEach(
+        (childStateName) => {
+          action.meta.parentState.children[childStateName].stateRunCount = 0;
+        }
+      );
+      return [temporaryState, true];
+    }
+  }
+};
